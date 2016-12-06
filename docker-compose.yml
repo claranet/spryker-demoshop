@@ -1,0 +1,41 @@
+--- 
+
+version: '2'
+services: 
+
+  spryker: 
+    image: "spryker-demo-shop:latest"
+    restart: always
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "2380:80"
+      - "2381:8080"
+    depends_on:
+      - redis
+      - elasticsearch
+      - postgres
+    links:
+      - redis
+      - "postgres:database"
+    environment:
+      - "ZED_DB_USERNAME=spryker"
+      - "ZED_DB_PASSWORD=test123"
+      - "ZED_DB_DATABASE=spryker"
+
+  redis:
+    image: "redis"
+    restart: always
+
+  elasticsearch:
+    image: "elasticsearch"
+    restart: always
+
+  postgres:
+    image: "postgres"
+    restart: always
+    environment:
+      - "POSTGRES_USER=spryker"
+      - "POSTGRES_PASSWORD=test123"
+      - "POSTGRES_DB=spryker"
