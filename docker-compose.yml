@@ -3,7 +3,7 @@
 version: '2'
 services: 
 
-  spryker: 
+  yves-and-zed: 
     image: "spryker-demo-shop:latest"
     restart: always
     build:
