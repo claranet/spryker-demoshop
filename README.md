@@ -11,6 +11,18 @@ If you encounter any issues during or after installation, you can first check ou
 
 ## Dockerization
 
+### Initialization
+
+Following steps are nececssary to get the demo shop up and running - provided that external resources as configured are existent and reachable:
+
+* `./vendor/bin/console setup:install`
+* `./vendor/bin/console import:demo-data`
+* `./vendor/bin/console setup:search`
+* `./vendor/bin/console collector:search:update`
+* `./vendor/bin/console collector:search:export`
+* `./vendor/bin/console collector:storage:export`
+
+
 ### Known Bugs
 
 #### Elasticsearch 5.0
