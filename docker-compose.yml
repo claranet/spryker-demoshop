@@ -29,7 +29,7 @@ services:
     restart: always
 
   elasticsearch:
-    image: "elasticsearch"
+    image: "elasticsearch:2"
     restart: always
 
   postgres:
