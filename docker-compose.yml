@@ -3,6 +3,14 @@
 version: '2'
 services: 
 
+  static-assets:
+    image: "busybox:latest"
+    command: /bin/true
+    restart: never
+    volumes:
+      - /data/shop/public/Yves/assets
+      - /data/shop/public/Zed/assets
+
   yves-and-zed: 
     image: "spryker-demo-shop:latest"
     restart: always
@@ -12,17 +20,27 @@ services:
     ports:
       - "2380:80"
       - "2381:8080"
-    depends_on:
-      - redis
-      - elasticsearch
-      - postgres
     links:
       - redis
+      - elasticsearch
       - "postgres:database"
-    environment:
-      - "ZED_DB_USERNAME=spryker"
-      - "ZED_DB_PASSWORD=test123"
-      - "ZED_DB_DATABASE=spryker"
+    env_file: ./docker-compose.env
+    volumes:
+      - ./assets:/data/shop/assets
+    volumes_from:
+      - static-assets:ro
+
+  init:
+    image: "spryker-demo-shop:latest"
+    command: "init_setup"
+    restart: never
+    depends_on:
+      - yves-and-zed
+    env_file: ./docker-compose.env
+    volumes:
+      - ./assets:/data/shop/assets
+    volumes_from:
+      - static-assets:rw
 
   redis:
     image: "redis"
