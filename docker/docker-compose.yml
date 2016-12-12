@@ -10,6 +10,7 @@ services:
     volumes:
       - /data/shop/public/Yves/assets
       - /data/shop/public/Zed/assets
+      - /data/shop/src/Generated
 
   yves-and-zed: 
     image: "spryker-demo-shop:latest"
