@@ -53,7 +53,4 @@ services:
   postgres:
     image: "postgres"
     restart: always
-    environment:
-      - "POSTGRES_USER=spryker"
-      - "POSTGRES_PASSWORD=test123"
-      - "POSTGRES_DB=spryker"
+    env_file: ./docker-compose.env
