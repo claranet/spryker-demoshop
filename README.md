@@ -25,6 +25,21 @@ Following steps are nececssary to get the demo shop up and running - provided th
 
 ### Known Bugs
 
+#### Spryker - Search Setup
+
+The console command `setup:search` integrates two tasks of different nature: 
+
+* Create the indices in elasticsearch 
+* Generate code which serves as mapping bridge between spryker and ES
+
+The former is an init task needs to be ran at runtime if external resources are
+available, the ladder one is a build time task creating code which should be
+available in all containers. We've asked Vladimir (Volodymyr) Lunov of Spryker
+to split these console asks. 
+
+As workaround we make `./src/Generated` a volume shared by all containers and
+put the `setup:search` task into the init stage.
+
 #### Elasticsearch 5.0
 
 ES 5 introduced bootstrap checks which enforce some configuraion parameter in

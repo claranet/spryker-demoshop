@@ -2,6 +2,4 @@
 
 set -x
 
-echo `pwd`
-
-$CONSOLE import:demo-data
+$CONSOLE import:demo-data"
