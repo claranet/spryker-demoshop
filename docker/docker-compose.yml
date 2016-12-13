@@ -26,6 +26,8 @@ services:
       - elasticsearch
       - database
     env_file: ./docker-compose.env
+    volumes:
+      - ../assets:/data/shop/assets
     volumes_from:
       - shared-assets:rw
 
