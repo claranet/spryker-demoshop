@@ -16,8 +16,8 @@ services:
     image: "spryker-demo-shop:latest"
     restart: always
     build:
-      context: ./
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: ../Dockerfile
     ports:
       - "2380:80"
       - "2381:8080"
@@ -27,7 +27,7 @@ services:
       - "postgres:database"
     env_file: ./docker-compose.env
     volumes:
-      - ./assets:/data/shop/assets
+      - ../assets:/data/shop/assets
     volumes_from:
       - static-assets:ro
 
@@ -39,7 +39,7 @@ services:
       - yves-and-zed
     env_file: ./docker-compose.env
     volumes:
-      - ./assets:/data/shop/assets
+      - ../assets:/data/shop/assets
     volumes_from:
       - static-assets:rw
 
