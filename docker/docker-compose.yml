@@ -3,7 +3,7 @@
 version: '2'
 services: 
 
-  static-assets:
+  shared-assets:
     image: "busybox:latest"
     command: /bin/true
     restart: never
@@ -24,24 +24,28 @@ services:
     links:
       - redis
       - elasticsearch
-      - "postgres:database"
+      - database
     env_file: ./docker-compose.env
-    volumes:
-      - ../assets:/data/shop/assets
     volumes_from:
-      - static-assets:ro
+      - shared-assets:ro
 
   init:
     image: "spryker-demo-shop:latest"
     command: "init_setup"
+    #command: sleep 1d
     restart: never
+    privileged: true
     depends_on:
       - yves-and-zed
+    links:
+      - redis
+      - elasticsearch
+      - database
     env_file: ./docker-compose.env
     volumes:
       - ../assets:/data/shop/assets
     volumes_from:
-      - static-assets:rw
+      - shared-assets:rw
 
   redis:
     image: "redis"
@@ -51,7 +55,7 @@ services:
     image: "elasticsearch:2"
     restart: always
 
-  postgres:
+  database:
     image: "postgres"
     restart: always
     env_file: ./docker-compose.env
