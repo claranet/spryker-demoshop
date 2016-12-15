@@ -27,7 +27,7 @@ services:
       - database
     env_file: ./docker-compose.env
     volumes_from:
-      - shared-assets:ro
+      - shared-assets:rw
 
   init:
     image: "spryker-demo-shop:latest"
