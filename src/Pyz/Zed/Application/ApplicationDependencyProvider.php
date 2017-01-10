@@ -16,7 +16,6 @@ use Silex\Provider\TwigServiceProvider;
 use Spryker\Shared\Application\ServiceProvider\FormFactoryServiceProvider;
 use Spryker\Zed\Acl\Communication\Plugin\Bootstrap\AclBootstrapProvider;
 use Spryker\Zed\Application\ApplicationDependencyProvider as SprykerApplicationDependencyProvider;
-use Spryker\Zed\Application\Communication\Plugin\ServiceProvider\DateFormatterServiceProvider;
 use Spryker\Zed\Application\Communication\Plugin\ServiceProvider\EnvironmentInformationServiceProvider;
 use Spryker\Zed\Application\Communication\Plugin\ServiceProvider\MvcRoutingServiceProvider;
 use Spryker\Zed\Application\Communication\Plugin\ServiceProvider\RequestServiceProvider;
@@ -24,16 +23,16 @@ use Spryker\Zed\Application\Communication\Plugin\ServiceProvider\RoutingServiceP
 use Spryker\Zed\Application\Communication\Plugin\ServiceProvider\SilexRoutingServiceProvider;
 use Spryker\Zed\Application\Communication\Plugin\ServiceProvider\SslServiceProvider;
 use Spryker\Zed\Application\Communication\Plugin\ServiceProvider\SubRequestServiceProvider;
-use Spryker\Zed\Application\Communication\Plugin\ServiceProvider\TranslationServiceProvider;
 use Spryker\Zed\Application\Communication\Plugin\ServiceProvider\TwigServiceProvider as SprykerTwigServiceProvider;
 use Spryker\Zed\Application\Communication\Plugin\ServiceProvider\ZedHstsServiceProvider;
 use Spryker\Zed\Assertion\Communication\Plugin\ServiceProvider\AssertionServiceProvider;
 use Spryker\Zed\Auth\Communication\Plugin\Bootstrap\AuthBootstrapProvider;
+use Spryker\Zed\Currency\Communication\Plugin\ServiceProvider\TwigCurrencyServiceProvider;
 use Spryker\Zed\Kernel\Communication\Plugin\GatewayControllerListenerPlugin;
 use Spryker\Zed\Kernel\Communication\Plugin\GatewayServiceProviderPlugin;
 use Spryker\Zed\Kernel\Container;
 use Spryker\Zed\Log\Communication\Plugin\ServiceProvider\LogServiceProvider;
-use Spryker\Zed\Price\Communication\Plugin\ServiceProvider\PriceServiceProvider;
+use Spryker\Zed\Money\Communication\Plugin\ServiceProvider\TwigMoneyServiceProvider;
 use Spryker\Zed\Propel\Communication\Plugin\ServiceProvider\PropelServiceProvider;
 use Spryker\Zed\Session\Communication\Plugin\ServiceProvider\SessionServiceProvider as SprykerSessionServiceProvider;
 use Spryker\Zed\User\Communication\Plugin\ServiceProvider\UserServiceProvider;
@@ -89,13 +88,12 @@ class ApplicationDependencyProvider extends SprykerApplicationDependencyProvider
             $this->getGatewayServiceProvider(),
             new AssertionServiceProvider(),
             new UserServiceProvider($container),
-            new PriceServiceProvider(),
-            new DateFormatterServiceProvider(),
-            new TranslationServiceProvider(),
+            new TwigMoneyServiceProvider(),
             new SubRequestServiceProvider(),
             new WebProfilerServiceProvider(),
             new ZedHstsServiceProvider(),
             new FormFactoryServiceProvider(),
+            new TwigCurrencyServiceProvider(),
         ];
 
         $providers = array_merge($providers, $coreProviders);

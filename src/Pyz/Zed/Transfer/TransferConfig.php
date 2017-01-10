@@ -11,15 +11,4 @@ use Spryker\Zed\Transfer\TransferConfig as SprykerTransferConfig;
 
 class TransferConfig extends SprykerTransferConfig
 {
-
-    /**
-     * @return array
-     */
-    public function getSourceDirectories()
-    {
-        $directories = parent::getSourceDirectories();
-
-        return $directories;
-    }
-
 }

@@ -19,16 +19,11 @@ use Spryker\Zed\CodeGenerator\Communication\Console\BundleSharedCodeGeneratorCon
 use Spryker\Zed\CodeGenerator\Communication\Console\BundleYvesCodeGeneratorConsole;
 use Spryker\Zed\CodeGenerator\Communication\Console\BundleZedCodeGeneratorConsole;
 use Spryker\Zed\Collector\Communication\Console\CollectorSearchExportConsole;
-use Spryker\Zed\Collector\Communication\Console\CollectorSearchUpdateConsole;
 use Spryker\Zed\Collector\Communication\Console\CollectorStorageExportConsole;
 use Spryker\Zed\Console\ConsoleDependencyProvider as SprykerConsoleDependencyProvider;
-use Spryker\Zed\Development\Communication\Console\CodeCreateConsole;
 use Spryker\Zed\Development\Communication\Console\CodePhpMessDetectorConsole;
 use Spryker\Zed\Development\Communication\Console\CodeStyleSnifferConsole;
 use Spryker\Zed\Development\Communication\Console\CodeTestConsole;
-use Spryker\Zed\Development\Communication\Console\ComposerJsonUpdaterConsole;
-use Spryker\Zed\Development\Communication\Console\DependencyTreeBuilderConsole;
-use Spryker\Zed\Development\Communication\Console\DependencyTreeDependencyViolationConsole;
 use Spryker\Zed\Installer\Communication\Console\InitializeDatabaseConsole;
 use Spryker\Zed\Kernel\Container;
 use Spryker\Zed\NewRelic\Communication\Console\RecordDeploymentConsole;
@@ -59,7 +54,6 @@ class ConsoleDependencyProvider extends SprykerConsoleDependencyProvider
             new BuildNavigationConsole(),
             new CollectorStorageExportConsole(),
             new CollectorSearchExportConsole(),
-            new CollectorSearchUpdateConsole(),
             new TouchCleanUpConsole(),
             new DeleteAllCachesConsole(),
             new DemoDataImportConsole(),
@@ -85,11 +79,7 @@ class ConsoleDependencyProvider extends SprykerConsoleDependencyProvider
         if (Environment::isDevelopment()) {
             $commands[] = new CodeTestConsole();
             $commands[] = new CodeStyleSnifferConsole();
-            $commands[] = new CodeCreateConsole();
             $commands[] = new CodePhpMessDetectorConsole();
-            $commands[] = new DependencyTreeBuilderConsole();
-            $commands[] = new DependencyTreeDependencyViolationConsole();
-            $commands[] = new ComposerJsonUpdaterConsole();
             $commands[] = new ProductTouchConsole();
             $commands[] = new ValidatorConsole();
             $commands[] = new BundleCodeGeneratorConsole();

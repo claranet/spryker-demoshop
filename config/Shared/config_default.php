@@ -4,6 +4,7 @@ use Pyz\Shared\Mail\MailConstants;
 use Spryker\Shared\Acl\AclConstants;
 use Spryker\Shared\Application\ApplicationConstants;
 use Spryker\Shared\Auth\AuthConstants;
+use Spryker\Shared\Collector\CollectorConstants;
 use Spryker\Shared\CustomerMailConnector\CustomerMailConnectorConstants;
 use Spryker\Shared\Customer\CustomerConstants;
 use Spryker\Shared\ErrorHandler\ErrorHandlerConstants;
@@ -56,17 +57,30 @@ $config[PropelConstants::ZED_DB_SUPPORTED_ENGINES] = [
 /**
  * Elasticsearch settings
  */
-$config[ApplicationConstants::ELASTICA_PARAMETER__HOST] = 'localhost';
-$config[ApplicationConstants::ELASTICA_PARAMETER__TRANSPORT] = 'http';
-$config[ApplicationConstants::ELASTICA_PARAMETER__PORT] = '10005';
-$config[ApplicationConstants::ELASTICA_PARAMETER__AUTH_HEADER] = '';
-$config[ApplicationConstants::ELASTICA_PARAMETER__INDEX_NAME] = null; // Store related config
-$config[ApplicationConstants::ELASTICA_PARAMETER__DOCUMENT_TYPE] = 'page';
+$config[ApplicationConstants::ELASTICA_PARAMETER__HOST]
+    = $config[SearchConstants::ELASTICA_PARAMETER__HOST]
+    = 'localhost';
+$config[ApplicationConstants::ELASTICA_PARAMETER__TRANSPORT]
+    = $config[SearchConstants::ELASTICA_PARAMETER__TRANSPORT]
+    = 'http';
+$config[ApplicationConstants::ELASTICA_PARAMETER__PORT]
+    = $config[SearchConstants::ELASTICA_PARAMETER__PORT]
+    = '10005';
+$config[ApplicationConstants::ELASTICA_PARAMETER__AUTH_HEADER]
+    = $config[SearchConstants::ELASTICA_PARAMETER__AUTH_HEADER]
+    = '';
+$config[ApplicationConstants::ELASTICA_PARAMETER__INDEX_NAME]
+    = $config[CollectorConstants::ELASTICA_PARAMETER__INDEX_NAME]
+    = $config[SearchConstants::ELASTICA_PARAMETER__INDEX_NAME]
+    = null; // Store related config
+$config[ApplicationConstants::ELASTICA_PARAMETER__DOCUMENT_TYPE]
+    = $config[CollectorConstants::ELASTICA_PARAMETER__DOCUMENT_TYPE]
+    = $config[SearchConstants::ELASTICA_PARAMETER__DOCUMENT_TYPE]
+    = 'page';
 
 /**
  * Page search settings
  */
-$config[SearchConstants::SEARCH_CONFIG_CACHE_KEY] = 'search_config_cache';
 $config[SearchConstants::FULL_TEXT_BOOSTED_BOOSTING_VALUE] = 3;
 
 /**
@@ -152,7 +166,7 @@ $config[ApplicationConstants::YVES_COOKIE_DEVICE_ID_VALID_FOR] = '+5 year';
 $config[ApplicationConstants::YVES_COOKIE_VISITOR_ID_NAME] = 'vid';
 $config[ApplicationConstants::YVES_COOKIE_VISITOR_ID_VALID_FOR] = '+30 minute';
 
-$config[CustomerConstants::CUSTOMER_SECURED_PATTERN] = '(^/login_check$|^/customer)';
+$config[CustomerConstants::CUSTOMER_SECURED_PATTERN] = '(^/login_check$|^/customer|^/wishlist)';
 $config[CustomerConstants::CUSTOMER_ANONYMOUS_PATTERN] = '^/.*';
 
 $currentStore = \Spryker\Shared\Kernel\Store::getInstance()->getStoreName();
@@ -370,12 +384,11 @@ $config[NewRelicConstants::NEWRELIC_API_KEY] = null;
 
 $config[LogConstants::LOG_FILE_PATH] = APPLICATION_ROOT_DIR . '/data/DE/logs/application.log';
 
-$config[ErrorHandlerConstants::ERROR_LEVEL] = E_ALL;
-
-// To silence e.g. deprecations completely use
-//$config[ErrorHandlerConstants::ERROR_LEVEL] = E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED;
+// Due to some deprecation notices we silence all deprecations for the time being
+$config[ErrorHandlerConstants::ERROR_LEVEL] = E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED;
 
 // To only log e.g. deprecations instead of throwing exceptions here use
+//$config[ErrorHandlerConstants::ERROR_LEVEL] = E_ALL
 //$config[ErrorHandlerConstants::ERROR_LEVEL_LOG_ONLY] = E_DEPRECATED | E_USER_DEPRECATED;
 
 $config[KernelConstants::AUTO_LOADER_CACHE_FILE_NO_LOCK] = false;
