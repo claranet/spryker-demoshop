@@ -76,6 +76,7 @@ class ApplicationDependencyProvider extends SprykerApplicationDependencyProvider
         $coreProviders = parent::getServiceProvider($container);
 
         $providers = [
+            new NewRelicServiceProvider(),
             new LogServiceProvider(),
             new SessionServiceProvider(),
             $this->getSessionServiceProvider($container),
@@ -121,6 +122,8 @@ class ApplicationDependencyProvider extends SprykerApplicationDependencyProvider
             new NewRelicServiceProvider(),
             new HttpFragmentServiceProvider(),
             new SubRequestServiceProvider(),
+            new TwigServiceProvider(),
+            new SprykerTwigServiceProvider(),
         ];
     }
 
@@ -145,9 +148,10 @@ class ApplicationDependencyProvider extends SprykerApplicationDependencyProvider
             new MvcRoutingServiceProvider(),
             new SilexRoutingServiceProvider(),
             $this->getGatewayServiceProvider(),
-            new NewRelicServiceProvider(),
             new HttpFragmentServiceProvider(),
             new SubRequestServiceProvider(),
+            new TwigServiceProvider(),
+            new SprykerTwigServiceProvider(),
         ];
     }
 

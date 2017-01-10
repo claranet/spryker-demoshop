@@ -1,10 +1,10 @@
 <?php
 
-use Pyz\Shared\Mail\MailConstants;
 use Pyz\Yves\Application\YvesBootstrap;
 use Pyz\Zed\Application\Communication\ZedBootstrap;
 use Spryker\Shared\Application\ApplicationConstants;
 use Spryker\Shared\Collector\CollectorConstants;
+use Spryker\Shared\Mail\MailConstants;
 use Spryker\Shared\Payolution\PayolutionConstants;
 use Spryker\Shared\Payone\PayoneConstants;
 use Spryker\Shared\Propel\PropelConstants;
@@ -88,15 +88,6 @@ $config[PayoneConstants::PAYONE] = [
 ];
 
 $config[SessionConstants::SESSION_IS_TEST] = true;
-
-$config[MailConstants::MAIL_PROVIDER_MANDRILL] = [
-    'api-key' => getenv('MAIL_PROVIDER_MANDRILL_API_KEY'),
-    'host' => 'smtp.mandrillapp.com',
-    'port' => '587',
-    'username' => 'John Doe',
-    'from_mail' => 'john.doe@spryker.com',
-    'from_name' => 'Spryker Demoshop',
-];
 
 $config[PayoneConstants::PAYONE] = [
     PayoneConstants::PAYONE_CREDENTIALS_ENCODING => 'UTF-8',

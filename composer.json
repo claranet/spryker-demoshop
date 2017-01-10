@@ -26,7 +26,7 @@
     "spryker/cache": "^2.0.0",
     "spryker/calculation": "^2.0.0",
     "spryker/cart": "^2.0.0",
-    "spryker/catalog": "^3.0.0",
+    "spryker/catalog": "^4.0.0",
     "spryker/category": "^2.0.0",
     "spryker/category-exporter": "^2.0.0",
     "spryker/checkout": "^2.0.0",
@@ -36,9 +36,8 @@
     "spryker/console": "^2.0.0",
     "spryker/country": "^2.0.0",
     "spryker/csv": "^2.0.0",
-    "spryker/customer": "^2.0.0",
+    "spryker/customer": "^3.0.0",
     "spryker/customer-group": "^0.2.0",
-    "spryker/customer-mail-connector": "^2.0.0",
     "spryker/development": "^2.0.0",
     "spryker/discount": "^3.0.0",
     "spryker/discount-calculation-connector": "^3.0.0",
@@ -61,15 +60,15 @@
     "spryker/library": "^2.0.0",
     "spryker/locale": "^2.0.0",
     "spryker/log": "^2.0.0",
-    "spryker/mail": "^2.0.0",
+    "spryker/mail": "^3.0.0",
     "spryker/maintenance": "^2.0.0",
     "spryker/mandrill": "^2.0.0",
     "spryker/messenger": "^2.0.0",
     "spryker/monolog": "^2.0.0",
     "spryker/new-relic": "^2.0.0",
-    "spryker/newsletter": "^2.0.0",
+    "spryker/newsletter": "^3.0.0",
     "spryker/nopayment": "^2.0.0",
-    "spryker/oms": "^4.0.0",
+    "spryker/oms": "^5.0.0",
     "spryker/oms-discount-connector": "^2.0.0",
     "spryker/payment": "^2.0.0",
     "spryker/payolution": "^2.0.0",
@@ -91,7 +90,7 @@
     "spryker/ratepay": "^0.4.0",
     "spryker/redis": "^2.0.0",
     "spryker/refund": "^3.0.0",
-    "spryker/sales": "^2.0.0",
+    "spryker/sales": "^3.0.0",
     "spryker/sales-aggregator": "^3.0.0",
     "spryker/sales-split": "^2.0.0",
     "spryker/search": "^5.0.0",
@@ -117,7 +116,8 @@
     "spryker/user": "^2.0.0",
     "spryker/wishlist": "^3.0.0",
     "spryker/zed-request": "^2.0.0",
-    "spryker/zend": "^2.0.0"
+    "spryker/zend": "^2.0.0",
+    "swiftmailer/swiftmailer": "^5.4.5"
   },
   "require-dev": {
     "codeception/codeception": "~2.1.11",
@@ -125,16 +125,16 @@
     "pdepend/pdepend": "~2.2.4",
     "phploc/phploc": "~3.0.1",
     "phpmd/phpmd": "~2.4.3",
-    "php-mock/php-mock": "^1.0",
     "sebastian/phpcpd": "~2.0.2",
     "sensiolabs/security-checker": "~3.0.2",
     "silex/web-profiler": "~1.0.8",
     "symfony/web-profiler-bundle": "v2.7.20",
     "site5/phantoman": "^1.1",
     "sllh/composer-versions-check": "~2.0.2",
+    "jakoch/phantomjs-installer": "^2.1",
+    "php-mock/php-mock": "^1.0",
     "spryker/code-generator": "*",
-    "spryker/code-sniffer": "*",
-    "jakoch/phantomjs-installer": "^2.1"
+    "spryker/code-sniffer": "*"
   },
   "autoload": {
     "psr-0": {
@@ -171,6 +171,7 @@
   "scripts": {
     "compile": [
       "mkdir -p ./data/DE/logs",
+      "echo '' > c3.php",
       "echo '<?php return \"development-heroku\";' > config/Shared/console_env_local.php",
       "./deploy/heroku/run.sh"
     ],

@@ -7,7 +7,9 @@
 use Spryker\Shared\Acl\AclConstants;
 use Spryker\Shared\Application\ApplicationConstants;
 use Spryker\Shared\EventJournal\EventJournalConstants;
+use Spryker\Shared\Kernel\KernelConstants;
 use Spryker\Shared\Log\LogConstants;
+use Spryker\Shared\NewRelic\NewRelicConstants;
 use Spryker\Shared\Payone\PayoneConstants;
 use Spryker\Shared\Propel\PropelConstants;
 use Spryker\Shared\Search\SearchConstants;
@@ -93,3 +95,14 @@ $config[ApplicationConstants::SHOW_SYMFONY_TOOLBAR] = false;
 $config[LogConstants::LOG_LEVEL] = 0;
 $config[EventJournalConstants::WRITERS]['YVES'] = [];
 $config[EventJournalConstants::WRITERS]['ZED'] = [];
+
+$config[NewRelicConstants::NEWRELIC_API_KEY] = getenv('NEW_RELIC_LICENSE_KEY');
+$config[KernelConstants::AUTO_LOADER_UNRESOLVABLE_CACHE_ENABLED] = true;
+
+$config[ApplicationConstants::ZED_TWIG_OPTIONS] = [
+    'cache' => true,
+];
+
+$config[ApplicationConstants::YVES_TWIG_OPTIONS] = [
+    'cache' => true,
+];

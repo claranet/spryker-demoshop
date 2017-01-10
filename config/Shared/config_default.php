@@ -1,11 +1,9 @@
 <?php
 
-use Pyz\Shared\Mail\MailConstants;
 use Spryker\Shared\Acl\AclConstants;
 use Spryker\Shared\Application\ApplicationConstants;
 use Spryker\Shared\Auth\AuthConstants;
 use Spryker\Shared\Collector\CollectorConstants;
-use Spryker\Shared\CustomerMailConnector\CustomerMailConnectorConstants;
 use Spryker\Shared\Customer\CustomerConstants;
 use Spryker\Shared\ErrorHandler\ErrorHandlerConstants;
 use Spryker\Shared\EventJournal\EventJournalConstants;
@@ -13,7 +11,6 @@ use Spryker\Shared\Kernel\KernelConstants;
 use Spryker\Shared\Library\DataDirectory;
 use Spryker\Shared\Log\LogConstants;
 use Spryker\Shared\NewRelic\NewRelicConstants;
-use Spryker\Shared\Newsletter\NewsletterConstants;
 use Spryker\Shared\Oms\OmsConstants;
 use Spryker\Shared\PriceCartConnector\PriceCartConnectorConstants;
 use Spryker\Shared\Price\PriceConstants;
@@ -51,7 +48,7 @@ $config[PropelConstants::ZED_DB_ENGINE_MYSQL] = PropelConfig::DB_ENGINE_MYSQL;
 $config[PropelConstants::ZED_DB_ENGINE_PGSQL] = PropelConfig::DB_ENGINE_PGSQL;
 $config[PropelConstants::ZED_DB_SUPPORTED_ENGINES] = [
     PropelConfig::DB_ENGINE_MYSQL => 'MySql',
-    PropelConfig::DB_ENGINE_PGSQL => 'PostgreSql'
+    PropelConfig::DB_ENGINE_PGSQL => 'PostgreSql',
 ];
 
 /**
@@ -114,7 +111,7 @@ $config[ApplicationConstants::ZED_HTTP_STRICT_TRANSPORT_SECURITY_CONFIG] =
     $config[ApplicationConstants::YVES_HTTP_STRICT_TRANSPORT_SECURITY_CONFIG] = [
     'max_age' => 31536000,
     'include_sub_domains' => true,
-    'preload' => true
+    'preload' => true,
     ];
 
 $config[ApplicationConstants::LOG_LEVEL] = Monolog\Logger::INFO;
@@ -152,7 +149,7 @@ $config[ApplicationConstants::YVES_TRUSTED_PROXIES] = [];
 $config[ApplicationConstants::YVES_SSL_ENABLED] = false;
 $config[ApplicationConstants::YVES_COMPLETE_SSL_ENABLED] = false;
 $config[ApplicationConstants::YVES_SSL_EXCLUDED] = [
-    'heartbeat' => '/heartbeat'
+    'heartbeat' => '/heartbeat',
 ];
 
 $config[ApplicationConstants::YVES_ERROR_PAGE] = APPLICATION_ROOT_DIR . '/static/public/Yves/errorpage/error.html';
@@ -180,46 +177,8 @@ $config[ApplicationConstants::CLOUD_CDN_STATIC_MEDIA_HTTP] = '';
 $config[ApplicationConstants::CLOUD_CDN_STATIC_MEDIA_HTTPS] = '';
 $config[ApplicationConstants::CLOUD_CDN_PRODUCT_IMAGES_PATH_NAME] = '/images/products/';
 
-$config[MailConstants::MAIL_PROVIDER_MANDRILL] = [
-    'api-key' => '',
-    'host' => 'smtp.mandrillapp.com',
-    'port' => '587',
-    'username' => '',
-    'from_mail' => 'john.doe@spryker.com',
-    'from_name' => 'John Doe',
-];
-
 $config[PriceConstants::DEFAULT_PRICE_TYPE] =
     $config[PriceCartConnectorConstants::DEFAULT_PRICE_TYPE] = 'DEFAULT';
-
-$config[CustomerConstants::MERGE_LANGUAGE_HANDLEBARS] =
-    $config[MailConstants::MERGE_LANGUAGE_HANDLEBARS] =
-    $config[NewsletterConstants::MERGE_LANGUAGE_HANDLEBARS] =
-    $config[CustomerMailConnectorConstants::MERGE_LANGUAGE_HANDLEBARS] = 'handlebars';
-
-$config[CustomerConstants::SHOP_MAIL_FROM_EMAIL_NAME] =
-    $config[CustomerMailConnectorConstants::SHOP_MAIL_FROM_EMAIL_NAME] = '';
-
-$config[CustomerConstants::SHOP_MAIL_FROM_EMAIL_ADDRESS] =
-    $config[CustomerMailConnectorConstants::SHOP_MAIL_FROM_EMAIL_ADDRESS] = 'john.doe@spryker.com';
-
-$config[CustomerConstants::SHOP_MAIL_REGISTRATION_TOKEN] =
-    $config[CustomerMailConnectorConstants::SHOP_MAIL_REGISTRATION_TOKEN] = 'registration.token';
-
-$config[CustomerConstants::SHOP_MAIL_REGISTRATION_SUBJECT] =
-    $config[CustomerMailConnectorConstants::SHOP_MAIL_REGISTRATION_SUBJECT] = 'registration.mail.subject';
-
-$config[CustomerConstants::SHOP_MAIL_PASSWORD_RESTORE_TOKEN] =
-    $config[CustomerMailConnectorConstants::SHOP_MAIL_PASSWORD_RESTORE_TOKEN] = 'password.restore';
-
-$config[CustomerConstants::SHOP_MAIL_PASSWORD_RESTORE_SUBJECT] =
-    $config[CustomerMailConnectorConstants::SHOP_MAIL_PASSWORD_RESTORE_SUBJECT] = 'password.restore.mail.subject';
-
-$config[CustomerConstants::SHOP_MAIL_PASSWORD_RESTORED_CONFIRMATION_TOKEN] =
-    $config[CustomerMailConnectorConstants::SHOP_MAIL_PASSWORD_RESTORED_CONFIRMATION_TOKEN] = 'password.change.confirmation';
-
-$config[CustomerConstants::SHOP_MAIL_PASSWORD_RESTORED_CONFIRMATION_SUBJECT] =
-    $config[CustomerMailConnectorConstants::SHOP_MAIL_PASSWORD_RESTORED_CONFIRMATION_SUBJECT] = 'password.change.confirmation.mail.subject';
 
 $config[UserConstants::USER_SYSTEM_USERS] = [
     'yves_system',
@@ -366,7 +325,7 @@ $config[EventJournalConstants::FILTER_OPTIONS] = [
             ['_password'],
             ['transfer_data', 'login', 'password'],
         ],
-        'filtered_string' => '***'
+        'filtered_string' => '***',
     ],
 ];
 
@@ -395,6 +354,14 @@ $config[KernelConstants::AUTO_LOADER_CACHE_FILE_NO_LOCK] = false;
 $config[KernelConstants::AUTO_LOADER_UNRESOLVABLE_CACHE_ENABLED] = false;
 $config[KernelConstants::AUTO_LOADER_UNRESOLVABLE_CACHE_PROVIDER] = \Spryker\Shared\Kernel\ClassResolver\Cache\Provider\File::class;
 $config[ApplicationConstants::ENABLE_WEB_PROFILER] = false;
+
+$config[PropelConstants::ZED_DB_ENGINE_MYSQL] = PropelConfig::DB_ENGINE_MYSQL;
+$config[PropelConstants::ZED_DB_ENGINE_PGSQL] = PropelConfig::DB_ENGINE_PGSQL;
+$config[PropelConstants::ZED_DB_SUPPORTED_ENGINES] = [
+    PropelConfig::DB_ENGINE_MYSQL => 'MySql',
+    PropelConfig::DB_ENGINE_PGSQL => 'PostgreSql',
+];
+$config[PropelConstants::SCHEMA_FILE_PATH_PATTERN] = $config[ApplicationConstants::APPLICATION_SPRYKER_ROOT] . '/*/src/*/Zed/*/Persistence/Propel/Schema/';
 $config[PropelConstants::USE_SUDO_TO_MANAGE_DATABASE] = true;
 
 $config[KernelConstants::DEPENDENCY_INJECTOR_YVES] = [
