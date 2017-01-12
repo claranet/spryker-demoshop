@@ -59,3 +59,11 @@ services:
     image: "postgres"
     restart: always
     env_file: ./docker-compose.env
+
+  jenkins:
+    image: "jenkins"
+    ports: 
+      - "10007:8080"
+    env_file: ./docker-compose.env
+    volumes:
+      - /var/jenkins_home jenkins
