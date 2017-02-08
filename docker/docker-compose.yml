@@ -56,7 +56,7 @@ services:
     restart: always
 
   database:
-    image: "postgres"
+    image: "postgres:9.4.10"
     restart: always
     env_file: ./docker-compose.env
 
