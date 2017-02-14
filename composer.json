@@ -82,7 +82,7 @@
     "spryker/product-category": "^3.0.0",
     "spryker/product-discount-connector": "^2.0.0",
     "spryker/product-image": "^2.0.0",
-    "spryker/product-management": "^0.1.0",
+    "spryker/product-management": ">=0.1.3",
     "spryker/product-option": "^3.0.0",
     "spryker/product-option-cart-connector": "^3.0.0",
     "spryker/product-option-discount-connector": "^3.0.0",
