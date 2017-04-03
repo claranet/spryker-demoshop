@@ -13,7 +13,7 @@ services:
       - /data/shop/src/Generated
 
   yves-and-zed: 
-    image: "spryker-demo-shop:latest"
+    image: "spryker-demoshop:latest"
     restart: always
     build:
       context: ../
@@ -30,7 +30,7 @@ services:
       - shared-assets:rw
 
   init:
-    image: "spryker-demo-shop:latest"
+    image: "spryker-demoshop:latest"
     command: "init_setup"
     #command: sleep 1d
     restart: "no"
