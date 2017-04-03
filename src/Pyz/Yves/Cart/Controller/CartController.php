@@ -8,7 +8,7 @@
 namespace Pyz\Yves\Cart\Controller;
 
 use Pyz\Yves\Cart\Plugin\Provider\CartControllerProvider;
-use Spryker\Yves\Application\Controller\AbstractController;
+use Spryker\Yves\Kernel\Controller\AbstractController;
 
 /**
  * @method \Spryker\Client\Cart\CartClientInterface getClient()
@@ -22,15 +22,19 @@ class CartController extends AbstractController
      */
     public function indexAction()
     {
-/*        if (@extension_loaded('newrelic')) {
-            @newrelic_name_transaction('CART');
-        }*/
+        $quoteTransfer = $this->getClient()
+            ->getQuote();
 
-        $quoteTransfer = $this->getClient()->getQuote();
-        $voucherForm = $this->getFactory()->createVoucherForm();
+        $voucherForm = $this->getFactory()
+            ->createVoucherForm();
+
+        $cartItems = $this->getFactory()
+            ->createProductBundleGrouper()
+            ->getGroupedBundleItems($quoteTransfer->getItems(), $quoteTransfer->getBundleItems());
 
         return $this->viewResponse([
             'cart' => $quoteTransfer,
+            'cartItems' => $cartItems,
             'voucherForm' => $voucherForm->createView(),
         ]);
     }
@@ -83,11 +87,11 @@ class CartController extends AbstractController
     }
 
     /**
-     * @return \Pyz\Yves\Cart\Handler\CartOperationHandler
+     * @return \Pyz\Yves\Cart\Handler\ProductBundleCartOperationHandler
      */
     protected function getCartOperationHandler()
     {
-        return $this->getFactory()->createCartOperationHandler();
+        return $this->getFactory()->createProductBundleCartOperationHandler();
     }
 
 }
