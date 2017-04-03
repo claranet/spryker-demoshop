@@ -6,7 +6,7 @@ services:
   shared-assets:
     image: "busybox:latest"
     command: /bin/true
-    restart: never
+    restart: "no"
     volumes:
       - /data/shop/public/Yves/assets
       - /data/shop/public/Zed/assets
@@ -33,7 +33,7 @@ services:
     image: "spryker-demo-shop:latest"
     command: "init_setup"
     #command: sleep 1d
-    restart: never
+    restart: "no"
     privileged: true
     depends_on:
       - yves-and-zed
