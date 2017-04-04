@@ -12,15 +12,15 @@ services:
       - /data/shop/public/Zed/assets
       - /data/shop/src/Generated
 
-  yves-and-zed: 
-    image: "spryker-demo-shop:latest"
+  zed: 
+    image: "spryker-demoshop:latest"
+    command: "run_zed"
     restart: always
     build:
       context: ../
       dockerfile: Dockerfile
     ports:
-      - "2380:80"
-      - "2381:8080"
+      - "2381:80"
     links:
       - redis
       - elasticsearch
@@ -29,14 +29,31 @@ services:
     volumes_from:
       - shared-assets:rw
 
+  yves: 
+    image: "spryker-demoshop:latest"
+    command: "run_yves"
+    restart: always
+    depends_on:
+      - zed
+    ports:
+      - "2380:80"
+    links:
+      - zed
+      - redis
+      - elasticsearch
+      - database
+    env_file: ./docker-compose.env
+    volumes_from:
+      - shared-assets:rw
+
   init:
-    image: "spryker-demo-shop:latest"
+    image: "spryker-demoshop:latest"
     command: "init_setup"
     #command: sleep 1d
     restart: "no"
     privileged: true
     depends_on:
-      - yves-and-zed
+      - zed
     links:
       - redis
       - elasticsearch
