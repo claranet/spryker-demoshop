@@ -88,7 +88,8 @@ $config_local = [
 # specific client tools like psql for postgres are required nevertheless.
   PropelConstants::USE_SUDO_TO_MANAGE_DATABASE => false,
 ];
-$config = array_merge($config, $config_local);
+foreach($config_local as $k => $v)
+  $config[$k] = $v;
 
 
 /**
