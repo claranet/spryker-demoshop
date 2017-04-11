@@ -42,7 +42,7 @@ $config_local = [
   AC::ELASTICA_PARAMETER__TRANSPORT => getenv_default('ES_PROTOCOL', 'http'),
   AC::ELASTICA_PARAMETER__PORT => getenv_default('ES_PORT', '9200'),
   AC::ELASTICA_PARAMETER__AUTH_HEADER => '',
-  AC::ELASTICA_PARAMETER__INDEX_NAME => null; // Store related confi,
+  AC::ELASTICA_PARAMETER__INDEX_NAME => null, // Store related confi,
   AC::ELASTICA_PARAMETER__DOCUMENT_TYPE => 'page',
   
   // REDIS databases
