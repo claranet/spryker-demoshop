@@ -57,7 +57,7 @@ before_script:
     - cd docker/ && docker-compose -p spryker up && sleep 300 # wait 10min until spryker demoshop is initialized
     - echo "test yves" && curl --include http://localhost:2380
     - echo "test zed" && curl --include http://localhost:2381
-  service:
+  services:
     - docker:dind
   only:
       - feature/clara-dockerize
@@ -70,7 +70,7 @@ before_script:
     - docker pull $DEMOSHOP_TEST_IMAGE
     - docker tag $DEMOSHOP_TEST_IMAGE $DEMOSHOP_RELEASE_IMAGE
     - docker push $DEMOSHOP_RELEASE_IMAGE
-  service:
+  services:
     - docker:dind
   only:
     - feature/clara-dockerize
