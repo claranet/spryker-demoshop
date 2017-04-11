@@ -18,18 +18,6 @@ stages:
 # checkout: http://docs.gitlab.com/ce/ci/variables/README.html
 variables:
   CONTAINER_SPRYKER_BASE:  $CI_REGISTRY/de-docker-images/spryker-base:latest
-  CONTAINER_RELEASE_IMAGE_PHP56: $CI_REGISTRY/$CI_PROJECT_PATH:latest_php56
-  CONTAINER_TEST_IMAGE_PHP56:    $CI_REGISTRY/$CI_PROJECT_PATH:${CI_BUILD_REF}_php56
-  CONTAINER_RELEASE_IMAGE_PHP70: $CI_REGISTRY/$CI_PROJECT_PATH:latest_php70
-  CONTAINER_TEST_IMAGE_PHP70:    $CI_REGISTRY/$CI_PROJECT_PATH:${CI_BUILD_REF}_php70
-  ZED_DB_USERNAME:         spryker
-  ZED_DB_PASSWORD:         test123
-  ZED_DB_DATABASE:         spryker
-  POSTGRES_USER:           spryker
-  POSTGRES_PASSWORD:       test123
-  POSTGRES_DB:             spryker
-  JENKINS_HOST:            jenkins
-  JENKINS_PORT:            "8080"
   YVES_HOST:               $CI_SERVER_NAME
 
 
@@ -46,9 +34,10 @@ before_script:
   stage: build
   image: docker:git
   script:
-    - export SED_COMMAND_ARG=$CONTAINER_SPRYKER_BASE_PHP
+    - export SED_COMMAND_ARG=$CONTAINER_SPRYKER_BASE
     - sed -i "s#spryker-base:latest#${SED_COMMAND_ARG}#g" Dockerfile # replace "FROM ..." statement
     - docker build -t $REGISTRY_IMAGE_NAME . \
+                  --build-arg OPS_MODE=dev \
                   --build-arg PHP_VERSION=$PHP_VERSION \
                   --build-arg NODEJS_VERSION=$NODEJS_VERSION \
                   --build-arg NODEJS_PACKAGE_MANAGER=$NODEJS_PACKAGE_MANAGER
@@ -57,8 +46,35 @@ before_script:
     - docker:dind
   only:
     - feature/clara-dockerize
-    - feature/clara-enable_gitlabci_tests
+    - feature/prepareForLocalDev
 
+.test_demoshop_template: &test_demoshop_definition
+  stage: test
+  image: docker:git
+  script:
+    - export SED_COMMAND_ARG=$DEMOSHOP_CONTAINER_IMAGE
+    - sed -i "s#spryker-demoshop:latest#${SED_COMMAND_ARG}#g" docker/docker-compose.yml
+    - cd docker/ && docker-compose -p spryker up && sleep 300 # wait 10min until spryker demoshop is initialized
+    - echo "test yves" && curl --include http://localhost:2380
+    - echo "test zed" && curl --include http://localhost:2381
+  service:
+    - docker:dind
+  only:
+      - feature/clara-dockerize
+      - feature/prepareForLocalDev
+
+.release_demoshop_template: &release_demoshop_definition
+  stage: release
+  image: docker:git
+  script:
+    - docker pull $DEMOSHOP_TEST_IMAGE
+    - docker tag $DEMOSHOP_TEST_IMAGE $DEMOSHOP_RELEASE_IMAGE
+    - docker push $DEMOSHOP_RELEASE_IMAGE
+  service:
+    - docker:dind
+  only:
+    - feature/clara-dockerize
+    - feature/prepareForLocalDev
 
 # ==========================
 #      Job definitions
@@ -72,7 +88,7 @@ build_demoshop_php56:
     PHP_VERSION: "5.6"
     NODEJS_VERSION: "6"
     NODEJS_PACKAGE_MANAGER: "npm"
-    REGISTRY_IMAGE_NAME: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_latest
+    REGISTRY_IMAGE_NAME: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
 
 build_demoshop_php70:
   <<: *build_demoshop_definition
@@ -80,22 +96,30 @@ build_demoshop_php70:
     PHP_VERSION: "7.0"
     NODEJS_VERSION: "6"
     NODEJS_PACKAGE_MANAGER: "npm"
-    REGISTRY_IMAGE_NAME: $CI_REGISTRY/$CI_PROJECT_PATH:php7.0_latest
+    REGISTRY_IMAGE_NAME: $CI_REGISTRY/$CI_PROJECT_PATH:php7.0_${CI_BUILD_REF}
 
 
+# STAGE: test
+test_demoshop_php56:
+  <<: *test_demoshop_definition
+  variables:
+    DEMOSHOP_CONTAINER_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
 
-# fetch docker image (spryker demoshop)
-# init container (run entrypoint.sh init_setup)
-#test_init_setup:
-#  stage: test
-#  image: $CONTAINER_TEST_IMAGE
-##  image: docker:git
-#  script:
-#    - /entrypoint.sh init_setup
-##    - docker run registry.eu.clara.net/$CI_PROJECT_PATH:8b2e28c3ba420b369d0843a561287f019a0b3cf7 "ping elasticsearch; /entrypoint.sh init_setup"
-#  services:
-##    - docker:dind
-#    - redis:latest
-#    - postgres:9.4.10
-#    - jenkins:latest
-#    - elasticsearch:2
+test_demoshop_php70:
+  <<: *test_demoshop_definition
+  variables:
+    DEMOSHOP_CONTAINER_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
+
+
+# STAGE: release
+release_demoshop_php56:
+  <<: *release_demoshop_definition
+  variables:
+    DEMOSHOP_TEST_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
+    DEMOSHOP_RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_latest
+
+release_demoshop_php70:
+  <<: *release_demoshop_definition
+  variables:
+    DEMOSHOP_TEST_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php7.0_${CI_BUILD_REF}
+    DEMOSHOP_RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php7.0_latest
