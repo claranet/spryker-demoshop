@@ -36,12 +36,12 @@ before_script:
   script:
     - export SED_COMMAND_ARG=$CONTAINER_SPRYKER_BASE
     - sed -i "s#spryker-base:latest#${SED_COMMAND_ARG}#g" Dockerfile # replace "FROM ..." statement
-    - docker build -t $REGISTRY_IMAGE_NAME \
+    - docker build --no-cache \
                   --build-arg OPS_MODE=dev \
                   --build-arg PHP_VERSION=$PHP_VERSION \
                   --build-arg NODEJS_VERSION=$NODEJS_VERSION \
                   --build-arg NODEJS_PACKAGE_MANAGER=$NODEJS_PACKAGE_MANAGER \
-                  .
+                  -t $REGISTRY_IMAGE_NAME .
     - docker push $REGISTRY_IMAGE_NAME
   services:
     - docker:dind
