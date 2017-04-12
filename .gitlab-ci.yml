@@ -54,11 +54,12 @@ before_script:
 
 .test_demoshop_template: &test_demoshop_definition
   stage: test
-  image: docker/compose:1.12.0
+  image: docker:stable
   script:
+    - apk add 'py-pip==8.1.2-r0' && pip install 'docker-compose==1.12.0'
     - export SED_COMMAND_ARG=$DEMOSHOP_CONTAINER_IMAGE
     - sed -i "s#spryker-demoshop:latest#${SED_COMMAND_ARG}#g" docker/docker-compose.yml
-    - cd docker/ && docker-compose -p spryker up && sleep 300 # wait 10min until spryker demoshop is initialized
+    - cd docker/ && docker-compose up && sleep 300 # wait 10min until spryker demoshop is initialized
     - echo "test yves" && curl --include http://localhost:2380
     - echo "test zed" && curl --include http://localhost:2381
   services:
