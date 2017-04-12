@@ -16,9 +16,12 @@ stages:
   - release
 
 # checkout: http://docs.gitlab.com/ce/ci/variables/README.html
+# https://docs.gitlab.com/ce/ci/docker/using_docker_build.html#using-the-overlayfs-driver
 variables:
+  DOCKER_DRIVER: overlay
   CONTAINER_SPRYKER_BASE:  $CI_REGISTRY/de-docker-images/spryker-base:latest
   YVES_HOST:               $CI_SERVER_NAME
+
 
 
 # login to private gitlab registry
