@@ -56,7 +56,7 @@ before_script:
   stage: test
   image: docker:stable
   script:
-    - apk add 'py-pip==8.1.2-r0' && pip install 'docker-compose==1.12.0'
+    - apk update && apk add 'py-pip==8.1.2-r0' && pip install 'docker-compose==1.12.0'
     - export SED_COMMAND_ARG=$DEMOSHOP_CONTAINER_IMAGE
     - sed -i "s#spryker-demoshop:latest#${SED_COMMAND_ARG}#g" docker/docker-compose.yml
     - cd docker/ && docker-compose up && sleep 300 # wait 10min until spryker demoshop is initialized
