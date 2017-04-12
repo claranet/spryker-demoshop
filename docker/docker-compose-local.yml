@@ -12,9 +12,9 @@ services:
       - /data/shop/public/Zed/assets
       - /data/shop/src/Generated
 
-  zed: 
+  yves_and_zed: 
     image: "spryker-demoshop:latest"
-    command: "run_zed"
+    command: "run_yves_and_zed"
     restart: always
     build:
       context: ../
@@ -22,23 +22,6 @@ services:
     ports:
       - "2381:80"
     links:
-      - redis
-      - elasticsearch
-      - database
-    env_file: ./docker-compose.env
-    volumes_from:
-      - shared-assets:rw
-
-  yves: 
-    image: "spryker-demoshop:latest"
-    command: "run_yves"
-    restart: always
-    depends_on:
-      - zed
-    ports:
-      - "2380:80"
-    links:
-      - zed
       - redis
       - elasticsearch
       - database
