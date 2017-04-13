@@ -19,7 +19,6 @@ stages:
 # https://docs.gitlab.com/ce/ci/docker/using_docker_build.html#using-the-overlayfs-driver
 variables:
   DOCKER_DRIVER: aufs
-  CONTAINER_SPRYKER_BASE:  $CI_REGISTRY/de-docker-images/spryker-base:latest
   YVES_HOST:               $CI_SERVER_NAME
 
 
@@ -87,28 +86,28 @@ before_script:
 
 
 # STAGE: build
-build_demoshop_php56:
-  <<: *build_demoshop_definition
-  variables:
-    PHP_VERSION: "5.6"
-    NODEJS_VERSION: "6"
-    NODEJS_PACKAGE_MANAGER: "npm"
-    REGISTRY_IMAGE_NAME: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
+#build_demoshop_php56:#
+#  <<: *build_demoshop_definition
+#  variables:
+  CONTAINER_SPRYKER_BASE:  $CI_REGISTRY/de-docker-images/spryker-base:d2048e48a77e585c948fd113ed2a891129a98dc7-alpine
+#    NODEJS_VERSION: "6"
+#    NODEJS_PACKAGE_MANAGER: "npm"
+#    REGISTRY_IMAGE_NAME: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
 
 build_demoshop_php70:
   <<: *build_demoshop_definition
   variables:
-    PHP_VERSION: "7.0"
+  CONTAINER_SPRYKER_BASE:  $CI_REGISTRY/de-docker-images/spryker-base:d2048e48a77e585c948fd113ed2a891129a98dc7-alpine
     NODEJS_VERSION: "6"
     NODEJS_PACKAGE_MANAGER: "npm"
     REGISTRY_IMAGE_NAME: $CI_REGISTRY/$CI_PROJECT_PATH:php7.0_${CI_BUILD_REF}
 
 
 # STAGE: test
-test_demoshop_php56:
-  <<: *test_demoshop_definition
-  variables:
-    DEMOSHOP_CONTAINER_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
+#test_demoshop_php56:
+#  <<: *test_demoshop_definition
+#  variables:
+#    DEMOSHOP_CONTAINER_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
 
 test_demoshop_php70:
   <<: *test_demoshop_definition
