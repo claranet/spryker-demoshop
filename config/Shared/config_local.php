@@ -5,6 +5,7 @@ use Spryker\Shared\Setup\SetupConstants;
 use Spryker\Shared\Storage\StorageConstants;
 use Spryker\Shared\Session\SessionConstants;
 use Spryker\Shared\Propel\PropelConstants;
+use Spryker\Shared\Log\LogConstants;
 
 // Get config values from ENV. This enables the infrastructure guys to let the application
 // run in different environments without complicated file templating.
@@ -38,6 +39,8 @@ function getenv_default($env_key, $default=null) {
 $redis_database_counter = 0;
 
 $config_local = [
+  LogConstants::LOG_FILE_PATH => '/proc/self/fd/2',
+  
   AC::ELASTICA_PARAMETER__HOST => getenv_default('ES_HOST', 'elasticsearch'),
   AC::ELASTICA_PARAMETER__TRANSPORT => getenv_default('ES_PROTOCOL', 'http'),
   AC::ELASTICA_PARAMETER__PORT => getenv_default('ES_PORT', '9200'),
@@ -105,7 +108,7 @@ $config[AC::HOST_YVES]
     = $config[AC::HOST_SSL_STATIC_MEDIA]
     = $config[SessionConstants::YVES_SESSION_COOKIE_NAME]
     = $config[SessionConstants::YVES_SESSION_COOKIE_DOMAIN]
-    = getenv_default('YVES_HOST');
+    = getenv_default('PUBLIC_YVES_DOMAIN', $_SERVER['HTTP_HOST']);
 
 /**
  * Hostname(s) for Zed - Shop frontend
@@ -115,4 +118,4 @@ $config[AC::HOST_ZED_GUI]
     = $config[AC::HOST_ZED_API]
     = $config[AC::HOST_SSL_ZED_GUI]
     = $config[AC::HOST_SSL_ZED_API]
-    = getenv_default('ZED_HOST');
+    = getenv_default('ZED_HOST', 'zed');
