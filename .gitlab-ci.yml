@@ -95,10 +95,10 @@ build_demoshop_php70:
 #  variables:
 #    DEMOSHOP_CONTAINER_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
 
-test_demoshop_php70:
-  <<: *test_demoshop_definition
-  variables:
-    DEMOSHOP_CONTAINER_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
+#test_demoshop_php70:
+#  <<: *test_demoshop_definition
+#  variables:
+#    DEMOSHOP_CONTAINER_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
 
 
 # STAGE: release
@@ -113,3 +113,4 @@ test_demoshop_php70:
 #  variables:
 #    DEMOSHOP_TEST_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php7.0_${CI_BUILD_REF}
 #    DEMOSHOP_RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php7.0_latest
+
