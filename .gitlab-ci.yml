@@ -83,7 +83,7 @@ before_script:
 build_demoshop_php70:
   <<: *build_demoshop_definition
   variables:
-  CONTAINER_SPRYKER_BASE:  $CI_REGISTRY/de-docker-images/spryker-base:b8f42332d018a1303e83d240f559dd733b577e75-alpine
+    CONTAINER_SPRYKER_BASE:  $CI_REGISTRY/de-docker-images/spryker-base:b8f42332d018a1303e83d240f559dd733b577e75-alpine
     NODEJS_VERSION: "6"
     NODEJS_PACKAGE_MANAGER: "npm"
     REGISTRY_IMAGE_NAME: $CI_REGISTRY/$CI_PROJECT_PATH:php7.0_${CI_BUILD_REF}
