@@ -43,7 +43,7 @@ before_script:
                   -t $REGISTRY_IMAGE_NAME .
     - docker push $REGISTRY_IMAGE_NAME
   only:
-    - feature/clara-*
+    - feature/clara-.*
 
 .test_demoshop_template: &test_demoshop_definition
   stage: test
