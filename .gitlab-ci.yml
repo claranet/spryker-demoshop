@@ -13,8 +13,8 @@ image: docker:latest
 
 stages:
   - build
-  - test
-  - release
+#  - test
+#  - release
 
 # checkout: http://docs.gitlab.com/ce/ci/variables/README.html
 variables:
@@ -43,28 +43,28 @@ before_script:
                   -t $REGISTRY_IMAGE_NAME .
     - docker push $REGISTRY_IMAGE_NAME
   only:
-    - feature/clara-.*
+    - /^feature\/clara-.*$/
 
-.test_demoshop_template: &test_demoshop_definition
-  stage: test
-  script:
-    - apk update && apk add py-pip && pip install docker-compose
-    - export SED_COMMAND_ARG=$DEMOSHOP_CONTAINER_IMAGE
-    - sed -i "s#spryker-demoshop:latest#${SED_COMMAND_ARG}#g" docker/docker-compose.yml
-    - cd docker/ && docker-compose up && sleep 300 # wait 10min until spryker demoshop is initialized
-    - echo "test yves" && curl --include http://localhost:2380
-    - echo "test zed" && curl --include http://localhost:2381
-  only:
-      - feature/clara-dockerize
-
-.release_demoshop_template: &release_demoshop_definition
-  stage: release
-  script:
-    - docker pull $DEMOSHOP_TEST_IMAGE
-    - docker tag $DEMOSHOP_TEST_IMAGE $DEMOSHOP_RELEASE_IMAGE
-    - docker push $DEMOSHOP_RELEASE_IMAGE
-  only:
-    - feature/clara-dockerize
+# .test_demoshop_template: &test_demoshop_definition
+#   stage: test
+#   script:
+#     - apk update && apk add py-pip && pip install docker-compose
+#     - export SED_COMMAND_ARG=$DEMOSHOP_CONTAINER_IMAGE
+#     - sed -i "s#spryker-demoshop:latest#${SED_COMMAND_ARG}#g" docker/docker-compose.yml
+#     - cd docker/ && docker-compose up && sleep 300 # wait 10min until spryker demoshop is initialized
+#     - echo "test yves" && curl --include http://localhost:2380
+#     - echo "test zed" && curl --include http://localhost:2381
+#   only:
+#       - feature/clara-dockerize
+# 
+# .release_demoshop_template: &release_demoshop_definition
+#   stage: release
+#   script:
+#     - docker pull $DEMOSHOP_TEST_IMAGE
+#     - docker tag $DEMOSHOP_TEST_IMAGE $DEMOSHOP_RELEASE_IMAGE
+#     - docker push $DEMOSHOP_RELEASE_IMAGE
+#   only:
+#     - feature/clara-dockerize
 
 # ==========================
 #      Job definitions
