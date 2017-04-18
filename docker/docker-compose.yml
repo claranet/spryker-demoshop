@@ -1,17 +1,14 @@
 --- 
 
 version: '3'
+
+volumes:
+  yves-assets:
+  zed-assets:
+  src-generated:
+  jenkins-volume:
+
 services: 
-
-  shared-assets:
-    image: "busybox:latest"
-    command: /bin/true
-    restart: "no"
-    volumes:
-      - /data/shop/public/Yves/assets
-      - /data/shop/public/Zed/assets
-      - /data/shop/src/Generated
-
   zed: 
     image: "spryker-demoshop:latest"
     command: "run_zed"
@@ -26,8 +23,10 @@ services:
       - elasticsearch
       - database
     env_file: ./docker-compose.env
-    volumes_from:
-      - shared-assets:rw
+    volumes:
+      - yves-assets:/data/shop/public/Yves/assets
+      - zed-assets:/data/shop/public/Zed/assets
+      - src-generated:/data/shop/src/Generated
 
   yves: 
     image: "spryker-demoshop:latest"
@@ -43,13 +42,15 @@ services:
       - elasticsearch
       - database
     env_file: ./docker-compose.env
-    volumes_from:
-      - shared-assets:rw
+    volumes:
+      - yves-assets:/data/shop/public/Yves/assets
+      - zed-assets:/data/shop/public/Zed/assets
+      - src-generated:/data/shop/src/Generated
 
   init:
     image: "spryker-demoshop:latest"
     command: "init_setup"
-    #command: sleep 1d
+   # command: sleep 1d
     restart: "no"
     privileged: true
     depends_on:
@@ -60,9 +61,10 @@ services:
       - database
     env_file: ./docker-compose.env
     volumes:
+      - yves-assets:/data/shop/public/Yves/assets
+      - zed-assets:/data/shop/public/Zed/assets
+      - src-generated:/data/shop/src/Generated
       - ../assets:/data/shop/assets
-    volumes_from:
-      - shared-assets:rw
 
   redis:
     image: "redis"
@@ -83,4 +85,4 @@ services:
       - "10007:8080"
     env_file: ./docker-compose.env
     volumes:
-      - /var/jenkins_home jenkins
+      - jenkins-volume:/var/jenkins_home jenkins
