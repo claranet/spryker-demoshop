@@ -94,7 +94,6 @@ $config_local = [
 foreach($config_local as $k => $v)
   $config[$k] = $v;
 
-
 /**
  * Hostname(s) for Yves - Shop frontend
  * In production you probably use a CDN for static content
@@ -108,7 +107,8 @@ $config[AC::HOST_YVES]
     = $config[AC::HOST_SSL_STATIC_MEDIA]
     = $config[SessionConstants::YVES_SESSION_COOKIE_NAME]
     = $config[SessionConstants::YVES_SESSION_COOKIE_DOMAIN]
-    = getenv_default('PUBLIC_YVES_DOMAIN', $_SERVER['HTTP_HOST']);
+    = getenv_default('PUBLIC_YVES_DOMAIN', (php_sapi_name() === "cli") ? 'not_required' : $_SERVER['HTTP_HOST']);
+
 
 /**
  * Hostname(s) for Zed - Shop frontend
