@@ -9,18 +9,16 @@
 # this .gitlab-ci.yml file requires that the gitlab-runner is started with DOCKER_PRIVILEGED=yes!
 # this is because of the docker-in-docker image build
 
+image: docker:latest
 
 stages:
   - build
-  - test
-  - release
+#  - test
+#  - release
 
 # checkout: http://docs.gitlab.com/ce/ci/variables/README.html
-# https://docs.gitlab.com/ce/ci/docker/using_docker_build.html#using-the-overlayfs-driver
 variables:
-  DOCKER_DRIVER: aufs
-  CONTAINER_SPRYKER_BASE:  $CI_REGISTRY/de-docker-images/spryker-base:latest
-  YVES_HOST:               $CI_SERVER_NAME
+  YVES_HOST: $CI_SERVER_NAME
 
 
 
@@ -35,51 +33,38 @@ before_script:
 
 .build_demoshop_template: &build_demoshop_definition
   stage: build
-  image: docker:stable
   script:
     - export SED_COMMAND_ARG=$CONTAINER_SPRYKER_BASE
     - sed -i "s#spryker-base:latest#${SED_COMMAND_ARG}#g" Dockerfile # replace "FROM ..." statement
     - docker build --no-cache
-                  --build-arg OPS_MODE=dev
-                  --build-arg PHP_VERSION=$PHP_VERSION
+                  --build-arg OPS_MODE=development
                   --build-arg NODEJS_VERSION=$NODEJS_VERSION
                   --build-arg NODEJS_PACKAGE_MANAGER=$NODEJS_PACKAGE_MANAGER
                   -t $REGISTRY_IMAGE_NAME .
     - docker push $REGISTRY_IMAGE_NAME
-  services:
-    - docker:dind
   only:
-    - feature/clara-dockerize
-    - feature/prepareForLocalDev
+    - /^feature\/clara-.*$/
 
-.test_demoshop_template: &test_demoshop_definition
-  stage: test
-  image: docker:stable
-  script:
-    - apk update && apk add 'py-pip==8.1.2-r0' && pip install 'docker-compose==1.12.0'
-    - export SED_COMMAND_ARG=$DEMOSHOP_CONTAINER_IMAGE
-    - sed -i "s#spryker-demoshop:latest#${SED_COMMAND_ARG}#g" docker/docker-compose.yml
-    - cd docker/ && docker-compose up && sleep 300 # wait 10min until spryker demoshop is initialized
-    - echo "test yves" && curl --include http://localhost:2380
-    - echo "test zed" && curl --include http://localhost:2381
-  services:
-    - docker:dind
-  only:
-      - feature/clara-dockerize
-      - feature/prepareForLocalDev
-
-.release_demoshop_template: &release_demoshop_definition
-  stage: release
-  image: docker:stable
-  script:
-    - docker pull $DEMOSHOP_TEST_IMAGE
-    - docker tag $DEMOSHOP_TEST_IMAGE $DEMOSHOP_RELEASE_IMAGE
-    - docker push $DEMOSHOP_RELEASE_IMAGE
-  services:
-    - docker:dind
-  only:
-    - feature/clara-dockerize
-    - feature/prepareForLocalDev
+# .test_demoshop_template: &test_demoshop_definition
+#   stage: test
+#   script:
+#     - apk update && apk add py-pip && pip install docker-compose
+#     - export SED_COMMAND_ARG=$DEMOSHOP_CONTAINER_IMAGE
+#     - sed -i "s#spryker-demoshop:latest#${SED_COMMAND_ARG}#g" docker/docker-compose.yml
+#     - cd docker/ && docker-compose up && sleep 300 # wait 10min until spryker demoshop is initialized
+#     - echo "test yves" && curl --include http://localhost:2380
+#     - echo "test zed" && curl --include http://localhost:2381
+#   only:
+#       - feature/clara-dockerize
+# 
+# .release_demoshop_template: &release_demoshop_definition
+#   stage: release
+#   script:
+#     - docker pull $DEMOSHOP_TEST_IMAGE
+#     - docker tag $DEMOSHOP_TEST_IMAGE $DEMOSHOP_RELEASE_IMAGE
+#     - docker push $DEMOSHOP_RELEASE_IMAGE
+#   only:
+#     - feature/clara-dockerize
 
 # ==========================
 #      Job definitions
@@ -87,44 +72,44 @@ before_script:
 
 
 # STAGE: build
-build_demoshop_php56:
-  <<: *build_demoshop_definition
-  variables:
-    PHP_VERSION: "5.6"
-    NODEJS_VERSION: "6"
-    NODEJS_PACKAGE_MANAGER: "npm"
-    REGISTRY_IMAGE_NAME: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
+#build_demoshop_php56:#
+#  <<: *build_demoshop_definition
+#  variables:
+#    CONTAINER_SPRYKER_BASE:  $CI_REGISTRY/de-docker-images/spryker-base:b8f42332d018a1303e83d240f559dd733b577e75-alpine
+#    NODEJS_VERSION: "6"
+#    NODEJS_PACKAGE_MANAGER: "npm"
+#    REGISTRY_IMAGE_NAME: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
 
 build_demoshop_php70:
   <<: *build_demoshop_definition
   variables:
-    PHP_VERSION: "7.0"
+    CONTAINER_SPRYKER_BASE:  $CI_REGISTRY/de-docker-images/spryker-base:3863eda7c5b3eecfe2c67734770ec19637cc8ad0-alpine
     NODEJS_VERSION: "6"
     NODEJS_PACKAGE_MANAGER: "npm"
     REGISTRY_IMAGE_NAME: $CI_REGISTRY/$CI_PROJECT_PATH:php7.0_${CI_BUILD_REF}
 
 
 # STAGE: test
-test_demoshop_php56:
-  <<: *test_demoshop_definition
-  variables:
-    DEMOSHOP_CONTAINER_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
+#test_demoshop_php56:
+#  <<: *test_demoshop_definition
+#  variables:
+#    DEMOSHOP_CONTAINER_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
 
-test_demoshop_php70:
-  <<: *test_demoshop_definition
-  variables:
-    DEMOSHOP_CONTAINER_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
+#test_demoshop_php70:
+#  <<: *test_demoshop_definition
+#  variables:
+#    DEMOSHOP_CONTAINER_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
 
 
 # STAGE: release
-release_demoshop_php56:
-  <<: *release_demoshop_definition
-  variables:
-    DEMOSHOP_TEST_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
-    DEMOSHOP_RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_latest
+#release_demoshop_php56:
+#  <<: *release_demoshop_definition
+#  variables:
+#    DEMOSHOP_TEST_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_${CI_BUILD_REF}
+#    DEMOSHOP_RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php5.6_latest
 
-release_demoshop_php70:
-  <<: *release_demoshop_definition
-  variables:
-    DEMOSHOP_TEST_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php7.0_${CI_BUILD_REF}
-    DEMOSHOP_RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php7.0_latest
+#release_demoshop_php70:
+#  <<: *release_demoshop_definition
+#  variables:
+#    DEMOSHOP_TEST_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php7.0_${CI_BUILD_REF}
+#    DEMOSHOP_RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH:php7.0_latest
