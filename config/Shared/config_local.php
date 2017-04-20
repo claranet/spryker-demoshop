@@ -107,7 +107,7 @@ $config[AC::HOST_YVES]
     = $config[AC::HOST_SSL_STATIC_MEDIA]
     = $config[SessionConstants::YVES_SESSION_COOKIE_NAME]
     = $config[SessionConstants::YVES_SESSION_COOKIE_DOMAIN]
-    = getenv_default('PUBLIC_YVES_DOMAIN', (php_sapi_name() === "cli") ? 'not_required' : $_SERVER['HTTP_HOST']);
+    = getenv_default('PUBLIC_YVES_DOMAIN', (php_sapi_name() === "cli") ? 'not_required' : parse_url($_SERVER['HTTP_HOST'], PHP_URL_HOST)); // if having a port, extract only the domain
 
 
 /**
