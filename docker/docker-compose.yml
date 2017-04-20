@@ -12,6 +12,7 @@ services:
   zed: 
     image: "spryker-demoshop:latest"
     command: "run_zed"
+    #command: "sleep 1d"
     restart: always
     build:
       context: ../
@@ -31,6 +32,7 @@ services:
   yves: 
     image: "spryker-demoshop:latest"
     command: "run_yves"
+    #command: "sleep 1d"
     restart: always
     depends_on:
       - zed
@@ -50,7 +52,7 @@ services:
   init:
     image: "spryker-demoshop:latest"
     command: "init_setup"
-   # command: sleep 1d
+    #command: sleep 1d
     restart: "no"
     privileged: true
     depends_on:
