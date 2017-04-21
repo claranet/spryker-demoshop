@@ -23,7 +23,7 @@ use Spryker\Shared\Log\LogConstants;
  * inform user and abort script execution. This should enforce,
  * that required fields are set via ENV!
 **/
-function getenv_default($env_key, $default=null) {
+function getenvDefault($env_key, $default=null) {
   $env_value = getenv($env_key);
   
   // print error if an required ENV var is not set
@@ -41,9 +41,9 @@ $redis_database_counter = 0;
 $config_local = [
   LogConstants::LOG_FILE_PATH => '/proc/self/fd/2',
   
-  AC::ELASTICA_PARAMETER__HOST => getenv_default('ES_HOST', 'elasticsearch'),
-  AC::ELASTICA_PARAMETER__TRANSPORT => getenv_default('ES_PROTOCOL', 'http'),
-  AC::ELASTICA_PARAMETER__PORT => getenv_default('ES_PORT', '9200'),
+  AC::ELASTICA_PARAMETER__HOST => getenvDefault('ES_HOST', 'elasticsearch'),
+  AC::ELASTICA_PARAMETER__TRANSPORT => getenvDefault('ES_PROTOCOL', 'http'),
+  AC::ELASTICA_PARAMETER__PORT => getenvDefault('ES_PORT', '9200'),
   AC::ELASTICA_PARAMETER__AUTH_HEADER => '',
   AC::ELASTICA_PARAMETER__INDEX_NAME => null, // Store related confi,
   AC::ELASTICA_PARAMETER__DOCUMENT_TYPE => 'page',
@@ -51,21 +51,21 @@ $config_local = [
   // REDIS databases
   StorageConstants::STORAGE_REDIS_DATABASE => $redis_database_counter++,
   StorageConstants::STORAGE_REDIS_PROTOCOL => 'tcp',
-  StorageConstants::STORAGE_REDIS_HOST => getenv_default('REDIS_STORAGE_HOST', 'redis'),
-  StorageConstants::STORAGE_REDIS_PORT => getenv_default('REDIS_STORAGE_PORT', '6379'),
-  StorageConstants::STORAGE_REDIS_PASSWORD => getenv_default('REDIS_STORAGE_PASSWORD', ''),
+  StorageConstants::STORAGE_REDIS_HOST => getenvDefault('REDIS_STORAGE_HOST', 'redis'),
+  StorageConstants::STORAGE_REDIS_PORT => getenvDefault('REDIS_STORAGE_PORT', '6379'),
+  StorageConstants::STORAGE_REDIS_PASSWORD => getenvDefault('REDIS_STORAGE_PASSWORD', ''),
 
   SessionConstants::YVES_SESSION_REDIS_DATABASE => $redis_database_counter++,
   SessionConstants::YVES_SESSION_REDIS_PROTOCOL => 'tcp',
-  SessionConstants::YVES_SESSION_REDIS_HOST => getenv_default('REDIS_SESSION_HOST', 'redis'),
-  SessionConstants::YVES_SESSION_REDIS_PORT => getenv_default('REDIS_SESSION_PORT', '6379'),
-  SessionConstants::YVES_SESSION_REDIS_PASSWORD => getenv_default('REDIS_SESSION_PASSWORD', ''),
+  SessionConstants::YVES_SESSION_REDIS_HOST => getenvDefault('REDIS_SESSION_HOST', 'redis'),
+  SessionConstants::YVES_SESSION_REDIS_PORT => getenvDefault('REDIS_SESSION_PORT', '6379'),
+  SessionConstants::YVES_SESSION_REDIS_PASSWORD => getenvDefault('REDIS_SESSION_PASSWORD', ''),
 
   SessionConstants::ZED_SESSION_REDIS_DATABASE => $redis_database_counter++,
   SessionConstants::ZED_SESSION_REDIS_PROTOCOL => 'tcp',
-  SessionConstants::ZED_SESSION_REDIS_HOST => getenv_default('REDIS_SESSION_HOST', 'redis'),
-  SessionConstants::ZED_SESSION_REDIS_PORT => getenv_default('REDIS_SESSION_PORT', '6379'),
-  SessionConstants::ZED_SESSION_REDIS_PASSWORD => getenv_default('REDIS_SESSION_PASSWORD', ''),
+  SessionConstants::ZED_SESSION_REDIS_HOST => getenvDefault('REDIS_SESSION_HOST', 'redis'),
+  SessionConstants::ZED_SESSION_REDIS_PORT => getenvDefault('REDIS_SESSION_PORT', '6379'),
+  SessionConstants::ZED_SESSION_REDIS_PASSWORD => getenvDefault('REDIS_SESSION_PASSWORD', ''),
   
   
   SessionConstants::YVES_SESSION_SAVE_HANDLER => SessionConstants::SESSION_HANDLER_REDIS,
@@ -73,17 +73,17 @@ $config_local = [
   SessionConstants::YVES_SESSION_FILE_PATH    => session_save_path(),
   SessionConstants::YVES_SESSION_PERSISTENT_CONNECTION => $config[StorageConstants::STORAGE_PERSISTENT_CONNECTION],
 
-  SetupConstants::JENKINS_BASE_URL => getenv_default('JENKINS_BASE_URL', 'http://jenkins:8080/'),
+  SetupConstants::JENKINS_BASE_URL => getenvDefault('JENKINS_BASE_URL', 'http://jenkins:8080/'),
 # FIXME [bug01] jenkins console commands of spryker/setup do not relies
 # completely of calls to a remote jenkins call
   SetupConstants::JENKINS_DIRECTORY => '/tmp/jenkins/jobs',
 
   PropelConstants::ZED_DB_ENGINE   => $config[PropelConstants::ZED_DB_ENGINE_PGSQL],
-  PropelConstants::ZED_DB_USERNAME => getenv_default('ZED_DB_USERNAME'),
-  PropelConstants::ZED_DB_PASSWORD => getenv_default('ZED_DB_PASSWORD'),
-  PropelConstants::ZED_DB_DATABASE => getenv_default('ZED_DB_DATABASE', 'spryker'),
-  PropelConstants::ZED_DB_HOST     => getenv_default('ZED_DB_HOST', 'database'),
-  PropelConstants::ZED_DB_PORT     => getenv_default('ZED_DB_PORT', '5432'),
+  PropelConstants::ZED_DB_USERNAME => getenvDefault('ZED_DB_USERNAME'),
+  PropelConstants::ZED_DB_PASSWORD => getenvDefault('ZED_DB_PASSWORD'),
+  PropelConstants::ZED_DB_DATABASE => getenvDefault('ZED_DB_DATABASE', 'spryker'),
+  PropelConstants::ZED_DB_HOST     => getenvDefault('ZED_DB_HOST', 'database'),
+  PropelConstants::ZED_DB_PORT     => getenvDefault('ZED_DB_PORT', '5432'),
 
   AC::ELASTICA_PARAMETER__INDEX_NAME => 'de_search',
 
@@ -93,6 +93,23 @@ $config_local = [
 ];
 foreach($config_local as $k => $v)
   $config[$k] = $v;
+
+/**
+ * detect the current, valid domain, used for Yves.
+ * This is a separate function, as it's a more complex szenario.
+ * To support local-dev, we need to detect the used domain
+ * dynamicaly.
+**/
+function getYvesDomain() {
+  $domain = getenv('PUBLIC_YVES_DOMAIN');
+  if($domain)
+    return $domain;
+  
+  if(isset($_SERVER['HTTP_HOST']))
+    return parse_url($_SERVER['HTTP_HOST'], PHP_URL_HOST); // drop port specifications, if defined
+  
+  return ''; // return nothing, if ENV and SERVER key isn't set
+}
 
 /**
  * Hostname(s) for Yves - Shop frontend
@@ -107,7 +124,7 @@ $config[AC::HOST_YVES]
     = $config[AC::HOST_SSL_STATIC_MEDIA]
     = $config[SessionConstants::YVES_SESSION_COOKIE_NAME]
     = $config[SessionConstants::YVES_SESSION_COOKIE_DOMAIN]
-    = getenv_default('PUBLIC_YVES_DOMAIN', (php_sapi_name() === "cli") ? 'not_required' : parse_url($_SERVER['HTTP_HOST'], PHP_URL_HOST)); // if having a port, extract only the domain
+    = getYvesDomain();
 
 
 /**
@@ -118,4 +135,4 @@ $config[AC::HOST_ZED_GUI]
     = $config[AC::HOST_ZED_API]
     = $config[AC::HOST_SSL_ZED_GUI]
     = $config[AC::HOST_SSL_ZED_API]
-    = getenv_default('ZED_HOST', 'zed');
+    = getenvDefault('ZED_HOST', 'zed');
