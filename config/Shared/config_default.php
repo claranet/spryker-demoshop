@@ -185,7 +185,7 @@ $config[ApplicationConstants::YVES_COOKIE_VISITOR_ID_VALID_FOR] = '+30 minute';
 $config[CustomerConstants::CUSTOMER_SECURED_PATTERN] = '(^/login_check$|^/customer|^/wishlist)';
 $config[CustomerConstants::CUSTOMER_ANONYMOUS_PATTERN] = '^/.*';
 
-$currentStore = \Spryker\Shared\Kernel\Store::getInstance()->getStoreName();
+$currentStore = Store::getInstance()->getStoreName();
 $config[PropelConstants::PROPEL_SHOW_EXTENDED_EXCEPTION] = false;
 
 $config[ApplicationConstants::CLOUD_ENABLED] = false;
