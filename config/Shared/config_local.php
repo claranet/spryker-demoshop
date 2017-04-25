@@ -39,7 +39,7 @@ function getenvDefault($env_key, $default=null) {
 $redis_database_counter = 0;
 
 $config_local = [
-  LogConstants::LOG_FILE_PATH => '/proc/self/fd/2',
+  LogConstants::LOG_FILE_PATH => '/data/logs/application.log',
   
   AC::ELASTICA_PARAMETER__HOST => getenvDefault('ES_HOST', 'elasticsearch'),
   AC::ELASTICA_PARAMETER__TRANSPORT => getenvDefault('ES_PROTOCOL', 'http'),
@@ -117,6 +117,11 @@ function getYvesDomain() {
  * But BE AWARE: session domain has to match the sites domain!
  */
 $config[AC::HOST_YVES]
+    = $config[ProductManagementConstants::HOST_YVES]
+    = $config[PayoneConstants::HOST_YVES]
+    = $config[PayolutionConstants::HOST_YVES]
+    = $config[NewsletterConstants::HOST_YVES]
+    = $config[CustomerConstants::HOST_YVES]
     = $config[AC::HOST_STATIC_ASSETS]
     = $config[AC::HOST_STATIC_MEDIA]
     = $config[AC::HOST_SSL_YVES]
