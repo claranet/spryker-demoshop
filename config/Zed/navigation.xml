@@ -9,9 +9,9 @@
     <product/>
     <search-and-filters/>
     <discount/>
+    <navigation/>
     <tax/>
     <shipment/>
-    <payment/>
     <acl/>
     <maintenance/>
 </config>

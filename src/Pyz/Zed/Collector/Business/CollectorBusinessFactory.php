@@ -173,6 +173,7 @@ class CollectorBusinessFactory extends SprykerCollectorBusinessFactory
         $storagePageCollector->setQueryBuilder(
             $this->createStoragePageCollectorPropelQuery()
         );
+        $storagePageCollector->setConfig($this->getConfig());
 
         return $storagePageCollector;
     }
@@ -219,6 +220,7 @@ class CollectorBusinessFactory extends SprykerCollectorBusinessFactory
         $storageRedirectCollector->setQueryBuilder(
             $this->createStorageRedirectCollectorPropelQuery()
         );
+        $storageRedirectCollector->setConfig($this->getConfig());
 
         return $storageRedirectCollector;
     }
@@ -238,6 +240,7 @@ class CollectorBusinessFactory extends SprykerCollectorBusinessFactory
         $storageTranslationCollector->setQueryBuilder(
             $this->createStorageTranslationCollectorPropelQuery()
         );
+        $storageTranslationCollector->setConfig($this->getConfig());
 
         return $storageTranslationCollector;
     }
@@ -279,6 +282,7 @@ class CollectorBusinessFactory extends SprykerCollectorBusinessFactory
         $storageBlockCollector->setQueryBuilder(
             $this->createStorageBlockCollectorPropelQuery()
         );
+        $storageBlockCollector->setConfig($this->getConfig());
 
         return $storageBlockCollector;
     }
@@ -321,12 +325,18 @@ class CollectorBusinessFactory extends SprykerCollectorBusinessFactory
         $attributeMapCollector->setTouchQueryContainer(
             $this->getTouchQueryContainer()
         );
-
-        $attributeMapCollector->setQueryBuilder(
-            new AttributeMapCollectorQuery()
-        );
+        $attributeMapCollector->setQueryBuilder($this->createAttributeMapCollectorQuery());
+        $attributeMapCollector->setConfig($this->getConfig());
 
         return $attributeMapCollector;
+    }
+
+    /**
+     * @return \Pyz\Zed\Collector\Persistence\Storage\Propel\AttributeMapCollectorQuery
+     */
+    protected function createAttributeMapCollectorQuery()
+    {
+        return new AttributeMapCollectorQuery();
     }
 
     /**
@@ -368,6 +378,7 @@ class CollectorBusinessFactory extends SprykerCollectorBusinessFactory
         $storageAvailabilityCollector->setQueryBuilder(
             $this->createStorageAvailabilityCollectorPropelQuery()
         );
+        $storageAvailabilityCollector->setConfig($this->getConfig());
 
         return $storageAvailabilityCollector;
     }
@@ -390,6 +401,16 @@ class CollectorBusinessFactory extends SprykerCollectorBusinessFactory
 
         $queryBuilderClassName = $classList[$name];
 
+        return $this->createQueryBuilderByClassName($queryBuilderClassName);
+    }
+
+    /**
+     * @param string $queryBuilderClassName
+     *
+     * @return \Spryker\Zed\Collector\Persistence\Collector\AbstractCollectorQuery
+     */
+    protected function createQueryBuilderByClassName($queryBuilderClassName)
+    {
         return new $queryBuilderClassName();
     }
 
@@ -411,7 +432,7 @@ class CollectorBusinessFactory extends SprykerCollectorBusinessFactory
 
         $queryBuilderClassName = $classList[$name];
 
-        return new $queryBuilderClassName();
+        return $this->createQueryBuilderByClassName($queryBuilderClassName);
     }
 
     /**

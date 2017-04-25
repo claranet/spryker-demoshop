@@ -8,7 +8,6 @@
 // add your custom common js here
 // and/or change the existing one
 
-var $ = require('jquery');
 var run = require('../lib/run');
 
 function setJsEnabledMode() {
@@ -23,6 +22,7 @@ $(function(){
     run([
         require('./components/aside'),
         require('./components/viewer'),
-        require('./components/suggestions')
+        require('./components/suggestions'),
+        require('./components/carousel')
     ]);
 });
