@@ -73,7 +73,7 @@ $config_local = [
   SessionConstants::YVES_SESSION_FILE_PATH    => session_save_path(),
   SessionConstants::YVES_SESSION_PERSISTENT_CONNECTION => $config[StorageConstants::STORAGE_PERSISTENT_CONNECTION],
 
-  SetupConstants::JENKINS_BASE_URL => getenvDefault('JENKINS_BASE_URL', 'http://jenkins:8080/'),
+  SetupConstants::JENKINS_BASE_URL => 'http://'.getenvDefault('JENKINS_HOST', 'jenkins').':'.getenvDefault('JENKINS_PORT', '8080').'/',
 # FIXME [bug01] jenkins console commands of spryker/setup do not relies
 # completely of calls to a remote jenkins call
   SetupConstants::JENKINS_DIRECTORY => '/tmp/jenkins/jobs',
@@ -117,11 +117,11 @@ function getYvesDomain() {
  * But BE AWARE: session domain has to match the sites domain!
  */
 $config[AC::HOST_YVES]
-    = $config[ProductManagementConstants::HOST_YVES]
-    = $config[PayoneConstants::HOST_YVES]
-    = $config[PayolutionConstants::HOST_YVES]
-    = $config[NewsletterConstants::HOST_YVES]
-    = $config[CustomerConstants::HOST_YVES]
+//    = $config[ProductManagementConstants::HOST_YVES]
+//    = $config[PayoneConstants::HOST_YVES]
+//    = $config[PayolutionConstants::HOST_YVES]
+//    = $config[NewsletterConstants::HOST_YVES]
+//    = $config[CustomerConstants::HOST_YVES]
     = $config[AC::HOST_STATIC_ASSETS]
     = $config[AC::HOST_STATIC_MEDIA]
     = $config[AC::HOST_SSL_YVES]
