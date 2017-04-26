@@ -2,12 +2,6 @@
 
 version: '3'
 
-#volumes:
-#  yves-assets:
-#  zed-assets:
-#  src-generated:
-#  jenkins-volume:
-
 services: 
   zed: 
     image: "spryker-demoshop:latest"
@@ -29,10 +23,6 @@ services:
       - elasticsearch
       - database
     env_file: ./docker-compose.env
-#    volumes:
-#      - yves-assets:/data/shop/public/Yves/assets
-#      - zed-assets:/data/shop/public/Zed/assets
-#      - src-generated:/data/shop/src/Generated
 
   yves: 
     image: "spryker-demoshop:latest"
@@ -49,29 +39,6 @@ services:
       - redis
       - elasticsearch
     env_file: ./docker-compose.env
-#    volumes:
-#      - yves-assets:/data/shop/public/Yves/assets
-#      - zed-assets:/data/shop/public/Zed/assets
-#      - src-generated:/data/shop/src/Generated
-
-#  init:
-#    image: "spryker-demoshop:latest"
-#    command: "init_setup"
-#    #command: sleep 1d
-#    restart: "no"
-#    privileged: true
-#    depends_on:
-#      - zed
-#    links:
-#      - redis
-#      - elasticsearch
-#      - database
-#    env_file: ./docker-compose.env
-#    volumes:
-#      - yves-assets:/data/shop/public/Yves/assets
-#      - zed-assets:/data/shop/public/Zed/assets
-#      - src-generated:/data/shop/src/Generated
-#      - ../assets:/data/shop/assets
 
   redis:
     image: "redis:3.2-alpine"
@@ -96,5 +63,3 @@ services:
     ports: 
       - "10007:8080"
     env_file: ./docker-compose.env
-#    volumes:
-#      - jenkins-volume:/var/jenkins_home jenkins
