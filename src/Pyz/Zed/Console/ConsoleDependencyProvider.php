@@ -36,9 +36,13 @@ use Spryker\Zed\NewRelic\Communication\Plugin\NewRelicConsolePlugin;
 use Spryker\Zed\Oms\Communication\Console\CheckConditionConsole as OmsCheckConditionConsole;
 use Spryker\Zed\Oms\Communication\Console\CheckTimeoutConsole as OmsCheckTimeoutConsole;
 use Spryker\Zed\Oms\Communication\Console\ClearLocksConsole as OmsClearLocksConsole;
+use Spryker\Zed\ProductRelation\Communication\Console\ProductRelationUpdaterConsole;
 use Spryker\Zed\Product\Communication\Console\ProductTouchConsole;
+use Spryker\Zed\Queue\Communication\Console\QueueTaskConsole;
+use Spryker\Zed\Queue\Communication\Console\QueueWorkerConsole;
 use Spryker\Zed\Search\Communication\Console\GenerateIndexMapConsole;
 use Spryker\Zed\Search\Communication\Console\SearchConsole;
+use Spryker\Zed\Session\Communication\Console\SessionRemoveLockConsole;
 use Spryker\Zed\Setup\Communication\Console\DeployPreparePropelConsole;
 use Spryker\Zed\Setup\Communication\Console\InstallConsole;
 use Spryker\Zed\Setup\Communication\Console\JenkinsDisableConsole;
@@ -52,7 +56,9 @@ use Spryker\Zed\StateMachine\Communication\Console\ClearLocksConsole as StateMac
 use Spryker\Zed\Touch\Communication\Console\TouchCleanUpConsole;
 use Spryker\Zed\Transfer\Communication\Console\GeneratorConsole;
 use Spryker\Zed\Transfer\Communication\Console\ValidatorConsole;
+use Spryker\Zed\Twig\Communication\Console\CacheWarmerConsole;
 use Spryker\Zed\ZedNavigation\Communication\Console\BuildNavigationConsole;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionCommand;
 
 class ConsoleDependencyProvider extends SprykerConsoleDependencyProvider
 {
@@ -65,7 +71,6 @@ class ConsoleDependencyProvider extends SprykerConsoleDependencyProvider
     public function getConsoleCommands(Container $container)
     {
         $commands = [
-
             new BuildNavigationConsole(),
             new CollectorStorageExportConsole(),
             new CollectorSearchExportConsole(),
@@ -84,6 +89,10 @@ class ConsoleDependencyProvider extends SprykerConsoleDependencyProvider
             new StateMachineCheckTimeoutConsole(),
             new StateMachineCheckConditionConsole(),
             new StateMachineClearLocksConsole(),
+            new SessionRemoveLockConsole(),
+            new QueueTaskConsole(),
+            new QueueWorkerConsole(),
+            new ProductRelationUpdaterConsole(),
 
             // Setup commands
             new RunnerConsole(),
@@ -114,6 +123,8 @@ class ConsoleDependencyProvider extends SprykerConsoleDependencyProvider
             $commands[] = new GenerateServiceIdeAutoCompletionConsole();
             $commands[] = new GenerateYvesIdeAutoCompletionConsole();
             $commands[] = new GenerateIdeAutoCompletionConsole();
+            $commands[] = new CacheWarmerConsole();
+            $commands[] = new CompletionCommand();
         }
 
         return $commands;

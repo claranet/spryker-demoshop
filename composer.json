@@ -16,6 +16,7 @@
     "ext-readline": "*",
     "ext-redis": "*",
     "spryker/acl": "^3.0.0",
+    "spryker/api": "dev-master as 0.1",
     "spryker/application": "^3.0.0",
     "spryker/assertion": "^3.0.0",
     "spryker/auth": "^3.0.0",
@@ -42,6 +43,7 @@
     "spryker/csv": "^2.0.0",
     "spryker/currency": "^2.0.0",
     "spryker/customer": "^4.0.0",
+    "spryker/customer-api": "dev-master as 0.1",
     "spryker/customer-group": "^2.0.0",
     "spryker/customer-group-discount-connector": "^2.0.0",
     "spryker/development": "^3.0.0",
@@ -51,6 +53,7 @@
     "spryker/dummy-payment": "^2.0.0",
     "spryker/elastica": "^3.0.0",
     "spryker/error-handler": "^2.0.0",
+    "spryker/event": "^1.0.0",
     "spryker/event-journal": "^3.0.0",
     "spryker/glossary": "^3.0.0",
     "spryker/graph": "^3.0.0",
@@ -70,6 +73,9 @@
     "spryker/messenger": "^3.0.0",
     "spryker/money": "^2.0.0",
     "spryker/monolog": "^2.0.0",
+    "spryker/navigation": "^1.0.0",
+    "spryker/navigation-collector": "^1.0.0",
+    "spryker/navigation-gui": "^1.0.0",
     "spryker/new-relic": "^3.0.0",
     "spryker/new-relic-api": "^1.0.0",
     "spryker/newsletter": "^4.0.0",
@@ -83,6 +89,7 @@
     "spryker/price": "^4.0.0",
     "spryker/price-cart-connector": "^3.0.0",
     "spryker/product": "^5.0.0",
+    "spryker/product-api": "dev-master as 0.1",
     "spryker/product-bundle": "^2.0.0",
     "spryker/product-cart-connector": "^4.0.0",
     "spryker/product-category": "^4.0.0",
@@ -92,12 +99,15 @@
     "spryker/product-option": "^4.0.0",
     "spryker/product-option-cart-connector": "^4.0.0",
     "spryker/product-option-discount-connector": "^4.0.0",
+    "spryker/product-relation": "^1.0.0",
+    "spryker/product-relation-collector": "^1.0.0",
     "spryker/product-search": "^5.0.0",
     "spryker/propel": "^3.0.0",
     "spryker/propel-orm": "^1.0.0",
-    "spryker/queue": "^0.2.0",
+    "spryker/propel-query-builder": "^0.2.0",
+    "spryker/queue": "^0.3.0",
     "spryker/quote": "^1.0.0",
-    "spryker/ratepay": "^0.5.0",
+    "spryker/rabbit-mq": "^0.1.0",
     "spryker/redis": "^2.0.0",
     "spryker/refund": "^4.0.0",
     "spryker/sales": "^5.0.0",
@@ -131,22 +141,25 @@
     "swiftmailer/swiftmailer": "^5.4.5"
   },
   "require-dev": {
-    "codeception/codeception": "~2.1.11",
-    "codeception/c3": "~2.0.0",
-    "pdepend/pdepend": "~2.2.4",
-    "phploc/phploc": "~3.0.1",
+    "codeception/codeception": "^2.2.11",
+    "codeception/c3": "^2.0.12",
+    "pdepend/pdepend": "^2.2.4",
+    "phploc/phploc": "^3.0.1",
     "phpmd/phpmd": "~2.4.3",
     "sebastian/phpcpd": "~2.0.2",
     "sensiolabs/security-checker": "~3.0.2",
     "silex/web-profiler": "~1.0.8",
-    "symfony/web-profiler-bundle": "v2.7.20",
+    "symfony/web-profiler-bundle": "*",
     "symfony/var-dumper": "*",
     "site5/phantoman": "^1.1",
-    "sllh/composer-versions-check": "~2.0.2",
+    "sllh/composer-versions-check": "^2.0.2",
     "jakoch/phantomjs-installer": "^2.1.0",
     "php-mock/php-mock": "^1.0",
-    "spryker/code-generator": "^0.2",
-    "spryker/code-sniffer": "*"
+    "phpunit/phpunit": "^5.0",
+    "spryker/architecture-sniffer": "^0.3.0",
+    "spryker/code-generator": "^0.2.0",
+    "spryker/code-sniffer": "*",
+    "stecman/symfony-console-completion": "^0.7.0"
   },
   "autoload": {
     "psr-0": {
@@ -154,7 +167,8 @@
       "Unit": "tests",
       "YvesUnit": "tests",
       "Functional": "tests",
-      "Acceptance": "tests"
+      "Acceptance": "tests",
+      "Unit\\Spryker\\Shared\\Twig\\": "vendor/spryker/spryker/Bundles/Twig/tests"
     }
   },
   "autoload-dev": {
@@ -178,12 +192,19 @@
     {
       "type": "composer",
       "url": "https://code.spryker.com/repo/private"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:spryker/architecture-sniffer.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:spryker/rabbit-mq.git"
     }
   ],
   "scripts": {
     "compile": [
-      "mkdir -p ./data/DE/logs",
-      "echo '' > c3.php",
+      "mkdir -p ./data/DE/logs/ZED",
       "echo '<?php return \"development-heroku\";' > config/Shared/console_env_local.php",
       "./deploy/heroku/run.sh"
     ],
