@@ -2,18 +2,17 @@
 
 version: '3'
 
-volumes:
-  yves-assets:
-  zed-assets:
-  src-generated:
-  jenkins-volume:
-
 services: 
   zed: 
     image: "spryker-demoshop:latest"
     command: "run_zed"
     #command: "sleep 1d"
-    restart: always
+    #restart: always
+    restart: "no"
+    depends_on:
+      - database
+      - redis
+      - elasticsearch
     build:
       context: ../
       dockerfile: Dockerfile
@@ -24,16 +23,13 @@ services:
       - elasticsearch
       - database
     env_file: ./docker-compose.env
-    volumes:
-      - yves-assets:/data/shop/public/Yves/assets
-      - zed-assets:/data/shop/public/Zed/assets
-      - src-generated:/data/shop/src/Generated
 
   yves: 
     image: "spryker-demoshop:latest"
     command: "run_yves"
     #command: "sleep 1d"
-    restart: always
+    #restart: always
+    restart: "no"
     depends_on:
       - zed
     ports:
@@ -42,49 +38,28 @@ services:
       - zed
       - redis
       - elasticsearch
-      - database
     env_file: ./docker-compose.env
-    volumes:
-      - yves-assets:/data/shop/public/Yves/assets
-      - zed-assets:/data/shop/public/Zed/assets
-      - src-generated:/data/shop/src/Generated
-
-  init:
-    image: "spryker-demoshop:latest"
-    command: "init_setup"
-    #command: sleep 1d
-    restart: "no"
-    privileged: true
-    depends_on:
-      - zed
-    links:
-      - redis
-      - elasticsearch
-      - database
-    env_file: ./docker-compose.env
-    volumes:
-      - yves-assets:/data/shop/public/Yves/assets
-      - zed-assets:/data/shop/public/Zed/assets
-      - src-generated:/data/shop/src/Generated
-      - ../assets:/data/shop/assets
 
   redis:
-    image: "redis"
+    image: "redis:3.2-alpine"
     restart: always
 
   elasticsearch:
-    image: "elasticsearch:2"
+    # TODO: images is deprecated and maintained until the 2017-06-20
+    # see https://hub.docker.com/_/elasticsearch/
+    image: "elasticsearch:2.4-alpine"
     restart: always
+    # just to create a simple delay for init phase
+    depends_on:
+      - database
 
   database:
-    image: "postgres:9.4.10"
+    image: "postgres:9.4.11-alpine"
     restart: always
     env_file: ./docker-compose.env
 
   jenkins:
-    image: "jenkins"
+    image: "jenkins:alpine"
     ports: 
       - "10007:8080"
     env_file: ./docker-compose.env
-    volumes:
-      - jenkins-volume:/var/jenkins_home jenkins

@@ -195,11 +195,11 @@
     },
     {
       "type": "git",
-      "url": "git@github.com:spryker/architecture-sniffer.git"
+      "url": "https://github.com/spryker/architecture-sniffer.git"
     },
     {
       "type": "git",
-      "url": "git@github.com:spryker/rabbit-mq.git"
+      "url": "https://github.com/spryker/rabbit-mq.git"
     }
   ],
   "scripts": {
