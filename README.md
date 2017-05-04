@@ -1,5 +1,5 @@
 
-This is a docker-enabled demoshop version of the official [spryker demoshop](https://github.com/spryker/demoshop). It makes running a local demo of the shop very easy with providing a one-line-to-do-it-all shortcut.
+This is a docker-enabled demoshop version of the official [spryker demoshop](https://github.com/spryker/demoshop). It makes running a local demo of the shop very easy with providing a one-line-to-does-it-all shortcut.
 
 
 # The one-line-does-it-all-for-you
@@ -9,7 +9,7 @@ Requires: a recent, stable version of [docker](https://docs.docker.com/) and [do
 ## TLTR
 
 ```
-git clone https://github.com/claranet/spryker-demoshop.git && cd cd spryker-demoshop/docker/ && docker-compose -p sprykerdemoshop up
+git clone https://github.com/claranet/spryker-demoshop.git && cd spryker-demoshop/docker/ && docker-compose -p sprykerdemoshop up
 ```
 
 ## Long version
