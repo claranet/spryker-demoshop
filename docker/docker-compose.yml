@@ -6,8 +6,6 @@ services:
   zed: 
     image: "spryker-demoshop:latest"
     command: "run_zed"
-    #command: "sleep 1d"
-    #restart: always
     restart: "no"
     depends_on:
       - database
@@ -27,8 +25,6 @@ services:
   yves: 
     image: "spryker-demoshop:latest"
     command: "run_yves"
-    #command: "sleep 1d"
-    #restart: always
     restart: "no"
     depends_on:
       - zed
@@ -49,10 +45,13 @@ services:
     # see https://hub.docker.com/_/elasticsearch/
     image: "elasticsearch:2.4-alpine"
     restart: always
-    # just to create a simple delay for init phase
+    # just to create a simple delay for init phase in depending on the database
     depends_on:
       - database
 
+# postgres is listening for incoming sessions even if it is not ready to serve as a service
+# this needs to be considered in the setup step as `wait_for_service` does only check, if the
+# given service is able to establish connections.
   database:
     image: "postgres:9.4.11-alpine"
     restart: always
