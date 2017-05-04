@@ -1,13 +1,28 @@
-# Spryker Demoshop
-[![License](https://img.shields.io/github/license/spryker/demoshop.svg)](https://github.com/spryker/demoshop/)
 
-In order to install Spryker Demoshop on your machine, you can follow the instructions described in the link below:
+This is a docker-enabled demoshop version of the official [spryker demoshop](https://github.com/spryker/demoshop). It makes running a local demo of the shop very easy with providing a one-line-to-do-it-all shortcut.
 
-* [Installation - spryker.github.io/getting-started/installation/guide/](https://spryker.github.io/getting-started/installation/guide/)
 
-If you encounter any issues during or after installation, you can first check our Troubleshooting article:
+# The one-line-does-it-all-for-you
 
-* [Troubleshooting - spryker.github.io/getting-started/installation/troubleshooting/](http://spryker.github.io/getting-started/installation/troubleshooting/)
+Requires: a recent, stable version of [docker](https://docs.docker.com/) and [docker-compose](https://docs.docker.com/compose/) on your [Linux](https://docs.docker.com/engine/installation/linux/ubuntu/)/[MacOS](https://docs.docker.com/docker-for-mac/install/) system
+
+## TLTR
+
+```
+git clone https://github.com/claranet/spryker-demoshop.git && cd cd spryker-demoshop/docker/ && docker-compose -p sprykerdemoshop up
+```
+
+## Long version
+
+This repository is the origin for the [docker-hub claranet/spryker-demoshop](https://hub.docker.com/claranet/spryker-demoshop). It is essentially a copy of the latest spryker-demoshop release with small, just enough to work, modifications to work within docker containers.
+
+It makes the spryker-demoshop work with [alpinelinux](https://alpinelinux.org/) and extends the repository by...
+
+* a [Dockerfile](Dockerfile)
+* a [docker-compose.yml](docker/docker-compose.yml)
+* some demo scenarios for how to leverage our [spryker-base image](https://hub.docker.com/claranet/spryker-base) image (aka "best practices")
+
+See [the docker folder](docker) for more details.
 
 ## Dockerization
 
