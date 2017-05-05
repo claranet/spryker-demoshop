@@ -4,7 +4,7 @@ version: '3'
 
 services: 
   zed: 
-    image: "claranet/spryker-demoshop:latest"
+    image: "spryker-demoshop:latest"
     command: "run_zed"
     restart: "no"
     depends_on:
@@ -24,7 +24,7 @@ services:
     env_file: ./docker-compose.env
 
   yves: 
-    image: "claranet/spryker-demoshop:latest"
+    image: "spryker-demoshop:latest"
     command: "run_yves"
     restart: "no"
     depends_on:
