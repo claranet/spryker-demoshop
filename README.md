@@ -1,19 +1,23 @@
 
-This is a docker-enabled demoshop version of the official [spryker demoshop](https://github.com/spryker/demoshop). It makes running a local demo of the shop very easy with providing a one-line-to-does-it-all shortcut.
+This is a dockerized version of the official reference implementation of the
+[Spryker Demoshop](https://github.com/spryker/demoshop). 
 
 
-# The one-line-does-it-all-for-you
+# Run the Demoshop
 
 Requires: a recent, stable version of [docker](https://docs.docker.com/) and [docker-compose](https://docs.docker.com/compose/) on your [Linux](https://docs.docker.com/engine/installation/linux/ubuntu/)/[MacOS](https://docs.docker.com/docker-for-mac/install/) system
 
 
-## TLTR
+## TL;DR
+
+If requisites are met running the shop is fairly easy. Just enter this one-liner:
 
 ```
-git clone https://github.com/claranet/spryker-demoshop.git && cd spryker-demoshop/docker/ && docker-compose -p sprykerdemoshop up
+git clone https://github.com/claranet/spryker-demoshop.git && cd spryker-demoshop && ./docker/docker-compose.sh up
 ```
 
-After the initialization is finished, you should be able to serve...
+After the initialization has been finished, you are able to point your browser
+to the following URLs:
 
 * Yves via http://localhost:2380
 * Zed via http://localhost:2381
@@ -21,9 +25,13 @@ After the initialization is finished, you should be able to serve...
 
 ## Long version
 
-This repository is the origin for the [docker-hub claranet/spryker-demoshop](https://hub.docker.com/claranet/spryker-demoshop). It is essentially a copy of the latest spryker-demoshop release with small, just enough to work, modifications to work within docker containers.
+This repository is the origin for the [docker-hub
+claranet/spryker-demoshop](https://hub.docker.com/claranet/spryker-demoshop).
+It is essentially a copy of the latest spryker-demoshop release with small,
+just enough to work, modifications to work within docker containers.
 
-It makes the spryker-demoshop work with [alpinelinux](https://alpinelinux.org/) and extends the repository by...
+It makes the spryker-demoshop work with [alpinelinux](https://alpinelinux.org/)
+and extends the repository by...
 
 * a [Dockerfile](Dockerfile)
 * a [docker-compose.yml](docker/docker-compose.yml)
