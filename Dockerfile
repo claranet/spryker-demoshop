@@ -1,3 +1,3 @@
 
-FROM spryker-base:latest
+FROM claranet/spryker-base:latest
 
