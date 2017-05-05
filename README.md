@@ -1,19 +1,49 @@
-# Spryker Demoshop
-[![License](https://img.shields.io/github/license/spryker/demoshop.svg)](https://github.com/spryker/demoshop/)
 
-In order to install Spryker Demoshop on your machine, you can follow the instructions described in the link below:
+This is a dockerized version of the official reference implementation of the
+[Spryker Demoshop](https://github.com/spryker/demoshop). 
 
-* [Installation - spryker.github.io/getting-started/installation/guide/](https://spryker.github.io/getting-started/installation/guide/)
 
-If you encounter any issues during or after installation, you can first check our Troubleshooting article:
+# Run the Demoshop
 
-* [Troubleshooting - spryker.github.io/getting-started/installation/troubleshooting/](http://spryker.github.io/getting-started/installation/troubleshooting/)
+Requires: a recent, stable version of [docker](https://docs.docker.com/) and [docker-compose](https://docs.docker.com/compose/) on your [Linux](https://docs.docker.com/engine/installation/linux/ubuntu/)/[MacOS](https://docs.docker.com/docker-for-mac/install/) system
+
+
+## TL;DR
+
+If requisites are met running the shop is fairly easy. Just enter this one-liner:
+
+```
+git clone https://github.com/claranet/spryker-demoshop.git && cd spryker-demoshop && ./docker/docker-compose.sh up
+```
+
+After the initialization has been finished, you are able to point your browser
+to the following URLs:
+
+* Yves via http://localhost:2380
+* Zed via http://localhost:2381
+
+
+## Long version
+
+This repository is the origin for the [docker-hub
+claranet/spryker-demoshop](https://hub.docker.com/claranet/spryker-demoshop).
+It is essentially a copy of the latest spryker-demoshop release with small,
+just enough to work, modifications to work within docker containers.
+
+It makes the spryker-demoshop work with [alpinelinux](https://alpinelinux.org/)
+and extends the repository by...
+
+* a [Dockerfile](Dockerfile)
+* a [docker-compose.yml](docker/docker-compose.yml)
+* some demo scenarios for how to leverage our [spryker-base image](https://hub.docker.com/claranet/spryker-base) image (aka "best practices")
+
+See [the docker folder](docker) for more details.
 
 ## Dockerization
 
 ### Initialization
 
-Following steps are nececssary to get the demo shop up and running - provided that external resources as configured are existent and reachable:
+Following steps are necessary to get the demo shop up and running - provided that external resources as configured are existent and reachable:
 
 * `./vendor/bin/console setup:search`
 * `./vendor/bin/console setup:install`
@@ -25,29 +55,20 @@ Following steps are nececssary to get the demo shop up and running - provided th
 
 ### Known Bugs
 
-#### Spryker - Search Setup
+If you find a bug not listed here, please [report](https://github.com/claranet/spryker-demoshop/issues) them!
 
-The console command `setup:search` integrates two tasks of different nature: 
+#### Yves - Links for /cart /login and /checkout are not working
 
-* Create the indices in elasticsearch 
-* Generate code which serves as mapping bridge between spryker and ES
-
-The former is an init task needs to be ran at runtime if external resources are
-available, the ladder one is a build time task creating code which should be
-available in all containers. We've asked Vladimir (Volodymyr) Lunov of Spryker
-to split these console asks. 
-
-As workaround we make `./src/Generated` a volume shared by all containers and
-put the `setup:search` task into the init stage.
+Still looking into this. The links aren't build correctly (just pointing to http://<domain>/).
 
 #### Elasticsearch 5.0
 
-ES 5 introduced bootstrap checks which enforce some configuraion parameter in
+ES 5 introduced bootstrap checks which enforce some configuration parameter in
 order to prevent misconfigured es cluster in production. Problem is, that one of those parameters need linux kernel configuration of host system via `sysctl(1)`. This breaks isolation principles. 
 
 So far we rely on ES 2.4 in the first place and will later proceed with newly arrived version 5.0.
 
-Note: That Spryker is currently only supporting ES version 2.
+Note: [That Spryker is only supporting ES version 2.4.x](http://spryker.github.io/getting-started/system-requirements/#elasticsearch).
 
 For further discussion see: 
 
