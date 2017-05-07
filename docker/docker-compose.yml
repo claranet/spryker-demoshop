@@ -2,31 +2,11 @@
 
 version: '3'
 
-services: 
-  zed: 
-    image: "spryker-demoshop:latest"
-    command: "run_zed"
-    restart: "no"
-    depends_on:
-      - database
-      - redis
-      - elasticsearch
-    build:
-      context: ../
-      dockerfile: Dockerfile
-    ports:
-      - "2381:80"
-    links:
-      - redis
-      - elasticsearch
-      - database
-      - jenkins
-    env_file: ./docker-compose.env
-
-  yves: 
-    image: "spryker-demoshop:latest"
+services:
+  yves:
+    image: "claranet/spryker-demoshop:latest"
     command: "run_yves"
-    restart: "no"
+    restart: always
     depends_on:
       - zed
     ports:
@@ -37,20 +17,36 @@ services:
       - elasticsearch
     env_file: ./docker-compose.env
 
+  zed: 
+    image: "claranet/spryker-demoshop:latest"
+    command: "run_zed"
+    restart: always
+    depends_on:
+      - database
+      - redis
+      - elasticsearch
+    ports:
+      - "2381:80"
+    links:
+      - redis
+      - elasticsearch
+      - database
+      - jenkins
+    env_file: ./docker-compose.env
+
   redis:
     image: "redis:3.2-alpine"
     restart: always
 
   elasticsearch:
-    # TODO: images is deprecated and only maintained until the 2017-06-20
+    # FIXME: images is deprecated and only maintained until the 2017-06-20
     # see https://hub.docker.com/_/elasticsearch/
     image: "elasticsearch:2.4-alpine"
     restart: always
-    # just to create a simple delay for init phase in depending on the database
     depends_on:
       - database
 
-# postgres is listening for incoming sessions even if it is not ready to serve as a service
+# FIXME postgres is listening for incoming sessions even if it is not ready to serve as a service
 # this needs to be considered in the setup step as `wait_for_service` does only check, if the
 # given service is able to establish connections.
   database:

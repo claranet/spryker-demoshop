@@ -1,7 +1,13 @@
 
 This is a dockerized version of the official reference implementation of the
-[Spryker Demoshop](https://github.com/spryker/demoshop). 
+[Spryker Demoshop](https://github.com/spryker/demoshop). It is ready to run
+out-of-the-box by automatically pulling all required dependencies and creating
+a stack comprising PostgreSQL, Redis, Elasticsearch and Jenkins. During runtime
+each of the services getting initialized. 
 
+You can use this repository either as a demonstration for a paradigmatic shop
+based on Spryker Commerce Framework or as starting point for the development of
+your own implementation beginning with a fork of the demoshop.
 
 # Run the Demoshop
 
@@ -25,8 +31,6 @@ to the following URLs:
 
 ## Long version
 
-This repository is the origin for the [docker-hub
-claranet/spryker-demoshop](https://hub.docker.com/claranet/spryker-demoshop).
 It is essentially a copy of the latest spryker-demoshop release with small,
 just enough to work, modifications to work within docker containers.
 
