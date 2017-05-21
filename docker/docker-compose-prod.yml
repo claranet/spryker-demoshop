@@ -3,9 +3,33 @@
 version: '3'
 
 services:
+  init:
+    image: "${IMAGE}"
+    command: "init"
+    restart: "no"
+    depends_on:
+      - zed
+    links:
+      - elasticsearch
+      - database
+      - jenkins
+    env_file: ./docker-compose.env
+    environment:
+      - APPLICATION_ENV=production
+    volumes:
+      - ../config:/data/shop/config
+      - ../assets:/data/shop/assets
+      - ../src/Pyz:/data/shop/src/Pyz
+      - ../composer.json:/data/shop/composer.json
+      - ../package.json:/data/shop/package.json
+
   yves:
-    image: "claranet/spryker-demoshop:latest"
-    command: "run_yves"
+    image: "${IMAGE}"
+    build:
+      context: ..
+      args: 
+        - NETRC=$NETRC 
+    command: "run-yves"
     restart: always
     depends_on:
       - zed
@@ -16,10 +40,16 @@ services:
       - redis
       - elasticsearch
     env_file: ./docker-compose.env
+    environment:
+      - APPLICATION_ENV=production
 
   zed: 
-    image: "claranet/spryker-demoshop:latest"
-    command: "run_zed"
+    image: "${IMAGE}"
+    build:
+      context: ..
+      args: 
+        - NETRC=$NETRC 
+    command: "run-zed"
     restart: always
     depends_on:
       - database
@@ -33,22 +63,19 @@ services:
       - database
       - jenkins
     env_file: ./docker-compose.env
+    environment:
+      - APPLICATION_ENV=production
 
   redis:
     image: "redis:3.2-alpine"
     restart: always
 
   elasticsearch:
-    # FIXME: images is deprecated and only maintained until the 2017-06-20
-    # see https://hub.docker.com/_/elasticsearch/
     image: "elasticsearch:2.4-alpine"
     restart: always
     depends_on:
       - database
 
-# FIXME postgres is listening for incoming sessions even if it is not ready to serve as a service
-# this needs to be considered in the setup step as `wait_for_service` does only check, if the
-# given service is able to establish connections.
   database:
     image: "postgres:9.4.11-alpine"
     restart: always

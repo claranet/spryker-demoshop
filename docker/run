@@ -1,0 +1,175 @@
+#!/bin/sh
+
+WORKDIR=`dirname $0`
+cd $WORKDIR
+
+[ -e build.conf ] && source build.conf
+
+for cmd in docker-compose docker; do 
+  if ! which $cmd 2>&1 >/dev/null; then
+    echo "ERROR: The command '$cmd' is required. Please install it!"
+    exit 1
+  fi
+done
+
+
+# Exec into container and run command
+container_action() {
+  target=$1
+  case $2 in
+    yves)
+      echo "Entering Yves container ..."
+      docker_compose exec yves /entrypoint.sh $target
+      ;;
+    zed)
+      echo "Entering Yves container ..."
+      docker_compose exec zed /entrypoint.sh $target
+      ;;
+    *)
+      echo "Entering Yves container ..."
+      docker_compose exec yves /entrypoint.sh $target
+      echo "Entering Yves container ..."
+      docker_compose exec zed /entrypoint.sh $target
+      ;;
+  esac
+}
+
+
+compose_recreate() {
+  c=$1
+  echo "\nRecreating $c container ..."
+  docker_compose stop $c
+  docker_compose rm -f $c
+  docker_compose create $c
+  docker_compose start $c
+}
+
+
+env_action() {
+  action=$1; shift
+  case $action in
+    up)
+      docker_compose up $*
+      ;;
+    down)
+      docker_compose down $*
+      ;;
+    build)
+      echo "Building docker image via docker-compose ..."
+      docker_compose build $*
+      ;;
+    rebuild)
+      echo "Rebuilding image ..."
+      docker_compose build $*
+      for c in yves zed; do 
+        compose_recreate $c
+      done
+      ;;
+    reinit)
+      echo "Recreating init container ..."
+      compose_recreate init
+      ;;
+    recreate)
+      if [ -n "$1" ]; then
+          compose_recreate $1
+      else 
+        for c in yves zed; do 
+          compose_recreate $c
+        done
+      fi
+      ;;
+    update-deps)
+      echo "Updating dependencies in running container ..."
+      container_action build-deps $2
+      ;;
+    gen-code)
+      echo "Generating shop code in running container ..."
+      container_action build-shop $2
+      ;;
+    ps|exec)
+      docker_compose $action $*
+      ;;
+    compose)
+      docker_compose $*
+      ;;
+    *)
+      help
+      ;;
+  esac
+}
+
+docker_compose() {
+  export IMAGE=$IMAGE
+  netrc
+  echo "Executing: docker-compose -f docker-compose-$ENV.yml -p ${PROJECT}_$ENV $*"
+  docker-compose -f docker-compose-$ENV.yml -p ${PROJECT}_$ENV $*
+}
+
+netrc() {
+  if [ -e "$HOME/.netrc" ]; then 
+    echo "Using local ~/.netrc as credential provider"
+    export NETRC="$(cat $HOME/.netrc)"
+  fi
+}
+
+help() {
+    echo "
+SYNOPSIS: Wrapper around docker and docker-compose while considering local configurations.
+
+USAGE: $0 <cmd> | <env> <cmd> <args>
+
+COMMANDS:
+
+  Global:
+    build [<args>]                    -- build docker image 
+
+  Per Environment:
+    prod|devel up [<args>]            -- Creates containers
+    prod|devel down [<args>]          -- Stops containers 
+    prod|devel build                  -- Build docker image via docker-compose
+    prod|devel rebuild                -- Rebuild image and recreates running services 
+    prod|devel reinit                 -- Reinitializes the setup by recreating the init container
+    prod|devel recreate [yves|zed]    -- Just recreates running services
+    prod|devel update-deps [yves|zed] -- Update dependency in running containers
+    prod|devel gen-code [yves|zed]    -- Generate code in running containers
+    prod|devel compose cmd <args>     -- Interface to docker-compose
+    prod|devel ps [<args>]            -- Show running services (same as: compose ps)
+    prod|devel exec <svc> [<args>]    -- Exec into container (same as: compose exec) 
+
+EXAMPLES:
+
+    - Start devel environment:
+        $0 devel up 
+
+    - Tear down devel environment incl. their data stores:
+        $0 devel down -v
+
+    - Rebuild image and recreate container:
+        $0 devel rebuild
+
+    - Refetch Spryker dependencies in running containers:
+        $0 devel update-deps
+
+    - Exec into container:
+        $0 devel exec yves /bin/sh
+"
+}
+
+case $1 in
+  build)
+    shift
+    echo "Building docker image ..."
+    pushd ..
+    netrc
+    docker build --build-arg "NETRC=$NETRC" $* -t $IMAGE:latest .
+    popd
+    ;;
+  prod|devel)
+    export ENV=$1
+    shift
+    env_action $*
+    ;;
+  *)
+    help
+    ;;
+esac

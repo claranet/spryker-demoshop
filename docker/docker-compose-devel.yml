@@ -1,0 +1,100 @@
+--- 
+
+version: '3'
+
+services:
+  init:
+    image: "${IMAGE}"
+    command: "init"
+    restart: "no"
+    depends_on:
+      - zed
+    links:
+      - elasticsearch
+      - database
+      - jenkins
+    env_file: ./docker-compose.env
+    environment:
+      - APPLICATION_ENV=development
+    volumes:
+      - ../config:/data/shop/config
+      - ../assets:/data/shop/assets
+      - ../src/Pyz:/data/shop/src/Pyz
+      - ../composer.json:/data/shop/composer.json
+      - ../package.json:/data/shop/package.json
+
+  yves:
+    image: "${IMAGE}"
+    build:
+      context: ..
+      args: 
+        - NETRC=$NETRC
+        - APPLICATION_ENV=development
+    command: "run-yves"
+    restart: always
+    ports:
+      - "2380:80"
+    links:
+      - zed
+      - redis
+      - elasticsearch
+    env_file: ./docker-compose.env
+    environment:
+      - APPLICATION_ENV=development
+    volumes:
+      - ../config:/data/shop/config
+      - ../assets:/data/shop/assets
+      - ../src/Pyz:/data/shop/src/Pyz
+      - ../composer.json:/data/shop/composer.json
+      - ../package.json:/data/shop/package.json
+
+  zed: 
+    image: "${IMAGE}"
+    build:
+      context: ..
+      args: 
+        - NETRC=$NETRC 
+        - APPLICATION_ENV=development
+    command: "run-zed"
+    restart: always
+    ports:
+      - "2381:80"
+    links:
+      - redis
+      - elasticsearch
+      - database
+      - jenkins
+    env_file: ./docker-compose.env
+    environment:
+      - APPLICATION_ENV=development
+    volumes:
+      - ../config:/data/shop/config
+      - ../assets:/data/shop/assets
+      - ../src/Pyz:/data/shop/src/Pyz
+      - ../composer.json:/data/shop/composer.json
+      - ../package.json:/data/shop/package.json
+
+  redis:
+    image: "redis:3.2-alpine"
+    restart: always
+
+  elasticsearch:
+    image: "elasticsearch:2.4-alpine"
+    restart: always
+    depends_on:
+      - database
+
+  database:
+    image: "postgres:9.4.11-alpine"
+    restart: always
+    env_file: ./docker-compose.env
+
+  jenkins:
+    image: "jenkins:alpine"
+    ports: 
+      - "10007:8080"
+    links:
+      - database
+      - elasticsearch
+      - redis
+    env_file: ./docker-compose.env
