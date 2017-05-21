@@ -4,7 +4,7 @@ services:
   - docker
 
 env:
-  - VERSION=2.13.0 LATEST=yes
+  - VERSION=2.13.1 LATEST=yes
 
 install: true
 
