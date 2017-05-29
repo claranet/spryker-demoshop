@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 WORKDIR=`dirname $0`
 cd $WORKDIR
@@ -86,6 +86,9 @@ env_action() {
       echo "Generating shop code in running container ..."
       container_action build-shop $2
       ;;
+    enter)
+      docker_compose exec $1 /bin/sh
+      ;;
     ps|exec)
       docker_compose $action $*
       ;;
@@ -132,6 +135,7 @@ COMMANDS:
     prod|devel recreate [yves|zed]    -- Just recreates running services
     prod|devel update-deps [yves|zed] -- Update dependency in running containers
     prod|devel gen-code [yves|zed]    -- Generate code in running containers
+    prod|devel enter <svc>            -- Exec into svc container and start /bin/sh
     prod|devel compose cmd <args>     -- Interface to docker-compose
     prod|devel ps [<args>]            -- Show running services (same as: compose ps)
     prod|devel exec <svc> [<args>]    -- Exec into container (same as: compose exec) 
@@ -150,8 +154,11 @@ EXAMPLES:
     - Refetch Spryker dependencies in running containers:
         $0 devel update-deps
 
-    - Exec into container:
-        $0 devel exec yves /bin/sh
+    - Exec shell in container:
+        $0 devel enter yves
+
+    - Exec arbitrary command in container:
+        $0 devel exec yves npm install
 "
 }
 
