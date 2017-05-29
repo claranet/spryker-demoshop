@@ -1,5 +1,5 @@
 
-# Docker Image claranet/spryker-base
+# Docker Image claranet/spryker-demoshop
 
 [![build status badge](https://img.shields.io/travis/claranet/spryker-demoshop/master.svg)](https://travis-ci.org/claranet/spryker-demoshop/branches)
 
