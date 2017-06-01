@@ -18,6 +18,7 @@
 * [Known Issues](#known-issues)
     * [Yves Links not working](#yves-links-not-working)
     * [Elasticsearch 5.0](#elasticsearch-50)
+    * [Redis concurrency](#redis-concurrency)
 
 <!-- vim-markdown-toc -->
 
@@ -161,3 +162,21 @@ For further discussion see:
 * https://www.elastic.co/guide/en/elasticsearch/reference/master/_maximum_map_count_check.html
 * https://discuss.elastic.co/t/elasticsearch-5-0-0-aplha4-wont-start-without-setting-vm-max-map-count/57471/12
 * https://www.elastic.co/blog/bootstrap_checks_annoying_instead_of_devastating
+
+### Redis concurrency
+
+While doing a load test, a bug was found (and it points to redis).
+
+Apparently, there is a limitation in the way [Redis](http://www.redis.io) is configured on the demoshop project in which there can only be no more than 100 requests at a time, otherwise it doesn't behave as expected.
+
+The following log from the demoshop can be seen during the tests:
+
+```
+redis_1          | 1:M 01 Jun 14:46:19.074 * 100 changes in 300 seconds. Saving...
+redis_1          | 1:M 01 Jun 14:46:19.075 * Background saving started by pid 37
+redis_1          | 37:C 01 Jun 14:46:19.271 * DB saved on disk
+redis_1          | 37:C 01 Jun 14:46:19.273 * RDB: 2 MB of memory used by copy-on-write
+redis_1          | 1:M 01 Jun 14:46:19.276 * Background saving terminated with success
+```
+
+which makes us think that it only saves the latest 100 changes every 5 minutes.
