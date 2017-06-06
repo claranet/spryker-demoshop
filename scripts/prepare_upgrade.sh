@@ -16,7 +16,7 @@ error() {
 #  - NEVER PUSHES changes to origin, since this must be supervisioned by some human
 
 TAG="$1"
-BRANCH="test/$TAG"
+BRANCH="upgrade/$TAG"
 REMOTE="upstream"
 UPSTREAM_REPO="git@github.com:spryker/demoshop.git"
 
