@@ -6,6 +6,7 @@ use Spryker\Shared\Storage\StorageConstants;
 use Spryker\Shared\Session\SessionConstants;
 use Spryker\Shared\Propel\PropelConstants;
 use Spryker\Shared\Log\LogConstants;
+use Spryker\Shared\ZedRequest\ZedRequestConstants;
 
 // Get config values from ENV. This enables the infrastructure guys to let the application
 // run in different environments without complicated file templating.
@@ -41,36 +42,36 @@ $redis_database_counter = 0;
 $config_local = [
   LogConstants::LOG_FILE_PATH => '/data/logs/application.log',
   
-  AC::ELASTICA_PARAMETER__HOST => getenvDefault('ES_HOST', 'elasticsearch'),
-  AC::ELASTICA_PARAMETER__TRANSPORT => getenvDefault('ES_PROTOCOL', 'http'),
-  AC::ELASTICA_PARAMETER__PORT => getenvDefault('ES_PORT', '9200'),
-  AC::ELASTICA_PARAMETER__AUTH_HEADER => '',
-  AC::ELASTICA_PARAMETER__INDEX_NAME => null, // Store related confi,
+  AC::ELASTICA_PARAMETER__HOST          => getenvDefault('ES_HOST', 'elasticsearch'),
+  AC::ELASTICA_PARAMETER__TRANSPORT     => getenvDefault('ES_PROTOCOL', 'http'),
+  AC::ELASTICA_PARAMETER__PORT          => getenvDefault('ES_PORT', '9200'),
+  AC::ELASTICA_PARAMETER__AUTH_HEADER   => '',
+  AC::ELASTICA_PARAMETER__INDEX_NAME    => null, // Store related confi,
   AC::ELASTICA_PARAMETER__DOCUMENT_TYPE => 'page',
   
   // REDIS databases
-  StorageConstants::STORAGE_REDIS_DATABASE => $redis_database_counter++,
-  StorageConstants::STORAGE_REDIS_PROTOCOL => 'tcp',
-  StorageConstants::STORAGE_REDIS_HOST => getenvDefault('REDIS_STORAGE_HOST', 'redis'),
-  StorageConstants::STORAGE_REDIS_PORT => getenvDefault('REDIS_STORAGE_PORT', '6379'),
-  StorageConstants::STORAGE_REDIS_PASSWORD => getenvDefault('REDIS_STORAGE_PASSWORD', ''),
+  StorageConstants::STORAGE_REDIS_DATABASE      => $redis_database_counter++,
+  StorageConstants::STORAGE_REDIS_PROTOCOL      => getenvDefault('REDIS_STORAGE_PROTOCOL', 'tcp'),
+  StorageConstants::STORAGE_REDIS_HOST          => getenvDefault('REDIS_STORAGE_HOST', 'redis'),
+  StorageConstants::STORAGE_REDIS_PORT          => getenvDefault('REDIS_STORAGE_PORT', '6379'),
+  StorageConstants::STORAGE_REDIS_PASSWORD      => getenvDefault('REDIS_STORAGE_PASSWORD', ''),
 
   SessionConstants::YVES_SESSION_REDIS_DATABASE => $redis_database_counter++,
-  SessionConstants::YVES_SESSION_REDIS_PROTOCOL => 'tcp',
-  SessionConstants::YVES_SESSION_REDIS_HOST => getenvDefault('REDIS_SESSION_HOST', 'redis'),
-  SessionConstants::YVES_SESSION_REDIS_PORT => getenvDefault('REDIS_SESSION_PORT', '6379'),
+  SessionConstants::YVES_SESSION_REDIS_PROTOCOL => getenvDefault('REDIS_SESSION_PROTOCOL', 'tcp'),
+  SessionConstants::YVES_SESSION_REDIS_HOST     => getenvDefault('REDIS_SESSION_HOST', 'redis'),
+  SessionConstants::YVES_SESSION_REDIS_PORT     => getenvDefault('REDIS_SESSION_PORT', '6379'),
   SessionConstants::YVES_SESSION_REDIS_PASSWORD => getenvDefault('REDIS_SESSION_PASSWORD', ''),
 
-  SessionConstants::ZED_SESSION_REDIS_DATABASE => $redis_database_counter++,
-  SessionConstants::ZED_SESSION_REDIS_PROTOCOL => 'tcp',
-  SessionConstants::ZED_SESSION_REDIS_HOST => getenvDefault('REDIS_SESSION_HOST', 'redis'),
-  SessionConstants::ZED_SESSION_REDIS_PORT => getenvDefault('REDIS_SESSION_PORT', '6379'),
-  SessionConstants::ZED_SESSION_REDIS_PASSWORD => getenvDefault('REDIS_SESSION_PASSWORD', ''),
+  SessionConstants::ZED_SESSION_REDIS_DATABASE  => $redis_database_counter++,
+  SessionConstants::ZED_SESSION_REDIS_PROTOCOL  => getenvDefault('REDIS_SESSION_PROTOCOL', 'tcp'),
+  SessionConstants::ZED_SESSION_REDIS_HOST      => getenvDefault('REDIS_SESSION_HOST', 'redis'),
+  SessionConstants::ZED_SESSION_REDIS_PORT      => getenvDefault('REDIS_SESSION_PORT', '6379'),
+  SessionConstants::ZED_SESSION_REDIS_PASSWORD  => getenvDefault('REDIS_SESSION_PASSWORD', ''),
   
   
-  SessionConstants::YVES_SESSION_SAVE_HANDLER => SessionConstants::SESSION_HANDLER_REDIS,
-  SessionConstants::YVES_SESSION_TIME_TO_LIVE => SessionConstants::SESSION_LIFETIME_1_HOUR,
-  SessionConstants::YVES_SESSION_FILE_PATH    => session_save_path(),
+  SessionConstants::YVES_SESSION_SAVE_HANDLER   => SessionConstants::SESSION_HANDLER_REDIS,
+  SessionConstants::YVES_SESSION_TIME_TO_LIVE   => SessionConstants::SESSION_LIFETIME_1_HOUR,
+  SessionConstants::YVES_SESSION_FILE_PATH      => session_save_path(),
   SessionConstants::YVES_SESSION_PERSISTENT_CONNECTION => $config[StorageConstants::STORAGE_PERSISTENT_CONNECTION],
 
   SetupConstants::JENKINS_BASE_URL => 'http://'.getenvDefault('JENKINS_HOST', 'jenkins').':'.getenvDefault('JENKINS_PORT', '8080').'/',
@@ -131,6 +132,8 @@ $config[AC::HOST_YVES]
     = $config[SessionConstants::YVES_SESSION_COOKIE_DOMAIN]
     = getYvesDomain();
 
+$config[AC::YVES_SSL_ENABLED] = (getenvDefault('YVES_SSL_ENABLED', false) === 'true' );
+$config[AC::YVES_COMPLETE_SSL_ENABLED] = (getenvDefault('YVES_COMPLETE_SSL_ENABLED', false) === 'true');
 
 /**
  * Hostname(s) for Zed - Shop frontend
@@ -141,3 +144,6 @@ $config[AC::HOST_ZED_GUI]
     = $config[AC::HOST_SSL_ZED_GUI]
     = $config[AC::HOST_SSL_ZED_API]
     = getenvDefault('ZED_HOST', 'zed');
+
+$config[AC::ZED_SSL_ENABLED] = (getenvDefault('ZED_SSL_ENABLED', false) === 'true');
+$config[ZedRequestConstants::ZED_API_SSL_ENABLED] = (getenvDefault('ZED_API_SSL_ENABLED', false) === 'true');
