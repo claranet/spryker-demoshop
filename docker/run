@@ -56,11 +56,11 @@ env_action() {
       ;;
     build)
       echo "Building docker image via docker-compose ..."
-      docker_compose build $*
+      docker_compose build --pull $*
       ;;
     rebuild)
       echo "Rebuilding image ..."
-      docker_compose build $*
+      docker_compose build --pull $*
       for c in yves zed; do 
         compose_recreate $c
       done

@@ -1,5 +1,5 @@
 
-FROM claranet/spryker-base:latest
+FROM claranet/spryker-base:0.7.2-php70
 
 LABEL org.label-schema.name="claranet/spryker-demoshop" \
       org.label-schema.version="2.14.0" \

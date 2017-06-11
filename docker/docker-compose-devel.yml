@@ -4,7 +4,7 @@ version: '3'
 
 services:
   init:
-    image: "${IMAGE}"
+    image: "${IMAGE}:${VERSION}"
     command: "init"
     restart: "no"
     depends_on:
@@ -24,7 +24,7 @@ services:
       - ../package.json:/data/shop/package.json
 
   yves:
-    image: "${IMAGE}"
+    image: "${IMAGE}:${VERSION}"
     build:
       context: ..
       args: 
@@ -49,7 +49,7 @@ services:
       - ../package.json:/data/shop/package.json
 
   zed: 
-    image: "${IMAGE}"
+    image: "${IMAGE}:${VERSION}"
     build:
       context: ..
       args: 
