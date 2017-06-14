@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e -o pipefail
+set -e -o pipefail -x
 
 ROOT="$(cd `dirname $0` && cd .. && pwd )"
 IMAGE="claranet/spryker-demoshop"
@@ -10,6 +10,6 @@ VERSION="$(cat $ROOT/version)"
 
 echo "[INFO] Building image $IMAGE:$VERSION"
 pushd $ROOT
-docker build -f Dockerfile --tag $IMAGE:$VERSION .
+docker build -f Dockerfile $* --tag $IMAGE:$VERSION .
 docker tag $IMAGE:$VERSION $IMAGE:latest
 popd
