@@ -16,6 +16,7 @@ services:
     env_file: ./docker-compose.env
     environment:
       - APPLICATION_ENV=production
+      - ENABLE_OPCACHE=true
     volumes:
       - ../config:/data/shop/config
       - ../assets:/data/shop/assets
@@ -42,6 +43,7 @@ services:
     env_file: ./docker-compose.env
     environment:
       - APPLICATION_ENV=production
+      - ENABLE_OPCACHE=true
 
   zed: 
     image: "${IMAGE}:${VERSION}"
@@ -65,6 +67,7 @@ services:
     env_file: ./docker-compose.env
     environment:
       - APPLICATION_ENV=production
+      - ENABLE_OPCACHE=true
 
   redis:
     image: "redis:3.2-alpine"
