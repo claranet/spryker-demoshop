@@ -2,8 +2,11 @@ class_name: AcceptanceTester
 modules:
     enabled:
         - WebDriver:
-            url: ''
-            browser: chrome
+            url: 'http://localhost/'
+            browser: phantomjs
+            port: 8910
+            host: phantomjs
+            path: /
             window_size: 1920x1080
 
         - \SprykerTest\Shared\Testify\Helper\Environment

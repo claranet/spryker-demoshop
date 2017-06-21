@@ -1,6 +1,5 @@
 .git
 ./setup
-./setup_test
 ./deploy
 ./docker/docker-compose*
 vendor
