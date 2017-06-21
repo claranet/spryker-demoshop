@@ -20,9 +20,12 @@ coverage:
     c3_url: 'http://zed.de.project.local'
     whitelist: { include: ['src/Pyz/*.php'] }
 
-extensions:
-    enabled:
-        - Codeception\Extension\Phantoman
+modules:
     config:
-        Codeception\Extension\Phantoman:
-            suites: ['Acceptance', 'Presentation']
+        WebDriver:
+            url: 'http://localhost/'
+            browser: phantomjs
+            port: 8910
+            host: phantomjs
+            path: /
+            window_size: 1920x1080

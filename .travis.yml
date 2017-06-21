@@ -4,7 +4,7 @@ services:
   - docker
 
 env:
-  - VERSION=2.16.0 LATEST=yes
+  - VERSION=2.16.0 LATEST=yes project=spryker
 
 install: true
 
@@ -14,7 +14,7 @@ before_script:
   - tag="${VERSION}${VARIANT:+-$VARIANT}"
 
 script:
-  - docker build -t $image:$tag .
+  - ./scripts/ci/run_tests.sh
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
