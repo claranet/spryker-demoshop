@@ -103,11 +103,15 @@ foreach($config_local as $k => $v)
 **/
 function getYvesDomain() {
   $domain = getenv('PUBLIC_YVES_DOMAIN');
-  if($domain)
+  if($domain) {
     return $domain;
+  }
   
-  if(isset($_SERVER['HTTP_HOST']))
-    return parse_url($_SERVER['HTTP_HOST'], PHP_URL_HOST); // drop port specifications, if defined
+  if(isset($_SERVER['HTTP_HOST'])) {
+    return (parse_url($_SERVER['HTTP_HOST'], PHP_URL_PORT) === null)
+       ? $_SERVER['HTTP_HOST'] // parse_url fails to return PHP_URL_HOST if there is no port set!
+       : parse_url($_SERVER['HTTP_HOST'], PHP_URL_HOST); // drop port specifications
+  }
   
   return ''; // return nothing, if ENV and SERVER key isn't set
 }
