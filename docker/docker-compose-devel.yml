@@ -38,6 +38,7 @@ services:
       - zed
       - redis
       - elasticsearch
+      - phantomjs
     env_file: ./docker-compose.env
     environment:
       - APPLICATION_ENV=development
@@ -48,6 +49,7 @@ services:
       - ../src/Pyz:/data/shop/src/Pyz
       - ../composer.json:/data/shop/composer.json
       - ../package.json:/data/shop/package.json
+      - ../tests:/data/shop/tests
 
   zed: 
     image: "${IMAGE}:${VERSION}"
@@ -75,6 +77,13 @@ services:
       - ../src/Pyz:/data/shop/src/Pyz
       - ../composer.json:/data/shop/composer.json
       - ../package.json:/data/shop/package.json
+
+  phantomjs:
+    image: "wernight/phantomjs"
+    restart: always
+    ports:
+      - "8910:8910"
+    command: "phantomjs --webdriver=8910"
 
   redis:
     image: "redis:3.2-alpine"

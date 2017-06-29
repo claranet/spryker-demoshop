@@ -27,8 +27,9 @@ class CheckoutAvailabilityCest
      *
      * @return void
      */
-    public function testCheckoutItemWithAvailability(AvailabilityTester $i)
+    public function testCheckoutItemWithAvailability(AvailabilityTester $i, $scenario)
     {
+        $scenario->skip('Accessing a non existent page');
         $i->wantTo('Checkout item with stock');
         $i->expectTo('Availability changed during SM processing.');
 

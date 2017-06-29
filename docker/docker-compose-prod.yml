@@ -40,7 +40,6 @@ services:
       - zed
       - redis
       - elasticsearch
-      - phantomjs
     env_file: ./docker-compose.env
     environment:
       - APPLICATION_ENV=production
@@ -69,13 +68,6 @@ services:
     environment:
       - APPLICATION_ENV=production
       - ENABLE_OPCACHE=true
-
-  phantomjs:
-    image: "wernight/phantomjs"
-    restart: always
-    ports:
-      - "8910:8910"
-    command: "phantomjs --webdriver=8910"
 
   redis:
     image: "redis:3.2-alpine"
