@@ -37,10 +37,10 @@ jobs:
         - docker push $image:$tagci
     - stage: Test
       script:
-        - docker run --rm -t $image:$tagci /entrypoint.sh build-base
+        - ./scripts/ci/test.sh
     - stage: Publish
       deploy:
         provider: script
-        script: ./scripts/travis-deploy.sh
+        script: ./scripts/ci/deploy.sh
         on: 
           tags: true
