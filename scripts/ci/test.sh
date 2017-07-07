@@ -1,11 +1,12 @@
 #!/bin/bash
 set -e -o pipefail
-
+set -x
 RETRY=600
 SLEEP=1
 
-docker pull $image:$tagci
 
+export IMAGE=$image
+export VERSION=$tagci
 ./docker/run devel up -d 
 
 printf "Waiting for stack to come up "
