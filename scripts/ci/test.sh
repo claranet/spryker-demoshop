@@ -4,9 +4,10 @@ set -x
 RETRY=600
 SLEEP=1
 
-
 export IMAGE=$image
 export VERSION=$tagci
+
+docker pull $IMAGE:$VERSION
 ./docker/run devel up -d 
 
 printf "Waiting for stack to come up "
