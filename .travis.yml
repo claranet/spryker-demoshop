@@ -14,6 +14,7 @@ before_script:
   - tag="${VERSION}${VARIANT:+-$VARIANT}"
 
 script:
+  - ./docker/run devel up -d
   - ./scripts/ci/run_tests.sh
 
 after_success:
