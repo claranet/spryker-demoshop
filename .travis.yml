@@ -4,7 +4,7 @@ services:
   - docker
 
 env:
-  - VERSION=2.16.0 LATEST=yes project=spryker
+  - VERSION=2.16.0 LATEST=yes PROJECT=spryker
 
 install: true
 
