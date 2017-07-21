@@ -1,8 +1,24 @@
 var config = require('./config');
 
+/**
+ * Shows the load time of the current page.
+ * Use it with JS function 'call'
+ * 
+ * The timing used is based on https://www.w3.org/TR/navigation-timing/#processing-model
+ * @param {String} path - URL path that is being tested.
+ */
+function loadTime(path) {
+    this.echo("'" + path + "'" + " load time is: " + this.evaluate(function() {
+        var timing = window.performance.timing;
+        var start = timing.navigationStart > 0 ? timing.navigationStart : timing.redirectStart;
+        return timing.loadEventEnd - start;
+    }) + " ms", "INFO_BAR");
+}
+
 casper.test.begin('Testing Spryker Demoshop web page', function (test) {
     // Open home page and search for item
     casper.start(config.baseUrl, function () {
+        loadTime.call(this, '/');
         test.assertTitle(config.title, 'Home Page title is ' + config.title);
         test.comment('Fill search field');
         this.fill('form[action="/search"]', {
@@ -36,10 +52,10 @@ casper.test.begin('Testing Spryker Demoshop web page', function (test) {
 
     // Go to checkout
     casper.then(function () {
+        loadTime.call(this, '/cart');
         test.assertSelectorHasText('h3', 'Cart');
         test.comment('Proceed to checkout');
-        // this.click('a.button.expanded.success');     // Uncomment when links are working
-        casper.open(config.baseUrl + 'checkout');     // This should be taken out when the links are working properly
+        this.click('a.button.expanded.success');
     });
 
     // Fill checkout-guest form
