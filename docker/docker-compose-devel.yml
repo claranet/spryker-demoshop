@@ -56,7 +56,7 @@ services:
     build:
       context: ..
       args: 
-        - NETRC=$NETRC 
+        - NETRC=$NETRC
         - APPLICATION_ENV=development
     command: "run-zed"
     restart: always

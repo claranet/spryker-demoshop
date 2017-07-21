@@ -121,20 +121,17 @@ function getYvesDomain() {
  * In production you probably use a CDN for static content
  * But BE AWARE: session domain has to match the sites domain!
  */
+// ---------- Yves host
 $config[AC::HOST_YVES]
-//    = $config[ProductManagementConstants::HOST_YVES]
-//    = $config[PayoneConstants::HOST_YVES]
-//    = $config[PayolutionConstants::HOST_YVES]
-//    = $config[NewsletterConstants::HOST_YVES]
-//    = $config[CustomerConstants::HOST_YVES]
-    = $config[AC::HOST_STATIC_ASSETS]
-    = $config[AC::HOST_STATIC_MEDIA]
-    = $config[AC::HOST_SSL_YVES]
-    = $config[AC::HOST_SSL_STATIC_ASSETS]
-    = $config[AC::HOST_SSL_STATIC_MEDIA]
-    = $config[SessionConstants::YVES_SESSION_COOKIE_NAME]
-    = $config[SessionConstants::YVES_SESSION_COOKIE_DOMAIN]
-    = getYvesDomain();
+        = $config[SessionConstants::YVES_SESSION_COOKIE_NAME]
+        = $config[SessionConstants::YVES_SESSION_COOKIE_DOMAIN]
+        = getYvesDomain();
+$config[AC::BASE_URL_YVES]
+        = $config[AC::BASE_URL_STATIC_ASSETS]
+        = $config[AC::BASE_URL_STATIC_MEDIA]
+        = $config[AC::BASE_URL_SSL_STATIC_ASSETS]
+        = $config[AC::BASE_URL_SSL_STATIC_MEDIA]
+        = 'http://' . $config[AC::HOST_YVES];
 
 $config[AC::YVES_SSL_ENABLED] = (getenvDefault('YVES_SSL_ENABLED', false) === 'true' );
 $config[AC::YVES_COMPLETE_SSL_ENABLED] = (getenvDefault('YVES_COMPLETE_SSL_ENABLED', false) === 'true');
@@ -143,11 +140,14 @@ $config[AC::YVES_COMPLETE_SSL_ENABLED] = (getenvDefault('YVES_COMPLETE_SSL_ENABL
  * Hostname(s) for Zed - Shop frontend
  * In production you probably use HTTPS for Zed
  */
-$config[AC::HOST_ZED_GUI]
-    = $config[AC::HOST_ZED_API]
-    = $config[AC::HOST_SSL_ZED_GUI]
-    = $config[AC::HOST_SSL_ZED_API]
-    = getenvDefault('ZED_HOST', 'zed');
+// ---------- Zed host
+$config[AC::HOST_ZED]
+        = $config[ZedRequestConstants::HOST_ZED_API]
+        = $config[SessionConstants::ZED_SESSION_COOKIE_NAME]
+        = getenvDefault('ZED_HOST', 'zed');
+$config[AC::BASE_URL_ZED]
+        = $config[ZedRequestConstants::BASE_URL_ZED_API]
+        = 'http://' . $config[AC::HOST_ZED];
 
 $config[AC::ZED_SSL_ENABLED] = (getenvDefault('ZED_SSL_ENABLED', false) === 'true');
 $config[ZedRequestConstants::ZED_API_SSL_ENABLED] = (getenvDefault('ZED_API_SSL_ENABLED', false) === 'true');
