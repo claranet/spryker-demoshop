@@ -168,7 +168,7 @@ case $1 in
     echo "Building docker image ..."
     pushd ..
     netrc
-    docker build --build-arg "NETRC=$NETRC" $* -t $IMAGE:latest .
+    docker build --build-arg "NETRC=$NETRC" $* -t $IMAGE:$VERSION .
     popd
     ;;
   prod|devel)
