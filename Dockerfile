@@ -1,5 +1,5 @@
 
-FROM claranet/spryker-base:0.8.0-php70
+FROM claranet/spryker-base:0.8.3
 
 LABEL org.label-schema.name="claranet/spryker-demoshop" \
       org.label-schema.version="2.16.0" \
@@ -9,9 +9,3 @@ LABEL org.label-schema.name="claranet/spryker-demoshop" \
       org.label-schema.vcs-url="https://github.com/claranet/spryker-demoshop" \
       author1="Fabian Dörk <fabian.doerk@de.clara.net>" \
       author2="Tony Fahrion <tony.fahrion@de.clara.net>"
-
-WORKDIR /data/shop
-
-COPY codeception.yml $WORKDIR/
-COPY setup_test $WORKDIR/
-ADD tests $WORKDIR/tests
