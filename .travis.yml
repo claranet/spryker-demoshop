@@ -37,6 +37,8 @@ jobs:
         - docker push $image:$tagci
     - stage: Test
       script:
+        - export IMAGE=$image VERSION=$tagci
+        - ./docker/run prod up -d
         - ./scripts/ci/test.sh
     - stage: Publish
       deploy:
