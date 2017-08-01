@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+
 WORKDIR=`dirname $0`
 cd $WORKDIR
 
