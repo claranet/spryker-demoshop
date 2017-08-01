@@ -39,7 +39,7 @@ jobs:
       script:
         - export IMAGE=$image VERSION=$tagci
         - ./docker/run prod up -d
-        - ./scripts/ci/test.sh
+        - ./scripts/ci/run_tests.sh
     - stage: Publish
       deploy:
         provider: script
