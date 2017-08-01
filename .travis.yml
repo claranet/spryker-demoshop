@@ -38,8 +38,8 @@ jobs:
     - stage: Test
       script:
         - export IMAGE=$image VERSION=$tagci
-        - echo $IMAGE:$VERSION
-        - ./docker/run prod up -d
+        - docker pull $IMAGE:$VERSION
+        - ./docker/run prod up -d --no-build
         - ./scripts/ci/run_tests.sh
     - stage: Publish
       deploy:
