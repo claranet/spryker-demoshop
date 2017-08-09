@@ -3,13 +3,10 @@ const helper = require('./helper');
 
 const loadTime = helper.loadTime.bind(casper);
 
-var totalTime = 1;
-
 casper.test.begin('Testing Spryker Demoshop web page', function (test) {
     // Open home page and search for item
     casper.start(config.baseUrl, function () {
         loadTime(this.getCurrentUrl());
-        this.echo(totalTime);
         test.assertTitle(config.title, 'Home Page title is ' + config.title);
         
         test.comment('Fill search field');
