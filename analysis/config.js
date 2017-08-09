@@ -1,4 +1,8 @@
 module.exports = {
+    //Set critical and warning times
+    critical: 0,
+    warning: 0,
+
     title: 'Spryker Shop',
     baseUrl: 'http://localhost:2380/',
     item: {
@@ -26,6 +30,13 @@ module.exports = {
             'addressesForm[shippingAddress][zip_code]': '12345',
             'addressesForm[shippingAddress][city]': 'City',
             'addressesForm[billingSameAsShipping]': true
+        },
+        shipment: {
+            'shipmentForm[idShipmentMethod]': '2'
+        },
+        payment: {
+            'paymentForm[paymentSelection]': 'dummyPaymentInvoice',
+            'paymentForm[dummyPaymentInvoice][date_of_birth]': '11.11.11'
         }
     }
 };

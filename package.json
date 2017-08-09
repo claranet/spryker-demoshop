@@ -15,7 +15,7 @@
     "zed": "node ./node_modules/@spryker/oryx-for-zed/build",
     "zed:dev": "node ./node_modules/@spryker/oryx-for-zed/build --dev",
     "zed:prod": "node ./node_modules/@spryker/oryx-for-zed/build --prod",
-    "test": "./node_modules/.bin/casperjs test analysis/acceptance.js"
+    "transaction": "./node_modules/.bin/casperjs test analysis/acceptance.js"
   },
   "engines": {
     "node": "^6.0.0"
