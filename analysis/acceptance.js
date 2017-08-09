@@ -1,28 +1,14 @@
 const config = require('./config');
+const helper = require('./helper');
+
+const loadTime = helper.loadTime.bind(casper);
 
 var totalTime = 1;
-
-/**
- * Shows the load time of the current page.
- * Use it with JS function 'call'
- * 
- * The timing used is based on https://www.w3.org/TR/navigation-timing/#processing-model
- * @param {String} path - URL path that is being tested.
- */
-function loadTime(path) {    
-    this.echo("'" + path + "'" + " load time is: " + this.evaluate(function () {
-        var timing = window.performance.timing;
-        var start = timing.navigationStart > 0 ? timing.navigationStart : timing.redirectStart;
-        var localTotal = timing.loadEventEnd - start;
-        
-        return localTotal;
-    }) + " ms", "INFO");
-}
 
 casper.test.begin('Testing Spryker Demoshop web page', function (test) {
     // Open home page and search for item
     casper.start(config.baseUrl, function () {
-        loadTime.call(this, this.getCurrentUrl());
+        loadTime(this.getCurrentUrl());
         this.echo(totalTime);
         test.assertTitle(config.title, 'Home Page title is ' + config.title);
         
@@ -43,7 +29,7 @@ casper.test.begin('Testing Spryker Demoshop web page', function (test) {
     // Add item to cart
     casper.then(function () {
         test.comment('Add item to cart');
-        loadTime.call(this, this.getCurrentUrl());
+        loadTime(this.getCurrentUrl());
         test.assertTitle(config.item.title, 'Title is ' + config.item.title);
         test.assertSelectorHasText('h5', 'Product Variants');
         this.fill('form[method="GET"]', config.item.variants, false);
@@ -63,7 +49,7 @@ casper.test.begin('Testing Spryker Demoshop web page', function (test) {
     // Go to checkout
     casper.then(function () {
         test.comment('Proceed to checkout');
-        loadTime.call(this, this.getCurrentUrl());
+        loadTime(this.getCurrentUrl());
         test.assertSelectorHasText('h3', 'Cart');
         this.click('a.button.expanded.success');
     });
@@ -72,7 +58,7 @@ casper.test.begin('Testing Spryker Demoshop web page', function (test) {
     // Fill checkout-guest form
     casper.then(function () {
         test.comment('Fill user form');
-        loadTime.call(this, this.getCurrentUrl());
+        loadTime(this.getCurrentUrl());
         this.click('input#guest');
         test.assertSelectorHasText('.__checkout-proceed-as-method.__is-shown', ' Order as guest');
         this.fill('form[name="guestForm"]', config.guest.register, true);
@@ -82,7 +68,7 @@ casper.test.begin('Testing Spryker Demoshop web page', function (test) {
     // Fill address information
     casper.then(function () {
         test.comment('Fill address form');
-        loadTime.call(this, this.getCurrentUrl());
+        loadTime(this.getCurrentUrl());
         test.assertSelectorHasText('h3', 'Address');
         test.assertSelectorHasText('h4', 'Shipping Address');
         this.fill('form[name="addressesForm"]', config.guest.address, true);
@@ -92,7 +78,7 @@ casper.test.begin('Testing Spryker Demoshop web page', function (test) {
     // Choose shipping method
     casper.then(function () {
         test.comment('Choose shipping method');
-        loadTime.call(this, this.getCurrentUrl());
+        loadTime(this.getCurrentUrl());
         test.assertSelectorHasText('h3', 'Shipment');
         this.fill('form[name="shipmentForm"]', config.guest.shipment, true);
     });
@@ -101,7 +87,7 @@ casper.test.begin('Testing Spryker Demoshop web page', function (test) {
     // Choose payment method
     casper.then(function () {
         test.comment('Choose payment method');
-        loadTime.call(this, this.getCurrentUrl());
+        loadTime(this.getCurrentUrl());
         test.assertSelectorHasText('h3', 'Payment');
         this.fill('form[name="paymentForm"]', config.guest.payment, true);
     });
@@ -109,7 +95,7 @@ casper.test.begin('Testing Spryker Demoshop web page', function (test) {
     // Cart - Summary
     casper.then(function () {
         test.comment('Submit order');
-        loadTime.call(this, this.getCurrentUrl());
+        loadTime(this.getCurrentUrl());
         test.assertSelectorHasText('h3', 'Summary');
         this.fill('form[name="summaryForm"]', {}, true);
     });
