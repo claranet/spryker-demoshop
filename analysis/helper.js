@@ -21,6 +21,12 @@ function loadTime(path) {
 
 var totalTime = 0;
 
+/**
+ * Checks if total time elapsed meets the given criteria.
+ * 
+ * @param {Number} warning - Warning level in ms.
+ * @param {Number} critical - Critical level in ms.
+ */
 function evalTotalTime(warning, critical) {
     if (warning == 0 && critical == 0) {
         return;
