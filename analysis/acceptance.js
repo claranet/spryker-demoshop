@@ -2,6 +2,7 @@ const config = require('./config');
 const helper = require('./helper');
 
 const loadTime = helper.loadTime.bind(casper);
+const evalTotalTime = helper.evalTotalTime.bind(casper);
 
 casper.test.begin('Testing Spryker Demoshop web page', function (test) {
     // Open home page and search for item
@@ -95,6 +96,12 @@ casper.test.begin('Testing Spryker Demoshop web page', function (test) {
         loadTime(this.getCurrentUrl());
         test.assertSelectorHasText('h3', 'Summary');
         this.fill('form[name="summaryForm"]', {}, true);
+    });
+
+    // Evaluate total transaction time
+    casper.then(function () {
+        test.comment('Evaluate transaction time');
+        evalTotalTime(config.warning, config.critical);
     });
 
     casper.run(function () {

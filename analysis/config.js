@@ -1,3 +1,7 @@
+/**
+ * Default config for testing transaction time on demoshop.
+ * 
+ */
 module.exports = {
     //Set critical and warning times
     critical: 0,
