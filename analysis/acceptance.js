@@ -5,15 +5,20 @@ const loadTime = helper.loadTime.bind(casper);
 const evalTotalTime = helper.evalTotalTime.bind(casper);
 
 casper.test.begin('Testing Spryker Demoshop web page', function (test) {
-    // Open home page and search for item
     casper.start(config.baseUrl, function () {
+        casper.viewport(1360, 768);
+    });
+
+    // Open home page and search for item
+    casper.then(function () {
         loadTime(this.getCurrentUrl());
         test.assertTitle(config.title, 'Home Page title is ' + config.title);
-        
+
         test.comment('Fill search field');
-        this.fill('form[action="/search"]', {
-            q: config.item.search
-        }, true);
+        this.sendKeys(config.search.fieldSelector, config.search.item);
+        this.waitForText(config.search.waitForText, function () {
+            this.echo('Text found!', 'INFO');
+        });
     });
 
     // Search preview box
@@ -29,7 +34,7 @@ casper.test.begin('Testing Spryker Demoshop web page', function (test) {
         test.comment('Add item to cart');
         loadTime(this.getCurrentUrl());
         test.assertTitle(config.item.title, 'Title is ' + config.item.title);
-        test.assertSelectorHasText('h5', 'Product Variants');
+        test.assertSelectorHasText('h5', config.item.variantsText);
         this.fill('form[method="GET"]', config.item.variants, false);
     });
 
@@ -48,53 +53,53 @@ casper.test.begin('Testing Spryker Demoshop web page', function (test) {
     casper.then(function () {
         test.comment('Proceed to checkout');
         loadTime(this.getCurrentUrl());
-        test.assertSelectorHasText('h3', 'Cart');
+        test.assertSelectorHasText('h3', config.selectorCart);
         this.click('a.button.expanded.success');
     });
 
-    // Cart - Login
+    // Login view
     // Fill checkout-guest form
     casper.then(function () {
         test.comment('Fill user form');
         loadTime(this.getCurrentUrl());
         this.click('input#guest');
-        test.assertSelectorHasText('.__checkout-proceed-as-method.__is-shown', ' Order as guest');
+        test.assertSelectorHasText('.__checkout-proceed-as-method.__is-shown', config.selectorGuest);
         this.fill('form[name="guestForm"]', config.guest.register, true);
     });
 
-    // Cart - Address
+    // Address view
     // Fill address information
     casper.then(function () {
         test.comment('Fill address form');
         loadTime(this.getCurrentUrl());
-        test.assertSelectorHasText('h3', 'Address');
-        test.assertSelectorHasText('h4', 'Shipping Address');
+        test.assertSelectorHasText('h3', config.selectorAddress);
+        test.assertSelectorHasText('h4', config.selectorShippingAddress);
         this.fill('form[name="addressesForm"]', config.guest.address, true);
     });
 
-    // Cart - Shipment
+    // Shipment view
     // Choose shipping method
     casper.then(function () {
         test.comment('Choose shipping method');
         loadTime(this.getCurrentUrl());
-        test.assertSelectorHasText('h3', 'Shipment');
+        test.assertSelectorHasText('h3', config.selectorShipment);
         this.fill('form[name="shipmentForm"]', config.guest.shipment, true);
     });
 
-    // Cart - Payment
+    // Payment view
     // Choose payment method
     casper.then(function () {
         test.comment('Choose payment method');
         loadTime(this.getCurrentUrl());
-        test.assertSelectorHasText('h3', 'Payment');
+        test.assertSelectorHasText('h3', config.selectorPayment);
         this.fill('form[name="paymentForm"]', config.guest.payment, true);
     });
 
-    // Cart - Summary
+    // Summary view
     casper.then(function () {
         test.comment('Submit order');
         loadTime(this.getCurrentUrl());
-        test.assertSelectorHasText('h3', 'Summary');
+        test.assertSelectorHasText('h3', config.selectorSummary);
         this.fill('form[name="summaryForm"]', {}, true);
     });
 

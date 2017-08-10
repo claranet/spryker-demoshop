@@ -9,14 +9,28 @@ module.exports = {
 
     title: 'Spryker Shop',
     baseUrl: 'http://localhost:2380/',
+    search: {
+        fieldSelector: 'input[name=q]',
+        item: 'dell chromebook 13',
+        
+        // Text in the elasticSearch results box
+        waitForText: 'Search suggestions'
+    },
     item: {
-        search: 'dell chromebook 13',
         href: '/en/dell-chromebook-13-63',
         title: 'DELL Chromebook 13',
+        variantsText: 'Product Variants',
         variants: {
             'attribute[processor_frequency]': '2 GHz'
         }
     },
+    selectorCart: 'Cart',
+    selectorGuest: ' Order as guest',
+    selectorAddress: 'Address',
+    selectorShippingAddress: 'Shipping Address',
+    selectorShipment: 'Shipment',
+    selectorPayment: 'Payment',
+    selectorSummary: 'Summary',
     guest: {
         register: {
             'guestForm[customer][salutation]': 'Mr.',
