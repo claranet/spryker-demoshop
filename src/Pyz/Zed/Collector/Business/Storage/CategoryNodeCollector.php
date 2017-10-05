@@ -8,7 +8,7 @@
 namespace Pyz\Zed\Collector\Business\Storage;
 
 use Generated\Shared\Transfer\LocaleTransfer;
-use Spryker\Shared\Category\CategoryConstants;
+use Spryker\Zed\Category\CategoryConfig;
 use Spryker\Zed\Collector\Business\Collector\Storage\AbstractStoragePdoCollector;
 use Spryker\Zed\Collector\Business\Exporter\Writer\Storage\TouchUpdaterSet;
 use Spryker\Zed\Collector\CollectorConfig;
@@ -79,13 +79,14 @@ class CategoryNodeCollector extends AbstractStoragePdoCollector
     protected function formatCategoryNode(array $collectItemData)
     {
         return [
-            'node_id' => $collectItemData[CollectorConfig::COLLECTOR_RESOURCE_ID],
+            'node_id' => (int)$collectItemData[CollectorConfig::COLLECTOR_RESOURCE_ID],
             'name' => $collectItemData['name'],
             'url' => $collectItemData['url'],
+            'template_path' => $collectItemData['template_path'],
             'image' => $collectItemData['category_image_name'],
             'children' => $collectItemData['children'],
             'parents' => $collectItemData['parents'],
-            'order' => $collectItemData['node_order'],
+            'order' => (int)$collectItemData['node_order'],
             'meta_title' => $collectItemData['meta_title'],
             'meta_description' => $collectItemData['meta_description'],
             'meta_keywords' => $collectItemData['meta_keywords'],
@@ -137,7 +138,7 @@ class CategoryNodeCollector extends AbstractStoragePdoCollector
      */
     protected function collectResourceType()
     {
-        return CategoryConstants::RESOURCE_TYPE_CATEGORY_NODE;
+        return CategoryConfig::RESOURCE_TYPE_CATEGORY_NODE;
     }
 
 }

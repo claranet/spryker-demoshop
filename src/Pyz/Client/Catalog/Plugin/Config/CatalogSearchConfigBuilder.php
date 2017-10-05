@@ -11,7 +11,9 @@ use Generated\Shared\Search\PageIndexMap;
 use Generated\Shared\Transfer\FacetConfigTransfer;
 use Generated\Shared\Transfer\PaginationConfigTransfer;
 use Generated\Shared\Transfer\SortConfigTransfer;
+use Pyz\Client\ProductReview\Plugin\ProductRatingValueTransformer;
 use Spryker\Client\Kernel\AbstractPlugin;
+use Spryker\Client\ProductLabel\Plugin\ProductLabelFacetValueTransformerPlugin;
 use Spryker\Client\Search\Dependency\Plugin\FacetConfigBuilderInterface;
 use Spryker\Client\Search\Dependency\Plugin\PaginationConfigBuilderInterface;
 use Spryker\Client\Search\Dependency\Plugin\SearchConfigBuilderInterface;
@@ -29,6 +31,8 @@ class CatalogSearchConfigBuilder extends AbstractPlugin implements SearchConfigB
     const SIZE_UNLIMITED = 0;
 
     const CATEGORY_FACET_PARAM_NAME = 'category';
+    const LABEL_FACET_NAME = 'label';
+    const RATING_FACET_NAME = 'rating';
 
     /**
      * @param \Spryker\Client\Search\Dependency\Plugin\FacetConfigBuilderInterface $facetConfigBuilder
@@ -39,7 +43,9 @@ class CatalogSearchConfigBuilder extends AbstractPlugin implements SearchConfigB
     {
         $this
             ->addCategoryFacet($facetConfigBuilder)
-            ->addPriceFacet($facetConfigBuilder);
+            ->addPriceFacet($facetConfigBuilder)
+            ->addProductLabelFacet($facetConfigBuilder)
+            ->addProductRatingFacet($facetConfigBuilder);
     }
 
     /**
@@ -50,6 +56,7 @@ class CatalogSearchConfigBuilder extends AbstractPlugin implements SearchConfigB
     public function buildSortConfig(SortConfigBuilderInterface $sortConfigBuilder)
     {
         $this
+            ->addDescendingRatingSort($sortConfigBuilder)
             ->addAscendingNameSort($sortConfigBuilder)
             ->addDescendingNameSort($sortConfigBuilder)
             ->addAscendingPriceSort($sortConfigBuilder)
@@ -110,6 +117,45 @@ class CatalogSearchConfigBuilder extends AbstractPlugin implements SearchConfigB
     }
 
     /**
+     * @param \Spryker\Client\Search\Dependency\Plugin\FacetConfigBuilderInterface $facetConfigBuilder
+     *
+     * @return $this
+     */
+    protected function addProductLabelFacet(FacetConfigBuilderInterface $facetConfigBuilder)
+    {
+        $productLabelFacetTransfer = (new FacetConfigTransfer())
+            ->setName(static::LABEL_FACET_NAME)
+            ->setParameterName(static::LABEL_FACET_NAME)
+            ->setFieldName(PageIndexMap::STRING_FACET)
+            ->setType(SearchConfig::FACET_TYPE_ENUMERATION)
+            ->setIsMultiValued(true)
+            ->setValueTransformer(ProductLabelFacetValueTransformerPlugin::class);
+
+        $facetConfigBuilder->addFacet($productLabelFacetTransfer);
+
+        return $this;
+    }
+
+    /**
+     * @param \Spryker\Client\Search\Dependency\Plugin\FacetConfigBuilderInterface $facetConfigBuilder
+     *
+     * @return $this
+     */
+    protected function addProductRatingFacet(FacetConfigBuilderInterface $facetConfigBuilder)
+    {
+        $productRatingFacetTransfer = (new FacetConfigTransfer())
+            ->setName(static::RATING_FACET_NAME)
+            ->setParameterName(static::RATING_FACET_NAME)
+            ->setFieldName(PageIndexMap::INTEGER_FACET)
+            ->setType(SearchConfig::FACET_TYPE_RANGE)
+            ->setValueTransformer(ProductRatingValueTransformer::class);
+
+        $facetConfigBuilder->addFacet($productRatingFacetTransfer);
+
+        return $this;
+    }
+
+    /**
      * @param \Spryker\Client\Search\Dependency\Plugin\SortConfigBuilderInterface $sortConfigBuilder
      *
      * @return $this
@@ -122,6 +168,24 @@ class CatalogSearchConfigBuilder extends AbstractPlugin implements SearchConfigB
             ->setFieldName(PageIndexMap::STRING_SORT);
 
         $sortConfigBuilder->addSort($ascendingNameSortConfig);
+
+        return $this;
+    }
+
+    /**
+     * @param \Spryker\Client\Search\Dependency\Plugin\SortConfigBuilderInterface $sortConfigBuilder
+     *
+     * @return $this
+     */
+    protected function addDescendingRatingSort(SortConfigBuilderInterface $sortConfigBuilder)
+    {
+        $descendingRatingSortConfig = (new SortConfigTransfer())
+            ->setName(static::RATING_FACET_NAME)
+            ->setParameterName(static::RATING_FACET_NAME)
+            ->setFieldName(PageIndexMap::INTEGER_SORT)
+            ->setIsDescending(true);
+
+        $sortConfigBuilder->addSort($descendingRatingSortConfig);
 
         return $this;
     }

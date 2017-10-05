@@ -12,10 +12,10 @@ use Generated\Shared\Transfer\WishlistMoveToCartRequestTransfer;
 use Generated\Shared\Transfer\WishlistOverviewRequestTransfer;
 use Generated\Shared\Transfer\WishlistOverviewResponseTransfer;
 use Generated\Shared\Transfer\WishlistTransfer;
+use Pyz\Yves\Application\Controller\AbstractController;
 use Pyz\Yves\Customer\Plugin\Provider\CustomerControllerProvider;
 use Pyz\Yves\Wishlist\Form\AddAllAvailableProductsToCartFormType;
 use Pyz\Yves\Wishlist\Plugin\Provider\WishlistControllerProvider;
-use Spryker\Yves\Kernel\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -49,7 +49,7 @@ class WishlistController extends AbstractController
         $itemsPerPage = $this->getItemsPerPage($request);
 
         $customerTransfer = $this->getFactory()
-            ->createCustomerClient()
+            ->getCustomerClient()
             ->getCustomer();
 
         $wishlistTransfer = (new WishlistTransfer())
@@ -95,7 +95,10 @@ class WishlistController extends AbstractController
             return $this->redirectResponseInternal(CustomerControllerProvider::ROUTE_LOGIN);
         }
 
-        $this->getClient()->addItem($wishlistItemTransfer);
+        $wishlistItemTransfer = $this->getClient()->addItem($wishlistItemTransfer);
+        if (!$wishlistItemTransfer->getIdWishlistItem()) {
+            $this->addErrorMessage('customer.account.wishlist.item.not_added');
+        }
 
         return $this->redirectResponseInternal(WishlistControllerProvider::ROUTE_WISHLIST_DETAILS, [
             'wishlistName' => $wishlistItemTransfer->getWishlistName(),
@@ -213,7 +216,7 @@ class WishlistController extends AbstractController
      */
     protected function getWishlistItemTransferFromRequest(Request $request)
     {
-        $customerClient = $this->getFactory()->createCustomerClient();
+        $customerClient = $this->getFactory()->getCustomerClient();
         $customerTransfer = $customerClient->getCustomer();
 
         if (!$customerTransfer) {
@@ -237,7 +240,7 @@ class WishlistController extends AbstractController
     protected function createAddAllAvailableProductsToCartForm(WishlistOverviewResponseTransfer $wishlistOverviewResponse = null)
     {
         $addAllAvailableProductsToCartFormDataProvider = $this->getFactory()->createAddAllAvailableProductsToCartFormDataProvider();
-        $addAllAvailableProductsToCartForm = $this->getFactory()->createAddAllAvailableProductsToCartForm(
+        $addAllAvailableProductsToCartForm = $this->getFactory()->getAddAllAvailableProductsToCartForm(
             $addAllAvailableProductsToCartFormDataProvider->getData($wishlistOverviewResponse)
         );
 

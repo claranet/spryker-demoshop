@@ -8,8 +8,8 @@
 namespace Pyz\Yves\Cart\Controller;
 
 use Generated\Shared\Transfer\ItemTransfer;
+use Pyz\Yves\Application\Controller\AbstractController;
 use Pyz\Yves\Cart\Plugin\Provider\CartControllerProvider;
-use Spryker\Yves\Kernel\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -22,17 +22,18 @@ class CartController extends AbstractController
     const PARAM_ITEMS = 'items';
 
     /**
+     * @param \Symfony\Component\HttpFoundation\Request $request
      * @param array|null $selectedAttributes
      *
      * @return array
      */
-    public function indexAction(array $selectedAttributes = null)
+    public function indexAction(Request $request, array $selectedAttributes = null)
     {
         $quoteTransfer = $this->getClient()
             ->getQuote();
 
         $voucherForm = $this->getFactory()
-            ->createVoucherForm();
+            ->getVoucherForm();
 
         $cartItems = $this->getFactory()
             ->createProductBundleGrouper()
@@ -43,7 +44,15 @@ class CartController extends AbstractController
             ->generateStepBreadcrumbs($quoteTransfer);
 
         $itemAttributesBySku = $this->getFactory()
-            ->createCartItemsAttributeProvider()->getItemsAttributes($quoteTransfer, $selectedAttributes);
+            ->createCartItemsAttributeProvider()
+            ->getItemsAttributes($quoteTransfer, $selectedAttributes);
+
+        $promotionStorageProducts = $this->getFactory()
+            ->getProductPromotionMapperPlugin()
+            ->mapPromotionItemsFromProductStorage(
+                $quoteTransfer,
+                $request
+            );
 
         return $this->viewResponse([
             'cart' => $quoteTransfer,
@@ -51,6 +60,7 @@ class CartController extends AbstractController
             'attributes' => $itemAttributesBySku,
             'voucherForm' => $voucherForm->createView(),
             'stepBreadcrumbs' => $stepBreadcrumbsTransfer,
+            'promotionStorageProducts' => $promotionStorageProducts,
         ]);
     }
 

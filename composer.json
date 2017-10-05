@@ -32,13 +32,13 @@
     "spryker/cart": "^4.0.0",
     "spryker/cart-variant": "^1.0.0",
     "spryker/catalog": "^5.0.0",
-    "spryker/category": "^3.0.0",
+    "spryker/category": "^4.0.0",
     "spryker/category-data-feed": "^0.2.0",
     "spryker/category-exporter": "^3.0.0",
     "spryker/checkout": "^3.0.0",
     "spryker/cms": "^6.0.0",
     "spryker/cms-block": "^1.0.0",
-    "spryker/cms-block-category-connector": "^1.0.0",
+    "spryker/cms-block-category-connector": "^2.0.0",
     "spryker/cms-block-collector": "^1.0.0",
     "spryker/cms-block-gui": "^1.0.0",
     "spryker/cms-block-product-connector": "^1.0.0",
@@ -55,15 +55,15 @@
     "spryker/config": "^3.0.0",
     "spryker/console": "^3.0.0",
     "spryker/country": "^3.0.0",
-    "spryker/csv": "^2.0.0",
-    "spryker/currency": "^2.0.0",
+    "spryker/currency": "^3.0.0",
     "spryker/customer": "^6.0.0",
     "spryker/customer-api": "^0.1.0",
     "spryker/customer-group": "^2.0.0",
     "spryker/customer-group-discount-connector": "^2.0.0",
-    "spryker/development": "^3.0.0",
+    "spryker/data-import": "^1.0.0",
     "spryker/discount": "^4.0.0",
     "spryker/discount-calculation-connector": "^5.0.0",
+    "spryker/discount-promotion": "^1.0.0",
     "spryker/dummy-payment": "^2.0.0",
     "spryker/elastica": "^3.0.0",
     "spryker/error-handler": "^2.0.0",
@@ -102,8 +102,8 @@
     "spryker/oms": "^7.0.0",
     "spryker/oms-discount-connector": "^3.0.0",
     "spryker/payment": "^4.0.0",
+    "spryker/payment-cart-connector": "^1.0.0",
     "spryker/payolution": "^4.0.0",
-    "spryker/payone": "^4.0.0",
     "spryker/pimple": "^2.0.0",
     "spryker/price": "^4.0.0",
     "spryker/price-cart-connector": "^3.0.0",
@@ -111,6 +111,8 @@
     "spryker/product": "^5.0.0",
     "spryker/product-abstract-data-feed": "^0.2.0",
     "spryker/product-api": "^0.1.0",
+    "spryker/product-attribute": "^1.0.0",
+    "spryker/product-attribute-gui": "^1.0.0",
     "spryker/product-bundle": "^3.0.0",
     "spryker/product-cart-connector": "^4.0.0",
     "spryker/product-category": "^4.0.0",
@@ -123,11 +125,15 @@
     "spryker/product-label-collector": "^1.0.0",
     "spryker/product-label-discount-connector": "^1.0.0",
     "spryker/product-label-gui": "^1.0.0",
-    "spryker/product-management": "^0.7.0",
+    "spryker/product-management": "^0.8.0",
+    "spryker/product-new": "^1.0.0",
     "spryker/product-option": "^5.0.0",
     "spryker/product-option-cart-connector": "^4.0.0",
     "spryker/product-relation": "^1.0.0",
     "spryker/product-relation-collector": "^1.0.0",
+    "spryker/product-review": "^1.0.0",
+    "spryker/product-review-collector": "^1.0.0",
+    "spryker/product-review-gui": "^1.0.0",
     "spryker/product-search": "^5.0.0",
     "spryker/product-set": "^1.0.0",
     "spryker/product-set-collector": "^1.0.0",
@@ -138,16 +144,17 @@
     "spryker/queue": "^0.3.0",
     "spryker/quote": "^1.0.0",
     "spryker/rabbit-mq": "^0.1.0",
-    "spryker/redis": "2.0.0",
+    "spryker/redis": "^2.0.0",
     "spryker/refund": "^5.0.0",
-    "spryker/sales": "^6.0.0",
-    "spryker/sales-aggregator": "^5.0.0",
+    "spryker/sales": "^7.0.0",
+    "spryker/sales-product-connector": "^1.0.0",
     "spryker/sales-split": "^3.0.0",
     "spryker/search": "^6.0.0",
     "spryker/sequence-number": "^3.0.0",
     "spryker/session": "^3.0.0",
     "spryker/setup": "^4.0.0",
     "spryker/shipment": "^5.0.0",
+    "spryker/shipment-discount-connector": "^1.0.0",
     "spryker/silex": "^2.0.0",
     "spryker/sql-criteria-builder": "^1.0.0",
     "spryker/state-machine": "^2.0.0",
@@ -155,10 +162,10 @@
     "spryker/stock": "^4.0.0",
     "spryker/stock-sales-connector": "^3.0.0",
     "spryker/storage": "^3.0.0",
+    "spryker/store": "^1.0.0",
     "spryker/symfony": "^3.0.0",
     "spryker/tax": "^5.0.0",
     "spryker/tax-product-connector": "^4.0.0",
-    "spryker/testify": "^3.0.0",
     "spryker/touch": "^3.0.0",
     "spryker/transfer": "^3.0.0",
     "spryker/twig": "^3.0.0",
@@ -172,24 +179,31 @@
   },
   "require-dev": {
     "codeception/c3": "^2.0.12",
+    "doctrine/instantiator": "~1.0.5",
+    "fzaninotto/faker": "^1.6",
+    "jakoch/phantomjs-installer": "^2.1.0",
+    "nette/php-generator": "^2.6.1",
     "pdepend/pdepend": "^2.2.4",
+    "php-mock/php-mock": "^1.0",
     "phploc/phploc": "^3.0.1",
     "phpmd/phpmd": "~2.4.3",
-    "sebastian/phpcpd": "~2.0.2",
-    "sensiolabs/security-checker": "~3.0.2",
-    "silex/web-profiler": "~1.0.8",
-    "symfony/web-profiler-bundle": "*",
-    "symfony/var-dumper": "*",
+    "phpunit/php-token-stream": "^1.4.11",
+    "phpunit/phpunit": "^5.0",
+    "sebastian/phpcpd": "^2.0.2",
+    "sensiolabs/security-checker": "^3.0.2",
+    "silex/web-profiler": "^1.0.8",
     "site5/phantoman": "^1.1",
     "sllh/composer-versions-check": "^2.0.2",
-    "jakoch/phantomjs-installer": "^2.1.0",
-    "php-mock/php-mock": "^1.0",
-    "phpunit/phpunit": "^5.0",
-    "spryker/architecture-sniffer": "^0.3.0",
+    "spryker/architecture-sniffer": "^0.4.0",
     "spryker/code-generator": "^0.3.0",
-    "spryker/code-sniffer": "*",
+    "spryker/code-sniffer": "^0.10.0",
+    "spryker/development": "^3.0.0",
+    "spryker/testify": "^3.0.0",
+    "squizlabs/php_codesniffer": "^3.0",
     "stecman/symfony-console-completion": "^0.7.0",
-    "fzaninotto/faker": "^1.6"
+    "phpdocumentor/reflection-docblock": "^2.0",
+    "symfony/var-dumper": "*",
+    "symfony/web-profiler-bundle": "*"
   },
   "autoload": {
     "psr-0": {
@@ -206,8 +220,12 @@
       "Auth\\Module\\": "vendor/spryker/auth/tests/_support/Module"
     },
     "psr-0": {
+      "PyzTest": "tests",
       "Acceptance\\Auth\\": "vendor/spryker/auth/tests/"
-    }
+    },
+    "files": [
+      "test-autoload.php"
+    ]
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -222,14 +240,6 @@
     {
       "type": "composer",
       "url": "https://code.spryker.com/repo/private"
-    },
-    {
-      "type": "git",
-      "url": "https://github.com/spryker/architecture-sniffer.git"
-    },
-    {
-      "type": "git",
-      "url": "https://github.com/spryker/rabbit-mq.git"
     }
   ],
   "scripts": {
@@ -242,7 +252,8 @@
       "PhantomInstaller\\Installer::installPhantomJS"
     ],
     "post-update-cmd": [
-      "PhantomInstaller\\Installer::installPhantomJS"
+      "PhantomInstaller\\Installer::installPhantomJS",
+      "Install\\ComposerAdjuster::assertDemoshopGitUrls"
     ]
   }
 }

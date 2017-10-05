@@ -61,17 +61,14 @@ class ProductDataPageMapBuilder
      */
     public function buildPageMap(PageMapBuilderInterface $pageMapBuilder, array $productData, LocaleTransfer $localeTransfer)
     {
-        $isActive = $this->isProductAbstractActive(
-            $productData['product_status_aggregation'],
-            $productData['product_searchable_status_aggregation']
-        );
+        $productData = $this->filterInactiveConcreteProducts($productData);
 
         $pageMapTransfer = (new PageMapTransfer())
             ->setStore(Store::getInstance()->getStoreName())
             ->setLocale($localeTransfer->getLocaleName())
             ->setType(ProductSearchConfig::PRODUCT_ABSTRACT_PAGE_SEARCH_TYPE)
-            ->setIsFeatured($productData['is_featured'] == 'true')
-            ->setIsActive($isActive);
+            ->setIsFeatured(filter_var($productData['is_featured'], FILTER_VALIDATE_BOOLEAN))
+            ->setIsActive(!empty($productData['concrete_skus']));
 
         $attributes = $this->getProductAttributes($productData);
 
@@ -79,7 +76,7 @@ class ProductDataPageMapBuilder
          * Here you can hard code which product data will be used for which search functionality
          */
         $pageMapBuilder
-            ->addSearchResultData($pageMapTransfer, 'id_product_abstract', $productData['id_product_abstract'])
+            ->addSearchResultData($pageMapTransfer, 'id_product_abstract', (int)$productData['id_product_abstract'])
             ->addSearchResultData($pageMapTransfer, 'abstract_sku', $productData['abstract_sku'])
             ->addSearchResultData($pageMapTransfer, 'abstract_name', $productData['abstract_name'])
             ->addSearchResultData($pageMapTransfer, 'url', $this->getProductUrl($productData))
@@ -87,7 +84,7 @@ class ProductDataPageMapBuilder
             ->addFullTextBoosted($pageMapTransfer, $productData['abstract_name'])
             ->addFullTextBoosted($pageMapTransfer, $productData['abstract_sku'])
             ->addFullText($pageMapTransfer, $productData['concrete_names'])
-            ->addFullText($pageMapTransfer, $productData['concrete_skus'])
+            ->addFullText($pageMapTransfer, explode(',', $productData['concrete_skus']))
             ->addFullText($pageMapTransfer, $productData['abstract_description'])
             ->addFullText($pageMapTransfer, $productData['concrete_descriptions'])
             ->addSuggestionTerms($pageMapTransfer, $productData['abstract_name'])
@@ -121,25 +118,6 @@ class ProductDataPageMapBuilder
         }
 
         return $pageMapTransfer;
-    }
-
-    /**
-     * @param string $productStatusAggregation
-     * @param string $productSearchableStatusAggregation
-     *
-     * @return bool
-     */
-    protected function isProductAbstractActive($productStatusAggregation, $productSearchableStatusAggregation)
-    {
-        if (strpos($productSearchableStatusAggregation, 'true') === false) {
-            return false;
-        }
-
-        if (strpos($productStatusAggregation, 'true') === false) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -203,6 +181,104 @@ class ProductDataPageMapBuilder
         }, $result);
 
         return $result;
+    }
+
+    /**
+     * @param array $productData
+     *
+     * @return array
+     */
+    protected function filterInactiveConcreteProducts(array $productData)
+    {
+        $searchableProducts = $this->getSearchableProductSkus($productData);
+        $productData = $this->filterActiveConcreteSkus($productData, $searchableProducts);
+
+        $fieldWithConcreteData = [
+            'concrete_attributes',
+            'concrete_localized_attributes',
+            'concrete_names',
+        ];
+
+        foreach ($fieldWithConcreteData as $field) {
+            $productData[$field] = $this->filterInactiveConcreteData($productData[$field], $searchableProducts);
+        }
+        return $productData;
+    }
+
+    /**
+     * @param array $productData
+     *
+     * @return array
+     */
+    protected function getSearchableProductSkus(array $productData)
+    {
+        $activeProducts = $this->getActiveProducts($productData);
+
+        $productSearchableList = explode(',', $productData['product_searchable_status_aggregation']);
+        $searchableProducts = [];
+        foreach ($productSearchableList as $productSearchableStatus) {
+            list($concreteSku, $status) = explode(':', $productSearchableStatus);
+
+            if (filter_var($status, FILTER_VALIDATE_BOOLEAN) && isset($activeProducts[$concreteSku])) {
+                $searchableProducts[$concreteSku] = true;
+            }
+        }
+        return $searchableProducts;
+    }
+
+    /**
+     * @param array $productData
+     * @param array $searchableProducts
+     *
+     * @return mixed
+     */
+    protected function filterActiveConcreteSkus(array $productData, array $searchableProducts)
+    {
+        $skuList = array_intersect_key($searchableProducts, array_flip(explode(',', $productData['concrete_skus'])));
+
+        $productData['concrete_skus'] = implode(',', array_keys($skuList));
+
+        return $productData;
+    }
+
+    /**
+     * @param string $data
+     * @param array $activeProducts
+     *
+     * @return string
+     */
+    protected function filterInactiveConcreteData($data, array $activeProducts)
+    {
+        $rows = explode(',', $data);
+        $activeConcreteData = [];
+        foreach ($rows as $col) {
+            list($sku, $entry) = explode(':', $col);
+
+            if (isset($activeProducts[$sku])) {
+                $activeConcreteData[] = $entry;
+            }
+        }
+
+        return implode(',', $activeConcreteData);
+    }
+
+    /**
+     * @param array $productData
+     *
+     * @return array
+     */
+    protected function getActiveProducts(array $productData)
+    {
+        $productStatusList = explode(',', $productData['product_status_aggregation']);
+        $activeProducts = [];
+        foreach ($productStatusList as $productStatus) {
+            list($abstractSku, $status) = explode(':', $productStatus);
+
+            if (filter_var($status, FILTER_VALIDATE_BOOLEAN)) {
+                $activeProducts[$abstractSku] = true;
+            }
+        }
+        return $activeProducts;
     }
 
 }
