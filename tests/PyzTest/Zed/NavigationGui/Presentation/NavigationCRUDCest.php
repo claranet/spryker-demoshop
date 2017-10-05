@@ -33,7 +33,6 @@ class NavigationCRUDCest
      */
     public function testICanCreateReadUpdateAndDeleteNavigation(NavigationGuiPresentationTester $i)
     {
-        $scenario->skip('Test pointing to the wrong current URL');
         $i->amLoggedInUser();
         $i->amOnPage(NavigationCreatePage::URL);
 
