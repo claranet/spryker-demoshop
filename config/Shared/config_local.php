@@ -54,19 +54,19 @@ $config_local = [
   StorageConstants::STORAGE_REDIS_PROTOCOL      => getenvDefault('REDIS_STORAGE_PROTOCOL', 'tcp'),
   StorageConstants::STORAGE_REDIS_HOST          => getenvDefault('REDIS_STORAGE_HOST', 'redis'),
   StorageConstants::STORAGE_REDIS_PORT          => getenvDefault('REDIS_STORAGE_PORT', '6379'),
-  StorageConstants::STORAGE_REDIS_PASSWORD      => getenvDefault('REDIS_STORAGE_PASSWORD', ''),
+  StorageConstants::STORAGE_REDIS_PASSWORD      => getenvDefault('REDIS_STORAGE_PASSWORD', NULL),
 
   SessionConstants::YVES_SESSION_REDIS_DATABASE => $redis_database_counter++,
   SessionConstants::YVES_SESSION_REDIS_PROTOCOL => getenvDefault('REDIS_SESSION_PROTOCOL', 'tcp'),
   SessionConstants::YVES_SESSION_REDIS_HOST     => getenvDefault('REDIS_SESSION_HOST', 'redis'),
   SessionConstants::YVES_SESSION_REDIS_PORT     => getenvDefault('REDIS_SESSION_PORT', '6379'),
-  SessionConstants::YVES_SESSION_REDIS_PASSWORD => getenvDefault('REDIS_SESSION_PASSWORD', ''),
+  SessionConstants::YVES_SESSION_REDIS_PASSWORD => getenvDefault('REDIS_SESSION_PASSWORD', NULL),
 
   SessionConstants::ZED_SESSION_REDIS_DATABASE  => $redis_database_counter++,
   SessionConstants::ZED_SESSION_REDIS_PROTOCOL  => getenvDefault('REDIS_SESSION_PROTOCOL', 'tcp'),
   SessionConstants::ZED_SESSION_REDIS_HOST      => getenvDefault('REDIS_SESSION_HOST', 'redis'),
   SessionConstants::ZED_SESSION_REDIS_PORT      => getenvDefault('REDIS_SESSION_PORT', '6379'),
-  SessionConstants::ZED_SESSION_REDIS_PASSWORD  => getenvDefault('REDIS_SESSION_PASSWORD', ''),
+  SessionConstants::ZED_SESSION_REDIS_PASSWORD  => getenvDefault('REDIS_SESSION_PASSWORD', NULL),
   
   
   SessionConstants::YVES_SESSION_SAVE_HANDLER   => SessionConstants::SESSION_HANDLER_REDIS,
