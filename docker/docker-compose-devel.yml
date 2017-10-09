@@ -5,10 +5,10 @@ version: '3'
 services:
   init:
     image: "${IMAGE}:${VERSION}"
-    #command: "init"
-    command:
-      - sleep
-      - "1000000"
+    command: "init"
+    #command:
+    #  - sleep
+    #  - "1000000"
     restart: "no"
     depends_on:
       - zed
@@ -19,12 +19,14 @@ services:
     env_file: ./docker-compose.env
     environment:
       - APPLICATION_ENV=development
+      - ENABLE_OPCACHE=false
     volumes:
       - ../config:/data/shop/config
       - ../assets:/data/shop/assets
       - ../src/Pyz:/data/shop/src/Pyz
       - ../composer.json:/data/shop/composer.json
       - ../package.json:/data/shop/package.json
+      - ./docker-compose-devel.d:/mnt/configs
 
   yves:
     image: "${IMAGE}:${VERSION}"
@@ -45,7 +47,7 @@ services:
     env_file: ./docker-compose.env
     environment:
       - APPLICATION_ENV=development
-      - ENABLE_OPCACHE=false
+      - ENABLE_OPCACHE=true
     volumes:
       - ../config:/data/shop/config
       - ../assets:/data/shop/assets
@@ -53,6 +55,7 @@ services:
       - ../composer.json:/data/shop/composer.json
       - ../package.json:/data/shop/package.json
       - ../tests:/data/shop/tests
+      - ./docker-compose-devel.d:/mnt/configs
 
   zed: 
     image: "${IMAGE}:${VERSION}"
@@ -73,13 +76,14 @@ services:
     env_file: ./docker-compose.env
     environment:
       - APPLICATION_ENV=development
-      - ENABLE_OPCACHE=false
+      - ENABLE_OPCACHE=true
     volumes:
       - ../config:/data/shop/config
       - ../assets:/data/shop/assets
       - ../src/Pyz:/data/shop/src/Pyz
       - ../composer.json:/data/shop/composer.json
       - ../package.json:/data/shop/package.json
+      - ./docker-compose-devel.d:/mnt/configs
 
   phantomjs:
     image: "wernight/phantomjs"

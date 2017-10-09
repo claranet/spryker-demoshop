@@ -18,11 +18,7 @@ services:
       - APPLICATION_ENV=production
       - ENABLE_OPCACHE=true
     volumes:
-      - ../config:/data/shop/config
-      - ../assets:/data/shop/assets
-      - ../src/Pyz:/data/shop/src/Pyz
-      - ../composer.json:/data/shop/composer.json
-      - ../package.json:/data/shop/package.json
+      - ./docker-compose-prod.d:/mnt/configs
 
   yves:
     image: "${IMAGE}:${VERSION}"
@@ -44,6 +40,8 @@ services:
     environment:
       - APPLICATION_ENV=production
       - ENABLE_OPCACHE=true
+    volumes:
+      - ./docker-compose-prod.d:/mnt/configs
 
   zed: 
     image: "${IMAGE}:${VERSION}"
@@ -68,6 +66,8 @@ services:
     environment:
       - APPLICATION_ENV=production
       - ENABLE_OPCACHE=true
+    volumes:
+      - ./docker-compose-prod.d:/mnt/configs
 
   redis:
     image: "bitnami/redis:4.0"
