@@ -5,10 +5,10 @@ version: '3'
 services:
   init:
     image: "${IMAGE}:${VERSION}"
-    command: "init"
-    #command:
-    #  - sleep
-    #  - "1000000"
+    #command: "init"
+    command:
+      - sleep
+      - "1000000"
     restart: "no"
     depends_on:
       - zed
@@ -45,7 +45,7 @@ services:
     env_file: ./docker-compose.env
     environment:
       - APPLICATION_ENV=development
-      - ENABLE_OPCACHE=true
+      - ENABLE_OPCACHE=false
     volumes:
       - ../config:/data/shop/config
       - ../assets:/data/shop/assets
@@ -73,7 +73,7 @@ services:
     env_file: ./docker-compose.env
     environment:
       - APPLICATION_ENV=development
-      - ENABLE_OPCACHE=true
+      - ENABLE_OPCACHE=false
     volumes:
       - ../config:/data/shop/config
       - ../assets:/data/shop/assets
