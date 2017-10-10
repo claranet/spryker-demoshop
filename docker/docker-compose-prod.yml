@@ -94,3 +94,13 @@ services:
       - elasticsearch
       - redis
     env_file: ./docker-compose.env
+  
+  nagios:
+    image: "nagios-docker"
+    build:
+      context: ../scripts/nagios
+    restart: always
+    ports:
+      - "5000:80"
+    links:
+      - yves
