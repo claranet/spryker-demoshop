@@ -1,28 +1,49 @@
-sudo: required
+# Rationale:
+#   - Build only: master, tags and PR
+#   - Master is the most current not yet released state
+#   - Tags representing releases versions
+#   - If tag matches the latest version configured here, the floating tag
+#     `:latest` will be conferred to this particular image.
+#   - PR are being built and tested, but not published
+#   - Concurrency is disabled; Newer jobs are spooled 
+#   - To share image between stages the intermediate product will be taged with
+#     `:ci-$variant` and pushed to docker hub
+sudo: false
+#dist: trusty
 language: bash
 services:
   - docker
 
-env:
-  - VERSION=2.17.0 LATEST=yes PROJECT=spryker
+branches:
+  only:
+    - master
+    - /^\d+\.\d+\.\d+$/
 
-install: true
+env:
+  - LATEST=2.23.0
 
 before_script:
   - env | sort
-  - image="claranet/spryker-demoshop"
-  - tag="${VERSION}${VARIANT:+-$VARIANT}"
+  - export image="claranet/spryker-demoshop"
+  - export tag="${TRAVIS_BRANCH:-${TRAVIS_TAG}}${VARIANT:+-$VARIANT}"
+  - export tagci="ci${VARIANT:+-$VARIANT}"
 
-script:
-  - ./docker/run devel up -d
-  - ./scripts/ci/run_tests.sh
-
-after_success:
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
-      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-      docker push $image:$tag;
-      if [ "$LATEST" == "yes" ]; then
-        docker tag $image:$tag $image:latest;
-        docker push $image:latest;
-      fi
-    fi
+jobs:
+  include:
+    - stage: Build
+      script:
+        - docker build -t $image:$tagci .
+        - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+        - docker push $image:$tagci
+    - stage: Test
+      script:
+        - export IMAGE=$image VERSION=$tagci ENV=devel
+        - docker pull $IMAGE:$VERSION
+        - ./docker/run $ENV up -d --no-build
+        - ./scripts/ci/run_tests.sh
+    - stage: Publish
+      deploy:
+        provider: script
+        script: ./scripts/ci/deploy.sh
+        on: 
+          tags: true
