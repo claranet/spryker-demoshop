@@ -12,7 +12,7 @@ docker pull $IMAGE:$VERSION
 
 printf "Waiting for stack to come up "
 while [ $RETRY -ge 0 ]; do
-    if nc -z localhost 2308; then 
+    if nc -z localhost 2380; then 
         break 
     fi
     printf "."
@@ -27,4 +27,4 @@ else
     printf "\nServices ready to be tested ...\n"
 fi
 
-curl -v http://localhost:2380/cart
+curl -f -v http://localhost:2380/cart
