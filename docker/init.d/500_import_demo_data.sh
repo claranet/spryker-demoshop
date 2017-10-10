@@ -1,3 +1,3 @@
 #!/bin/sh 
 
-$CONSOLE import:demo-data
+$CONSOLE data:import

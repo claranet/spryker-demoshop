@@ -29,7 +29,7 @@ class PasswordController extends AbstractCustomerController
     {
         $form = $this
             ->getFactory()
-            ->getCustomerFormFactory()
+            ->createCustomerFormFactory()
             ->createForgottenPasswordForm()
             ->handleRequest($request);
 
@@ -57,9 +57,14 @@ class PasswordController extends AbstractCustomerController
      */
     public function restorePasswordAction(Request $request)
     {
+        if ($this->isLoggedInCustomer()) {
+            $this->addErrorMessage('customer.reset.password.error.already.loggedIn');
+            return $this->redirectResponseInternal('home');
+        }
+
         $form = $this
             ->getFactory()
-            ->getCustomerFormFactory()
+            ->createCustomerFormFactory()
             ->createFormRestorePassword()
             ->setData([
                 RestorePasswordForm::FIELD_RESTORE_PASSWORD_KEY => $request->query->get('token'),

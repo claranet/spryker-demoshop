@@ -70,7 +70,8 @@ services:
       - ENABLE_OPCACHE=true
 
   redis:
-    image: "redis:3.2-alpine"
+    image: "bitnami/redis:4.0"
+    env_file: ./docker-compose.env
     restart: always
 
   elasticsearch:

@@ -4,10 +4,15 @@
  * This is the global runtime configuration for Yves and Generated_Yves_Zed in a devtest environment.
  */
 
+use Monolog\Logger;
+use Pyz\Shared\Log\LogConstants;
+use Pyz\Shared\WebProfiler\WebProfilerConstants;
 use Pyz\Yves\Application\YvesBootstrap;
 use Pyz\Zed\Application\Communication\ZedBootstrap;
+use Spryker\Shared\Config\ConfigConstants;
+use Spryker\Shared\ErrorHandler\ErrorHandlerConstants;
+use Spryker\Shared\ErrorHandler\ErrorRenderer\WebExceptionErrorRenderer;
 use Spryker\Shared\Kernel\KernelConstants;
-use Spryker\Shared\Payone\PayoneConstants;
 use Spryker\Shared\Propel\PropelConstants;
 use Spryker\Shared\RabbitMq\RabbitMqConstants;
 use Spryker\Shared\Search\SearchConstants;
@@ -33,7 +38,7 @@ $config[PropelConstants::ZED_DB_PORT] = 5432;
 $config[StorageConstants::STORAGE_REDIS_PROTOCOL] = 'tcp';
 $config[StorageConstants::STORAGE_REDIS_HOST] = '127.0.0.1';
 $config[StorageConstants::STORAGE_REDIS_PORT] = '10009';
-$config[StorageConstants::STORAGE_REDIS_PASSWORD] = '';
+$config[StorageConstants::STORAGE_REDIS_PASSWORD] = false;
 $config[StorageConstants::STORAGE_REDIS_DATABASE] = 3;
 
 // ---------- Session
@@ -70,7 +75,11 @@ $config[TwigConstants::YVES_TWIG_OPTIONS] = [
 $config[SetupConstants::JENKINS_BASE_URL] = 'http://localhost:10007/';
 $config[SetupConstants::JENKINS_DIRECTORY] = '/data/shop/development/shared/data/common/jenkins';
 
-// ---------- Payone
-$config[PayoneConstants::PAYONE] = [
-    PayoneConstants::PAYONE_MODE => '',
-];
+// ---------- ErrorHandler
+$config[ErrorHandlerConstants::ERROR_RENDERER] = WebExceptionErrorRenderer::class;
+
+// ---------- Logging
+$config[LogConstants::LOG_LEVEL] = Logger::CRITICAL;
+$config[WebProfilerConstants::ENABLE_WEB_PROFILER]
+    = $config[ConfigConstants::ENABLE_WEB_PROFILER]
+    = false;

@@ -12,10 +12,12 @@ use Spryker\Zed\Calculation\Communication\Plugin\Calculator\DiscountAmountAggreg
 use Spryker\Zed\Calculation\Communication\Plugin\Calculator\DiscountTotalCalculatorPlugin;
 use Spryker\Zed\Calculation\Communication\Plugin\Calculator\ExpenseTotalCalculatorPlugin;
 use Spryker\Zed\Calculation\Communication\Plugin\Calculator\GrandTotalCalculatorPlugin;
+use Spryker\Zed\Calculation\Communication\Plugin\Calculator\InitialGrandTotalCalculatorPlugin;
 use Spryker\Zed\Calculation\Communication\Plugin\Calculator\ItemDiscountAmountFullAggregatorPlugin;
 use Spryker\Zed\Calculation\Communication\Plugin\Calculator\ItemProductOptionPriceAggregatorPlugin;
 use Spryker\Zed\Calculation\Communication\Plugin\Calculator\ItemSubtotalAggregatorPlugin;
 use Spryker\Zed\Calculation\Communication\Plugin\Calculator\ItemTaxAmountFullAggregatorPlugin;
+use Spryker\Zed\Calculation\Communication\Plugin\Calculator\NetTotalCalculatorPlugin;
 use Spryker\Zed\Calculation\Communication\Plugin\Calculator\OrderTaxTotalCalculationPlugin;
 use Spryker\Zed\Calculation\Communication\Plugin\Calculator\PriceCalculatorPlugin;
 use Spryker\Zed\Calculation\Communication\Plugin\Calculator\PriceToPayAggregatorPlugin;
@@ -26,6 +28,7 @@ use Spryker\Zed\Calculation\Communication\Plugin\Calculator\RemoveTotalsCalculat
 use Spryker\Zed\Calculation\Communication\Plugin\Calculator\SubtotalCalculatorPlugin;
 use Spryker\Zed\Calculation\Communication\Plugin\Calculator\TaxTotalCalculatorPlugin;
 use Spryker\Zed\DiscountCalculationConnector\Communication\Plugin\DiscountCalculatorPlugin;
+use Spryker\Zed\DiscountPromotion\Communication\Plugin\Calculation\RemovePromotionItemsCalculatorPlugin;
 use Spryker\Zed\Kernel\Container;
 use Spryker\Zed\ProductBundle\Communication\Plugin\Calculation\CalculateBundlePricePlugin;
 use Spryker\Zed\ProductOption\Communication\Plugin\ProductOptionTaxRateCalculatorPlugin;
@@ -162,6 +165,9 @@ class CalculationDependencyProvider extends SprykerCalculationDependencyProvider
      * TaxTotalCalculatorPlugin - Total tax amount
      *    - Totals.taxTotal.amount
      *
+     * NetTotalCalculatorPlugin - Calculate total amount before taxes
+     *   - Totals.netTotal
+     *
      * @param \Spryker\Zed\Kernel\Container $container
      *
      * @return \Spryker\Zed\Calculation\Dependency\Plugin\CalculationPluginInterface[]
@@ -171,6 +177,7 @@ class CalculationDependencyProvider extends SprykerCalculationDependencyProvider
         return [
             new RemoveTotalsCalculatorPlugin(),
             new RemoveAllCalculatedDiscountsCalculatorPlugin(),
+            new RemovePromotionItemsCalculatorPlugin(),
 
             new PriceCalculatorPlugin(),
             new ItemProductOptionPriceAggregatorPlugin(),
@@ -182,6 +189,7 @@ class CalculationDependencyProvider extends SprykerCalculationDependencyProvider
             new ProductOptionTaxRateCalculatorPlugin(),
             new ShipmentTaxRateCalculatorPlugin(),
 
+            new InitialGrandTotalCalculatorPlugin(),
             new DiscountCalculatorPlugin(),
             new DiscountAmountAggregatorPlugin(),
             new ItemDiscountAmountFullAggregatorPlugin(),
@@ -202,6 +210,7 @@ class CalculationDependencyProvider extends SprykerCalculationDependencyProvider
             new RefundTotalCalculatorPlugin(),
             new TaxTotalCalculatorPlugin(),
             new GrandTotalCalculatorPlugin(),
+            new NetTotalCalculatorPlugin(),
 
         ];
     }
@@ -241,6 +250,7 @@ class CalculationDependencyProvider extends SprykerCalculationDependencyProvider
             new CanceledTotalCalculationPlugin(),
             new OrderTaxTotalCalculationPlugin(),
             new GrandTotalCalculatorPlugin(),
+            new NetTotalCalculatorPlugin(),
         ];
     }
 

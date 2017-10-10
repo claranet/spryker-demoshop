@@ -8,8 +8,7 @@
 namespace Pyz\Zed\Collector\Business\Search;
 
 use Spryker\Service\UtilDataReader\UtilDataReaderServiceInterface;
-
-use Spryker\Shared\Category\CategoryConstants;
+use Spryker\Zed\Category\CategoryConfig;
 use Spryker\Zed\Collector\Business\Collector\Search\AbstractSearchPdoCollector;
 use Spryker\Zed\Collector\CollectorConfig;
 use Spryker\Zed\Search\Business\SearchFacadeInterface;
@@ -49,7 +48,7 @@ class CategoryNodeCollector extends AbstractSearchPdoCollector
      */
     protected function collectResourceType()
     {
-        return CategoryConstants::RESOURCE_TYPE_CATEGORY_NODE;
+        return CategoryConfig::RESOURCE_TYPE_CATEGORY_NODE;
     }
 
     /**
@@ -77,8 +76,8 @@ class CategoryNodeCollector extends AbstractSearchPdoCollector
      */
     protected function addExtraCollectorFields(array $result, array $collectItemData)
     {
-        $result[CollectorConfig::COLLECTOR_TOUCH_ID] = $collectItemData[CollectorConfig::COLLECTOR_TOUCH_ID];
-        $result[CollectorConfig::COLLECTOR_RESOURCE_ID] = $collectItemData[CollectorConfig::COLLECTOR_RESOURCE_ID];
+        $result[CollectorConfig::COLLECTOR_TOUCH_ID] = (int)$collectItemData[CollectorConfig::COLLECTOR_TOUCH_ID];
+        $result[CollectorConfig::COLLECTOR_RESOURCE_ID] = (int)$collectItemData[CollectorConfig::COLLECTOR_RESOURCE_ID];
         $result[CollectorConfig::COLLECTOR_SEARCH_KEY] = $collectItemData[CollectorConfig::COLLECTOR_SEARCH_KEY];
 
         return $result;

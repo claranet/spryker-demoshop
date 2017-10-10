@@ -1,16 +1,19 @@
 <?php
 
+use Monolog\Logger;
+use Pyz\Shared\Log\LogConstants;
 use Pyz\Shared\Newsletter\NewsletterConstants;
+use Pyz\Shared\WebProfiler\WebProfilerConstants;
 use Pyz\Yves\Application\YvesBootstrap;
 use Pyz\Zed\Application\Communication\ZedBootstrap;
 use Spryker\Shared\Application\ApplicationConstants;
 use Spryker\Shared\Collector\CollectorConstants;
+use Spryker\Shared\Config\ConfigConstants;
 use Spryker\Shared\Customer\CustomerConstants;
 use Spryker\Shared\Kernel\KernelConstants;
 use Spryker\Shared\Kernel\Store;
 use Spryker\Shared\Mail\MailConstants;
 use Spryker\Shared\Payolution\PayolutionConstants;
-use Spryker\Shared\Payone\PayoneConstants;
 use Spryker\Shared\ProductManagement\ProductManagementConstants;
 use Spryker\Shared\Propel\PropelConstants;
 use Spryker\Shared\Search\SearchConstants;
@@ -25,6 +28,9 @@ $CURRENT_STORE = Store::getInstance()->getStoreName();
 
 // ---------- General
 $config[KernelConstants::SPRYKER_ROOT] = APPLICATION_ROOT_DIR . '/vendor/spryker';
+$config[WebProfilerConstants::ENABLE_WEB_PROFILER]
+    = $config[ConfigConstants::ENABLE_WEB_PROFILER]
+    = false;
 
 // ---------- Yves host
 $config[ApplicationConstants::HOST_YVES] = 'www.de.spryker.test';
@@ -41,11 +47,9 @@ $config[ApplicationConstants::BASE_URL_SSL_YVES] = sprintf(
     $config[ApplicationConstants::PORT_SSL_YVES]
 );
 $config[ProductManagementConstants::BASE_URL_YVES] = $config[ApplicationConstants::BASE_URL_YVES];
-$config[PayoneConstants::BASE_URL_YVES] = $config[ApplicationConstants::BASE_URL_YVES];
 $config[PayolutionConstants::BASE_URL_YVES] = $config[ApplicationConstants::BASE_URL_YVES];
 $config[NewsletterConstants::BASE_URL_YVES] = $config[ApplicationConstants::BASE_URL_YVES];
 $config[CustomerConstants::BASE_URL_YVES] = $config[ApplicationConstants::BASE_URL_YVES];
-$config[ApplicationConstants::YVES_TRUSTED_HOSTS] = [];
 
 // ---------- Zed host
 $config[ApplicationConstants::HOST_ZED] = 'zed.de.spryker.test';
@@ -79,17 +83,8 @@ $config[TestifyConstants::BOOTSTRAP_CLASS_ZED] = ZedBootstrap::class;
 $config[StorageConstants::STORAGE_REDIS_PROTOCOL] = 'tcp';
 $config[StorageConstants::STORAGE_REDIS_HOST] = '127.0.0.1';
 $config[StorageConstants::STORAGE_REDIS_PORT] = '6379';
-$config[StorageConstants::STORAGE_REDIS_PASSWORD] = '';
+$config[StorageConstants::STORAGE_REDIS_PASSWORD] = false;
 $config[StorageConstants::STORAGE_REDIS_DATABASE] = 3;
-
-// ---------- Propel
-$config[PropelConstants::ZED_DB_ENGINE] = $config[PropelConstants::ZED_DB_ENGINE_PGSQL];
-$config[PropelConstants::ZED_DB_USERNAME] = 'postgres';
-$config[PropelConstants::ZED_DB_PASSWORD] = '';
-$config[PropelConstants::ZED_DB_DATABASE] = 'DE_test_zed';
-$config[PropelConstants::ZED_DB_HOST] = '127.0.0.1';
-$config[PropelConstants::ZED_DB_PORT] = 5432;
-$config[PropelConstants::USE_SUDO_TO_MANAGE_DATABASE] = false;
 
 // ---------- Elasticsearch
 $ELASTICA_INDEX_NAME = 'de_search';
@@ -142,29 +137,6 @@ $config[SetupConstants::JENKINS_DIRECTORY] = APPLICATION_ROOT_DIR . '/shared/dat
 // ---------- Email
 $config[MailConstants::MAILCATCHER_GUI] = 'http://' . $config[ApplicationConstants::HOST_ZED] . ':1080';
 
-// ---------- Payone
-$config[PayoneConstants::PAYONE] = [
-    PayoneConstants::PAYONE_CREDENTIALS_ENCODING => 'UTF-8',
-    PayoneConstants::PAYONE_CREDENTIALS_KEY => getenv('PAYONE_CREDENTIALS_KEY'),
-    PayoneConstants::PAYONE_CREDENTIALS_MID => getenv('PAYONE_CREDENTIALS_MID'),
-    PayoneConstants::PAYONE_CREDENTIALS_AID => getenv('PAYONE_CREDENTIALS_AID'),
-    PayoneConstants::PAYONE_CREDENTIALS_PORTAL_ID => getenv('PAYONE_CREDENTIALS_PORTAL_ID'),
-    PayoneConstants::PAYONE_PAYMENT_GATEWAY_URL => 'https://api.pay1.de/post-gateway/',
-    PayoneConstants::PAYONE_REDIRECT_SUCCESS_URL => sprintf(
-        '%s/checkout/success/',
-        $config[ApplicationConstants::BASE_URL_YVES]
-    ),
-    PayoneConstants::PAYONE_REDIRECT_ERROR_URL => sprintf(
-        '/checkout/index/',
-        $config[ApplicationConstants::BASE_URL_YVES]
-    ),
-    PayoneConstants::PAYONE_REDIRECT_BACK_URL => sprintf(
-        '/checkout/regular-redirect-payment-cancellation/',
-        $config[ApplicationConstants::BASE_URL_YVES]
-    ),
-    PayoneConstants::PAYONE_MODE => '',
-];
-
 // ---------- Payolution
 $config[PayolutionConstants::TRANSACTION_GATEWAY_URL] = 'https://test.ctpe.net/frontend/payment.prc';
 $config[PayolutionConstants::CALCULATION_GATEWAY_URL] = 'https://test-payment.payolution.com/payolution-payment/rest/request/v2';
@@ -185,3 +157,9 @@ $config[PayolutionConstants::MAX_ORDER_GRAND_TOTAL_INVOICE] = '500000';
 $config[PayolutionConstants::MIN_ORDER_GRAND_TOTAL_INSTALLMENT] = '500';
 $config[PayolutionConstants::MAX_ORDER_GRAND_TOTAL_INSTALLMENT] = '500000';
 $config[PayolutionConstants::PAYOLUTION_BCC_EMAIL] = 'invoices@payolution.com';
+
+// ---------- Propel
+$config[PropelConstants::ZED_DB_DATABASE] = 'DE_test_zed';
+
+// ---------- Logging
+$config[LogConstants::LOG_LEVEL] = Logger::CRITICAL;
