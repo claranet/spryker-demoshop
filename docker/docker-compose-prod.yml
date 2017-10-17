@@ -94,3 +94,20 @@ services:
       - elasticsearch
       - redis
     env_file: ./docker-compose.env
+
+  jenkins-slave:
+    image: "${IMAGE}:${VERSION}"
+    command: "run-jenkins"
+    depends_on:
+      - jenkins
+    links:
+      - zed
+      - redis
+      - elasticsearch
+      - database
+      - jenkins
+    env_file: ./docker-compose.env
+    environment:
+      - APPLICATION_ENV=production
+    volumes:
+      - ./docker-compose-devel.d:/mnt/configs
