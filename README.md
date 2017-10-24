@@ -28,7 +28,7 @@ This is a dockerized version of the official reference implementation of the
 [Spryker Demoshop](https://github.com/spryker/demoshop). It is ready to run
 out-of-the-box by automatically pulling all required dependencies and creating
 a stack comprising PostgreSQL, Redis, Elasticsearch and Jenkins. During runtime
-each of the services gets initialized. 
+each of the services gets initialized.
 
 You can use this repository either as a demonstration for a paradigmatic shop
 based on Spryker Commerce Framework or as starting point for the development of
@@ -53,20 +53,22 @@ box.
 
 If requisites are met running the shop is fairly easy. Just enter these steps:
 
-    $ git clone https://github.com/claranet/spryker-demoshop.git 
-    $ cd spryker-demoshop 
-    $ ./docker/run prod up
+    $ git clone https://github.com/claranet/spryker-demoshop.git
+    $ cd spryker-demoshop
+    $ ./docker/run devel up
 
-This pulls the docker image, create a network, create all the containers, and
-connects them. One of the containers defined in the `docker-compose.yml` file
-will carry out the initialization which populates the data stores with dummy
-data. 
+This pulls the docker image, create a network, create all the containers, bind
+mounts your local code into the container in order to enable you to live-edit
+from outside, connects the container to each other and finally exposes the
+public services. One of the containers defined in the `docker-compose-deve.yml`
+file will carry out the initialization which populates the data stores with
+dummy data.
 
 After the initialization has been finished, you are able to point your browser
 to the following URLs:
 
-* Yves via http://localhost:2380
-* Zed via http://localhost:2381
+* Yves via http://localhost:20100
+* Zed via http://localhost:20200
 
 ## Exposed Services
 
@@ -99,13 +101,13 @@ http://localhost:10100/, or the jenkins instance in the development env:
 http://localhost:20300/.
 
 Please note: Only the development environment exposes data services like redis, es
-and postgresql. 
+and postgresql.
 
 ## Start Development Environment
 
 If you want to start you own work based on the demoshop you will find the local
 development environment interesting. This setup enables you to mount your local
-code base into a running spryker setup and see changes take effect immediately. 
+code base into a running spryker setup and see changes take effect immediately.
 
 Just run `./docker/run devel up` and there you go.
 
@@ -117,14 +119,14 @@ Furthermore the `./docker/run` script provides you with shortcuts for common tas
 
 Just to build the docker image use: `./docker/run build`
 
-This applies to both environments since both are based of the very same image. 
+This applies to both environments since both are based of the very same image.
 
 ### Create/Destroy Setup
 
 * Create devel env: `./docker/run/build devel up`
 * Destroy devel env including the removal of allocated unnamed volumes: `./docker/run devel down -v`
 
-### Operations While Setups is Running 
+### Operations While Setups is Running
 
 #### Refetch Dependencies
 
@@ -144,7 +146,7 @@ While debugging it might be useful instead of letting `/entrypoints.sh`
 initialize the container to skip this steps and check for yourself. You could
 do this by changing the `command: run-zed` directive of the concerning
 container to `command: sleep 1000000` in the `docker-compose-devel.yml` and
-recreate the container by running `./docker/run devel recreate zed`. 
+recreate the container by running `./docker/run devel recreate zed`.
 
 ### Interface to `docker-compose`
 
@@ -163,7 +165,7 @@ intermediate build container:
     docker commit $(docker ps -lq) debug
     docker run --rm --it debug /bin/sh
 
-And here you go in investigating the cause for the build failure. 
+And here you go in investigating the cause for the build failure.
 
 
 ## Known Issues
@@ -181,14 +183,14 @@ Still looking into this. The links aren't build correctly (just pointing to http
 ES 5 introduced bootstrap checks which enforce some configuration parameter in
 order to prevent misconfigured es cluster in production. Problem is, that one
 of those parameters need linux kernel configuration of host system via
-`sysctl(1)`. This breaks isolation principles. 
+`sysctl(1)`. This breaks isolation principles.
 
 So far we rely on ES 2.4 in the first place and will later proceed with newly
 arrived version 5.0.
 
 Note: [That Spryker is only supporting ES version 2.4.x](http://spryker.github.io/getting-started/system-requirements/#elasticsearch).
 
-For further discussion see: 
+For further discussion see:
 
 * https://www.elastic.co/guide/en/elasticsearch/reference/master/bootstrap-checks.html
 * https://www.elastic.co/guide/en/elasticsearch/reference/master/_maximum_map_count_check.html
