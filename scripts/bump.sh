@@ -14,7 +14,6 @@ FILES="
     $FILE
     $ROOT/.travis.yml
     $ROOT/Dockerfile
-    $ROOT/docker/build.conf
 "
 
 echo "Bumping $BUMP version: $CURR --> $NEXT ..."
