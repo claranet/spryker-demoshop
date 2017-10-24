@@ -5,6 +5,7 @@
 <!-- vim-markdown-toc GFM -->
 * [What?](#what)
 * [Run the Demoshop](#run-the-demoshop)
+* [Exposed Services](#exposed-services)
 * [Start Development Environment](#start-development-environment)
 * [Common Steps](#common-steps)
     * [Build Image](#build-image)
@@ -67,6 +68,38 @@ to the following URLs:
 * Yves via http://localhost:2380
 * Zed via http://localhost:2381
 
+## Exposed Services
+
+Several services are being exposed by the docker composable stack. In order to
+run stacks in parallel and prevent port collisions we need to align port
+allocation.
+
+Therefore the following scheme has been implemented: The port number is encoded
+like this: **ECCDD**
+
+* **E** - Environment
+    * 1 - production
+    * 2 - development
+* **CC** - Component
+    * 01 - yves
+    * 02 - zed
+    * 03 - jenkins
+    * 04 - redis
+    * 05 - elasticsearch
+    * 06 - postgresql
+    * 06 - rabbitmq
+* **DD** - Domain
+    * 00 - GLOBAL
+    * 01 - DE
+    * 02 - AT
+    * 02 - CH
+
+For example, to reach the default yves instance in the prod environment use:
+http://localhost:10100/, or the jenkins instance in the development env:
+http://localhost:20300/.
+
+Please note: Only the development environment exposes data services like redis, es
+and postgresql. 
 
 ## Start Development Environment
 

@@ -1,4 +1,4 @@
---- 
+---
 
 version: '3'
 
@@ -8,7 +8,7 @@ services:
     command: "init"
     #command:
     #  - sleep
-    #  - "1000000"
+    #  - "2d"
     restart: "no"
     depends_on:
       - zed
@@ -32,13 +32,13 @@ services:
     image: "${IMAGE}:${VERSION}"
     build:
       context: ..
-      args: 
+      args:
         - NETRC=$NETRC
         - APPLICATION_ENV=development
     command: "run-yves"
     restart: always
     ports:
-      - "2380:80"
+      - "20100:80"
     links:
       - zed
       - redis
@@ -57,17 +57,17 @@ services:
       - ../tests:/data/shop/tests
       - ./docker-compose-devel.d:/mnt/configs
 
-  zed: 
+  zed:
     image: "${IMAGE}:${VERSION}"
     build:
       context: ..
-      args: 
+      args:
         - NETRC=$NETRC
         - APPLICATION_ENV=development
     command: "run-zed"
     restart: always
     ports:
-      - "2381:80"
+      - "20200:80"
     links:
       - redis
       - elasticsearch
@@ -95,23 +95,29 @@ services:
   redis:
     image: "bitnami/redis:4.0"
     restart: always
+    ports:
+      - "20400:6379"
     env_file: ./docker-compose.env
 
   elasticsearch:
     image: "elasticsearch:2.4-alpine"
     restart: always
+    ports:
+      - "20500:9200"
     depends_on:
       - database
 
   database:
     image: "postgres:9.6.3-alpine"
     restart: always
+    ports:
+      - "20600:5432"
     env_file: ./docker-compose.env
 
   jenkins:
     image: "jenkins:alpine"
-    ports: 
-      - "10007:8080"
+    ports:
+      - "20300:8080"
     links:
       - database
       - elasticsearch

@@ -1,4 +1,4 @@
---- 
+---
 
 version: '3'
 
@@ -24,14 +24,14 @@ services:
     image: "${IMAGE}:${VERSION}"
     build:
       context: ..
-      args: 
-        - NETRC=$NETRC 
+      args:
+        - NETRC=$NETRC
     command: "run-yves"
     restart: always
     depends_on:
       - zed
     ports:
-      - "2380:80"
+      - "10100:80"
     links:
       - zed
       - redis
@@ -43,12 +43,12 @@ services:
     volumes:
       - ./docker-compose-prod.d:/mnt/configs
 
-  zed: 
+  zed:
     image: "${IMAGE}:${VERSION}"
     build:
       context: ..
-      args: 
-        - NETRC=$NETRC 
+      args:
+        - NETRC=$NETRC
     command: "run-zed"
     restart: always
     depends_on:
@@ -56,7 +56,7 @@ services:
       - redis
       - elasticsearch
     ports:
-      - "2381:80"
+      - "10200:80"
     links:
       - redis
       - elasticsearch
@@ -87,8 +87,8 @@ services:
 
   jenkins:
     image: "jenkins:alpine"
-    ports: 
-      - "10007:8080"
+    ports:
+      - "10300:8080"
     links:
       - database
       - elasticsearch
