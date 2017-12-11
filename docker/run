@@ -3,7 +3,7 @@
 WORKDIR=`dirname $0`
 cd $WORKDIR
 
-[ -e build.conf ] && source build.conf
+[ -e build.conf.sh ] && source build.conf.sh
 
 for cmd in docker-compose docker; do 
   if ! which $cmd 2>&1 >/dev/null; then
