@@ -20,7 +20,7 @@ branches:
     - /^\d+\.\d+\.\d+$/
 
 env:
-  - LATEST=2.24.1
+  - LATEST=2.25.0
 
 before_script:
   - env | sort
