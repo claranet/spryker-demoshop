@@ -10,4 +10,3 @@ LABEL org.label-schema.name="claranet/spryker-demoshop" \
       author1="Fabian Dörk <fabian.doerk@de.clara.net>" \
       author2="Tony Fahrion <tony.fahrion@de.clara.net>"
 
-COPY ./data $WORKDIR/data
