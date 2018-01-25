@@ -47,3 +47,4 @@ jobs:
         script: ./scripts/ci/deploy.sh
         on: 
           tags: true
+
