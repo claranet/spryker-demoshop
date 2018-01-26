@@ -5,5 +5,5 @@
 
 # 2.27.1
 
-* fix missing changes from 2.27 update
+* [fix] swap `currencyIsoCode` with `currencyIsoCodes` stores config properties
 
