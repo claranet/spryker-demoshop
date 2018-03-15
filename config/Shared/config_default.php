@@ -389,8 +389,12 @@ $config[QueueConstants::QUEUE_ADAPTER_CONFIGURATION] = [
     ],
 ];
 
-$config[LogglyConstants::QUEUE_NAME] = 'loggly-log-queue';
-$config[LogglyConstants::ERROR_QUEUE_NAME] = 'loggly-log-queue.error';
+// Used for QueueHandlerPlugin which is disabled in 
+// src/Pyz/Zed/Log/LogDependencyProvider.php and
+// src/Pyz/Yves/Log/LogDependencyProvider.php
+//
+//$config[LogglyConstants::QUEUE_NAME] = 'loggly-log-queue';
+//$config[LogglyConstants::ERROR_QUEUE_NAME] = 'loggly-log-queue.error';
 
 // ---------- Events
 $config[EventConstants::LOGGER_ACTIVE] = false;
