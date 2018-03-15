@@ -40,8 +40,7 @@ class LogDependencyProvider extends SprykerLogDependencyProvider
         return [
             new StreamHandlerPlugin(),
             new ExceptionStreamHandlerPlugin(),
-			// This plugin requires rabbitMq, which we are not using for logs
-            //new QueueHandlerPlugin(),
+            new QueueHandlerPlugin(),
         ];
     }
 
