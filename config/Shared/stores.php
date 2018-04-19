@@ -35,8 +35,8 @@ $stores['DE'] = [
     // first entry is default
     'countries' => ['DE', 'AT'],
     // internal and shop
-    //'currencyIsoCode' => 'EUR',
-    'currencyIsoCodes' => ['EUR'],
+    'currencyIsoCode' => 'EUR',
+    'currencyIsoCodes' => ['EUR', 'CHF'],
 ];
 
 $stores['AT'] = $stores['DE'];

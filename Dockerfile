@@ -1,8 +1,8 @@
 
-FROM claranet/spryker-base:0.9.5-php71-alpine
+FROM claranet/spryker-base:0.9.6-php-7.1.13-fpm-jessie
 
 LABEL org.label-schema.name="claranet/spryker-demoshop" \
-      org.label-schema.version="2.27.1" \
+      org.label-schema.version="2.28.0" \
       org.label-schema.description="Dockerized Spyker Demoshop" \
       org.label-schema.vendor="Claranet GmbH" \
       org.label-schema.schema-version="1.0" \
@@ -10,4 +10,3 @@ LABEL org.label-schema.name="claranet/spryker-demoshop" \
       author1="Fabian Dörk <fabian.doerk@de.clara.net>" \
       author2="Tony Fahrion <tony.fahrion@de.clara.net>"
 
-COPY ./data $WORKDIR/data

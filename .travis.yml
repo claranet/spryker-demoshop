@@ -13,14 +13,14 @@ sudo: false
 language: bash
 services:
   - docker
-
+  
 branches:
   only:
     - master
     - /^\d+\.\d+\.\d+$/
 
 env:
-  - LATEST=2.27.1
+  - LATEST=2.28.0
 
 before_script:
   - env | sort
@@ -47,3 +47,4 @@ jobs:
         script: ./scripts/ci/deploy.sh
         on: 
           tags: true
+
