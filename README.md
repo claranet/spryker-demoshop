@@ -2,6 +2,8 @@
 
 [![build status badge](https://img.shields.io/travis/claranet/spryker-demoshop/master.svg)](https://travis-ci.org/claranet/spryker-demoshop/branches)
 
+**DEPRECATION NOTICE: We dropped alpine support in favor of debian stretch! If you require alpine, please use versions until 2.28.0**
+
 <!-- vim-markdown-toc GFM -->
 * [What?](#what)
 * [Run the Demoshop](#run-the-demoshop)
