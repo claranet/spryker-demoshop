@@ -1,5 +1,5 @@
 
-FROM claranet/spryker-base:0.9.6-php-7.1.13-fpm-jessie
+FROM claranet/php:1.1.7-php7.1.17
 
 LABEL org.label-schema.name="claranet/spryker-demoshop" \
       org.label-schema.version="2.28.0" \
@@ -10,3 +10,79 @@ LABEL org.label-schema.name="claranet/spryker-demoshop" \
       author1="Fabian Dörk <fabian.doerk@de.clara.net>" \
       author2="Tony Fahrion <tony.fahrion@de.clara.net>"
 
+# Override claranet/php image settings
+ENV NPM_ARGS="--with-dev" \
+    PHP_EXTENSIONS="mcrypt redis" \
+    BUILD_PACKAGES="${BUILD_PACKAGES} libmcrypt-dev" \
+    SYSTEM_PACKAGES="libmcrypt4 graphviz redis-tools" \
+    PHP_EXTENSIONS_STARTUP_ONLY="xdebug" \
+    ERROR_EXIT_CODE="0" \
+    NODEJS_VERSION="6" \
+    CODECEPTION_ARGS="-x CheckoutAvailabilityCest -x CmsGuiCreatePageCest -x NavigationCRUDCest -x NavigationTreeCest -x ProductRelationCreateRelationCest -x Smoke"
+
+
+# STATIC_FILES_YVES:
+#   be aware, this list will be used to sync those files on a public object store
+#   each reference should be relative to the repos path
+#   php files will be omitted
+#   result is e.g.: https://storage.googleapis.com/my-uniq-bucket-name/maintenance/index.html
+ENV STATIC_FILES_YVES="path/within/repo path2/within/repo" \
+    ASSET_ENV="prod" \
+    ENABLE_DEMO_DATA="true" \
+    CLOUDSDK_KEY_FILE="/mnt/gcloudServiceAccount/key.json" \
+    ASSET_BUCKET_NAME="to-be-defined-on-gcp" \
+    ENABLE_GOOGLE_ASSET_BUCKET="false"
+    
+
+# spryker
+# disabled env vars: (so users are foced to set them in docker-compose/k8)
+#    REDIS_STORAGE_PASSWORD="" \
+#    REDIS_SESSION_PASSWORD="" \
+#    ZED_DB_PASSWORD="" \
+#    RABBITMQ_PASSWORD="" \
+ENV APPLICATION_ENV="production" \
+    STORES="DE AT" \
+    INIT_COLLECTOR_CHUNK_SIZE="2000"
+
+# database
+ENV ENABLE_PROPEL_DIFF="true" \
+    ZED_DATABASE_HOST="database" \
+    ZED_DATABASE_PORT="5432" \
+    ZED_DATABASE_USERNAME="spryker" \
+    ZED_DATABASE_DATABASE="spryker"
+
+# rabbitmq
+ENV RABBITMQ_HOST="rabbitmq" \
+    RABBITMQ_PORT="5672" \
+    RABBITMQ_USER="spryker"
+
+# jenkins
+ENV JENKINS_HOST="jenkins" \
+    JENKINS_WORKDIR="/home/jenkins/agent" \
+    JENKINS_HOME="/home/jenkins" \
+    JENKINS_JRE_PACKAGE="openjdk-8-jre"
+
+# redis
+ENV STORAGE_REDIS_HOST="storage-redis" \
+    STORAGE_REDIS_PORT="6379" \
+    YVES_SESSION_REDIS_HOST="yves-session-redis" \
+    YVES_SESSION_REDIS_PORT="6379" \
+    ZED_SESSION_REDIS_HOST="zed-session-redis" \
+    ZED_SESSION_REDIS_PORT="6379" \
+    REDIS_STORE_DB_FACTOR="3"
+
+# elasticsearch
+ENV ELASTICSEARCH_HOST="elasticsearch" \
+    ELASTICSEARCH_PROTOCOL="http" \
+    ELASTICSEARCH_PORT="9200" \
+    ES_INDEX_NUMBER_OF_SHARDS="1" \
+    ES_INDEX_NUMBER_OF_REPLICAS="0"
+
+COPY docker/etc /etc/
+COPY . ${WORKDIR}/
+
+RUN /entrypoint.sh build deps
+RUN /entrypoint.sh build shop
+
+ARG ENABLE_JENKINS_BUILD=false
+RUN if [ "${ENABLE_JENKINS_BUILD}" = "true" ]; then /entrypoint.sh build jenkins; fi
