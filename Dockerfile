@@ -2,7 +2,7 @@
 FROM claranet/php:1.1.7-php7.1.17
 
 LABEL org.label-schema.name="claranet/spryker-demoshop" \
-      org.label-schema.version="2.28.0" \
+      org.label-schema.version="2.29.0" \
       org.label-schema.description="Dockerized Spyker Demoshop" \
       org.label-schema.vendor="Claranet GmbH" \
       org.label-schema.schema-version="1.0" \
@@ -54,7 +54,8 @@ ENV ENABLE_PROPEL_DIFF="true" \
 # rabbitmq
 ENV RABBITMQ_HOST="rabbitmq" \
     RABBITMQ_PORT="5672" \
-    RABBITMQ_USER="spryker"
+    RABBITMQ_USERNAME="spryker" \
+    RABBITMQ_VIRTUAL_HOST="spryker"
 
 # jenkins
 ENV JENKINS_HOST="jenkins" \

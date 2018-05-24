@@ -1,9 +1,9 @@
 
-# 2.29.0 (unreleased)
+# 2.30.0 (unreleased)
 
-Updates the Spryker Demoshop to version 2.29.0
+Updates the Spryker Demoshop to version 2.30.0
 
-Spryker 2.29.0 now supports PHP 7.2.x, so we update PHP to 7.2.5 as well.
+Spryker now supports PHP 7.2.x, so we update PHP to 7.2.5 as well.
 
 **versions**
 * PHP: 7.2.5 (claranet/php 1.1.7)
@@ -17,7 +17,20 @@ Spryker 2.29.0 now supports PHP 7.2.x, so we update PHP to 7.2.5 as well.
 * update Demoshop to 2.29.0
 * switch to NodeJS: 10
 
+# 2.29.0 (2018-05-24)
 
+Updates the Spryker Demoshop to version 2.29.0
+
+**versions**
+* PHP: 7.1.17 (claranet/php 1.1.7)
+* PHP Composer: 1.6.5
+* NodeJS: 6.x.x
+* Spryker Demoshop: 2.29.0
+* Jenkins-Slave JRE: 8
+
+**changes**
+* add rabbitmq to docker-compose, config_local.php and Dockerfile
+* update spryker demoshop to 2.29.0
 
 # 2.28.0 ( 2018-05-24 )
 
