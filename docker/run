@@ -166,7 +166,7 @@ build_images() {
 docker_build() {
   local image=$1; shift
   set -x
-  docker build $DOCKER_BUILD_ARGS $* -t $image -f $DOCKERFILE $WORKDIR
+  docker build $DOCKER_BUILD_ARGS -t $image -f $DOCKERFILE $* $WORKDIR
 }
 
 help() {
@@ -214,7 +214,7 @@ EXAMPLES:
 case $1 in
   build)
     shift
-    build_images
+    build_images $*
     ;;
   prod|devel)
     configure_env_$1; shift
