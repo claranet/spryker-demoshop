@@ -1,7 +1,13 @@
 #!/bin/bash
+real_path() {
+  file=$1
+  local d=$(dirname $file)
+  local b=$(basename $file)
+  pushd $d >/dev/null; echo "$(pwd)/$b"; popd >/dev/null
+}
 
-WORKDIR=$(realpath $0 | xargs dirname | xargs dirname)
-SCRIPT_PATH=$(realpath $0 | xargs dirname)
+WORKDIR=$(real_path $0 | xargs dirname | xargs dirname)
+SCRIPT_PATH=$(real_path $0 | xargs dirname)
 SCRIPT_DIRECTORY=$(basename $SCRIPT_PATH) # only the dir name for Dockerfile so we know what to copy
 cd $WORKDIR
 
