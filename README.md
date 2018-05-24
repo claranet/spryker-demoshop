@@ -117,7 +117,7 @@ the spryker-demoshop image.
 
 ### Create/Destroy Setup
 
-* Launch devel env: `./docker/run/build devel up`
+* Launch devel env: `./docker/run devel up`
 * Destroy devel env including the removal of allocated unnamed volumes: `./docker/run devel down -v`
 
 ### Operations While Setups is Running
@@ -168,7 +168,7 @@ If you find a bug not listed here, please [report](https://github.com/claranet/s
 
 ### Elasticsearch 5.0
 
-**NOTE: will be fixed with the next spryker-release!**
+**NOTE: will be fixed with the 2.31 spryker-release!**
 
 ES 5 introduced bootstrap checks which enforce some configuration parameter in
 order to prevent misconfigured es cluster in production. Problem is, that one
