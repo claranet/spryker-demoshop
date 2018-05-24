@@ -16,6 +16,7 @@ Spryker now supports PHP 7.2.x, so we update PHP to 7.2.5 as well.
 * switch to PHP 7.2.5
 * update Demoshop to 2.29.0
 * switch to NodeJS: 10
+* get ride of the `envsubst` (gettext) command in `docker/run`
 
 # 2.29.0 (2018-05-24)
 

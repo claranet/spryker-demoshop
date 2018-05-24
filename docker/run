@@ -114,7 +114,7 @@ docker_compose() {
   source $SECRETS_FILE
 
   echo "Executing: docker-compose -f $SCRIPT_PATH/docker-compose.yml -p ${PROJECT}_$ENV $*"
-  envsubst '$VOLUMES $IMAGE $VERSION' < $SCRIPT_PATH/docker-compose.yml | docker-compose -f - -p ${PROJECT}_$ENV $*
+  sed "s/__VOLUMES__/$VOLUMES/" $SCRIPT_PATH/docker-compose.yml | docker-compose -f - -p ${PROJECT}_$ENV $*
 }
 
 netrc() {
