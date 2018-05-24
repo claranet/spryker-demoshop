@@ -19,7 +19,7 @@ Spryker 2.29.0 now supports PHP 7.2.x, so we update PHP to 7.2.5 as well.
 
 
 
-# 2.28.0 ( 2018-05-23 )
+# 2.28.0 ( 2018-05-24 )
 
 Marks version 2.28.0 of the spryker demoshop image. It is the first version
 using the new [Claranet PHP parent image](https://github.com/claranet/php).

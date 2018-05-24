@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Here go your local configs which should not be version controlled (tokens, passwords, keys, ...)
+ * Will be moved to config/Shared/config_local.php by build > deps subsection
  */
 
 use Spryker\Shared\Application\ApplicationConstants;

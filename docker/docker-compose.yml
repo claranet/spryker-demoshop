@@ -8,7 +8,6 @@ x-service_config: &x-service_config
   volumes: ${VOLUMES}
 
 x-zed_environment: &zed_environment
-  - APPLICATION_ENV
   - ZED_SESSION_REDIS_PASSWORD
   - STORAGE_REDIS_PASSWORD
   - ZED_DATABASE_PASSWORD
@@ -17,7 +16,6 @@ x-zed_environment: &zed_environment
   - PHPFPM_HOST=zed-phpfpm
 
 x-yves_environment: &yves_environment
-  - APPLICATION_ENV
   - YVES_SESSION_REDIS_PASSWORD
   - STORAGE_REDIS_PASSWORD
   - DOCUMENT_ROOT=/app/public/Yves
@@ -31,6 +29,7 @@ services:
       - init
     restart: "no"
     environment: *zed_environment
+    volumes: []
 
   yves-nginx:
     <<: *x-service_config

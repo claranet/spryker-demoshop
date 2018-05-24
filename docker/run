@@ -37,22 +37,19 @@ generate_secrets_env() {
 
 configure_env_devel() {
   # VOLUMES: enable volumes in docker-compose dev env
-  export APPLICATION_ENV="development" \
-         ENV="dev" \
-         VOLUMES=$(cat <<EOF
+  export ENV="dev" \
+         VOLUMES="
 
-    - ${WORKDIR}/config:/app/config
     - ${WORKDIR}/assets:/app/assets
     - ${WORKDIR}/src/Pyz:/app/src/Pyz
     - ${WORKDIR}/composer.json:/app/composer.json
     - ${WORKDIR}/package.json:/app/package.json
     - ${WORKDIR}/tests:/app/tests
-EOF)
+"
 }
 
 configure_env_prod() {
-  export APPLICATION_ENV="production" \
-         ENV="prod" \
+  export ENV="prod" \
          VOLUMES="[]"
 }
 
