@@ -2,6 +2,16 @@
 
 version: '3.4'
 
+x-build: &x-build
+  build:
+    context: .
+
+x-jenkins-build: &x-jenkins-build
+  build:
+    context: .
+    args:
+      ENABLE_JENKINS_BUILD: "true"
+
 x-service_config: &x-service_config
   image: "${IMAGE}:${VERSION}"
   restart: always
@@ -23,6 +33,7 @@ x-yves_environment: &yves_environment
 
 services:
   init:
+    <<: *x-build
     <<: *x-service_config
     command:
       - start
@@ -32,6 +43,7 @@ services:
     volumes: []
 
   yves-nginx:
+    <<: *x-build
     <<: *x-service_config
     command:
       - start
@@ -41,6 +53,7 @@ services:
     environment: *yves_environment
 
   yves-phpfpm:
+    <<: *x-build
     <<: *x-service_config
     command:
       - start
@@ -48,6 +61,7 @@ services:
     environment: *yves_environment
 
   zed-nginx:
+    <<: *x-build
     <<: *x-service_config
     command:
       - start
@@ -57,6 +71,7 @@ services:
     environment: *zed_environment
 
   zed-phpfpm:
+    <<: *x-build
     <<: *x-service_config
     command:
       - start
@@ -116,6 +131,7 @@ services:
       - /var/jenkins_home
 
   jenkins-slave:
+    <<: *x-jenkins-build
     <<: *x-service_config
     image: "${IMAGE}:${VERSION}-jenkins"
     command:
