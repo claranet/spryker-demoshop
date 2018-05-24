@@ -32,7 +32,7 @@ jobs:
   include:
     - stage: Build
       script:
-        - docker build -t $image:$tagci .
+        - docker/run build -t $image:$tagci .
         - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
         - docker push $image:$tagci
 #    - stage: Test
