@@ -12,12 +12,11 @@ error() {
 #  - add git@github.com:spryker/demoshop.git as "spryker" remote
 #  - fetch tag "$arg1" so it does not get populated, but is availabe via "FETCH_HEAD"
 #  - try to merge "FETCH_HEAD" into current branch, which should be "upgrade/$arg1"
-#  - NEVER CREATES A TAG, because authority over versioning of this repos is at `scripts/bump.sh`
+#  - NEVER CREATES A TAG, because authority over versioning of this repos is at `bump2version` (a pip package)
 #  - NEVER PUSHES changes to origin, since this must be supervisioned by some human
 
 TAG="$1"
 BRANCH="upgrade/$TAG"
-REMOTE="upstream"
 UPSTREAM_REPO="git@github.com:spryker/demoshop.git"
 
 [ -z "$1" ] && error "Error: tag missing! Usage: $0 <upstream tag>"
@@ -26,17 +25,8 @@ UPSTREAM_REPO="git@github.com:spryker/demoshop.git"
 echo "Create branch $BRANCH"
 git checkout -b $BRANCH
 
-URL="$(git remote get-url upstream || true)"
-if [ -z "$URL" ]; then
-    echo "Add remote $REMOTE $UPSTREAM_REPO"
-    git remote add $REMOTE $UPSTREAM_REPO
-else
-    echo "Update remote $REMOTE from $URL --> $UPSTREAM_REPO"
-    git remote set-url --push $REMOTE $UPSTREAM_REPO
-fi 
-
-echo "Fetch tag $TAG from $REMOTE"
-git fetch $REMOTE "$TAG"
+echo "Fetch tag $TAG from $UPSTREAM_REPO"
+git fetch $UPSTREAM_REPO "$TAG"
 
 echo "Merge tag $TAG"
 git merge -m "Merge upstream tag $TAG into $BRANCH" FETCH_HEAD
