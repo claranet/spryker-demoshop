@@ -9,7 +9,7 @@ cd $WORKDIR
 
 SECRETS_FILE="$SCRIPT_PATH/secrets.env"
 
-for cmd in docker-compose docker; do 
+for cmd in docker-compose docker pwgen; do
   if ! which $cmd 2>&1 >/dev/null; then
     echo "ERROR: The command '$cmd' is required. Please install it!"
     exit 1
