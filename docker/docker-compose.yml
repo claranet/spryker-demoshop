@@ -111,7 +111,7 @@ services:
     ports:
       - "20300:8080"
     environment:
-      JAVA_OPTS: "-Djava.awt.headless=true"
+      JAVA_OPTS: "-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"
       JENKINS_OPTS: "-remoting"
     volumes:
       - /var/jenkins_home
