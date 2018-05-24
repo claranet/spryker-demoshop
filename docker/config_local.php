@@ -16,6 +16,7 @@ use Spryker\Shared\Storage\StorageConstants;
 use Spryker\Shared\Twig\TwigConstants;
 use Spryker\Shared\ZedRequest\ZedRequestConstants;
 use Spryker\Shared\Log\LogConstants;
+use Spryker\Shared\RabbitMq\RabbitMqConstants;
 
 
 $applicationStore = strtoupper(getenv('APPLICATION_STORE'));
@@ -80,6 +81,14 @@ $config[SessionConstants::ZED_SESSION_PERSISTENT_CONNECTION] = true;
 $config[SetupConstants::JENKINS_BASE_URL]  = getenv('JENKINS_URL');
 $config[SetupConstants::JENKINS_DIRECTORY] = '/tmp/jenkins/jobs';
 
+/**
+ *   R A B B I T M Q
+ */
+$config[RabbitMqConstants::RABBITMQ_HOST] = getenv('RABBITMQ_HOST');
+$config[RabbitMqConstants::RABBITMQ_PORT] = getenv('RABBITMQ_PORT');
+$config[RabbitMqConstants::RABBITMQ_VIRTUAL_HOST] = getenv('RABBITMQ_VIRTUAL_HOST');
+$config[RabbitMqConstants::RABBITMQ_USERNAME] = getenv('RABBITMQ_USERNAME');
+$config[RabbitMqConstants::RABBITMQ_PASSWORD] = getenv('RABBITMQ_PASSWORD');
 
 /**
  *   P O S T G R E S

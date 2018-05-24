@@ -28,6 +28,10 @@ Updates the Spryker Demoshop to version 2.29.0
 * Spryker Demoshop: 2.29.0
 * Jenkins-Slave JRE: 8
 
+**changes**
+* add rabbitmq to docker-compose, config_local.php and Dockerfile
+* update spryker demoshop to 2.29.0
+
 # 2.28.0 ( 2018-05-24 )
 
 Marks version 2.28.0 of the spryker demoshop image. It is the first version
