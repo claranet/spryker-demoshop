@@ -112,8 +112,12 @@ docker_compose() {
   generate_secrets_env
   source $SECRETS_FILE
 
-  echo "Executing: docker-compose -f $SCRIPT_PATH/docker-compose.yml -p ${PROJECT}_$ENV $*"
-  perl -p -e 's/__VOLUMES__/$ENV{VOLUMES}/' < $SCRIPT_PATH/docker-compose.yml | docker-compose -f - -p ${PROJECT}_$ENV $*
+  in=$SCRIPT_PATH/docker-compose.yml
+  out=$SCRIPT_PATH/.docker-compose.yml
+
+  perl -p -e 's/__VOLUMES__/$ENV{VOLUMES}/' < $in > $out
+  echo "Executing: docker-compose -f $out -p ${PROJECT}_$ENV $*"
+  docker-compose -f $out -p ${PROJECT}_$ENV $*
 }
 
 netrc() {
