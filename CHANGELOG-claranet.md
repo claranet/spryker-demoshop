@@ -8,13 +8,13 @@ Spryker now supports PHP 7.2.x, so we update PHP to 7.2.5 as well.
 **versions**
 * PHP: 7.2.5 (claranet/php 1.1.7)
 * PHP Composer: 1.6.5
-* NodeJS: 8.x.x
-* Spryker Demoshop: 2.29.0
+* NodeJS: 10
+* Spryker Demoshop: 2.30.0
 * Jenkins-Slave JRE: 8
 
 **changes**
-* switch to PHP 7.2.5
-* update Demoshop to 2.29.0
+* switch to PHP 7.2.5 (which includes switching to Debian Stretch, from Jessie)
+* update Demoshop to 2.30.0
 * switch to NodeJS: 10
 * get ride of the `envsubst` (gettext) command in `docker/run`
 
