@@ -39,7 +39,6 @@ configure_env_devel() {
   # VOLUMES: enable volumes in docker-compose dev env
   export ENV="dev" \
          VOLUMES="
-
     - ${WORKDIR}/assets:/app/assets
     - ${WORKDIR}/src/Pyz:/app/src/Pyz
     - ${WORKDIR}/composer.json:/app/composer.json
@@ -114,7 +113,7 @@ docker_compose() {
   source $SECRETS_FILE
 
   echo "Executing: docker-compose -f $SCRIPT_PATH/docker-compose.yml -p ${PROJECT}_$ENV $*"
-  sed "s/__VOLUMES__/$VOLUMES/" $SCRIPT_PATH/docker-compose.yml | docker-compose -f - -p ${PROJECT}_$ENV $*
+  perl -p -e 's/__VOLUMES__/$ENV{VOLUMES}/' < $SCRIPT_PATH/docker-compose.yml | docker-compose -f - -p ${PROJECT}_$ENV $*
 }
 
 netrc() {
