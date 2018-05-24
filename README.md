@@ -6,6 +6,7 @@
 **Also note: The parent image switched from `claranet/spryker-base` to `claranet/php`, which breaks the previous `docker/` filesystem structure!**
 
 <!-- vim-markdown-toc GFM -->
+
 * [What?](#what)
 * [Run the Demoshop](#run-the-demoshop)
 * [Exposed Services](#exposed-services)
@@ -19,9 +20,7 @@
     * [Interface to `docker-compose`](#interface-to-docker-compose)
     * [Debug Failed Build](#debug-failed-build)
 * [Known Issues](#known-issues)
-    * [Yves Links not working](#yves-links-not-working)
     * [Elasticsearch 5.0](#elasticsearch-50)
-    * [Redis concurrency](#redis-concurrency)
 
 <!-- vim-markdown-toc -->
 
@@ -34,7 +33,7 @@ a stack comprising PostgreSQL, Redis, Elasticsearch and Jenkins. During runtime
 each of the services gets initialized.
 
 You can use this repository either as a demonstration for a paradigmatic shop
-based on Spryker Commerce Framework or as starting point for the development of
+based on Spryker Commerce OS or as starting point for the development of
 your own implementation beginning with a fork of the demoshop.
 
 The build and start procedure along with further tooling are inherited from the
@@ -59,6 +58,7 @@ If requisites are met, running the shop is fairly easy. Just enter these steps:
 
     $ git clone https://github.com/claranet/spryker-demoshop.git
     $ cd spryker-demoshop
+    $ ./docker/run devel pull
     $ ./docker/run devel up
 
 This pulls the docker image, create a network, create all the containers, bind
@@ -82,7 +82,7 @@ run stacks in parallel and prevent port collisions we need to align port
 allocation.
 
 Therefore the following scheme has been implemented: The port number is encoded
-like this: **2CC00**
+like this: **ECC00**
 
 * **E** - Environment
     * 1 - production

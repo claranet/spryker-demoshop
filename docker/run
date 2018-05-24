@@ -94,8 +94,8 @@ env_action() {
     recreate)
       if [ -n "$1" ]; then
           compose_recreate $1
-      else 
-        for c in yves-phpfpm yves-nginx zed-nginx zed-phpfpm init; do 
+      else
+        for c in yves-phpfpm yves-nginx zed-nginx zed-phpfpm init; do
           compose_recreate $c
         done
       fi
@@ -111,7 +111,7 @@ env_action() {
     enter)
       docker_compose exec $1 /bin/bash
       ;;
-    ps|exec|up|down)
+    ps|exec|up|down|pull)
       docker_compose $action $*
       ;;
     compose)
@@ -137,7 +137,7 @@ docker_compose() {
 }
 
 netrc() {
-  if [ -e "$HOME/.netrc" ]; then 
+  if [ -e "$HOME/.netrc" ]; then
     echo "Using local ~/.netrc as credential provider"
     export NETRC=$(cat $HOME/.netrc)
     DOCKER_BUILD_ARGS="--build-arg NETRC $DOCKER_BUILD_ARGS"
@@ -169,6 +169,16 @@ docker_build() {
   docker build $DOCKER_BUILD_ARGS -t $image -f $DOCKERFILE $* $WORKDIR
 }
 
+push_images() {
+  set -exo pipefail
+
+  echo "Push spryker image"
+  docker push $* "$IMAGE:$VERSION"
+
+  echo "Push spryker jenkins slave image"
+  docker push $* "$IMAGE:$VERSION-jenkins"
+}
+
 help() {
     echo "
 SYNOPSIS: Wrapper around docker and docker-compose while considering local configurations.
@@ -178,7 +188,8 @@ USAGE: $0 <cmd> | <env> <cmd> <args>
 COMMANDS:
 
   Global:
-    build [<args>]                    -- build docker image 
+    build [<args>]                    -- build docker image
+    push  [<args>]                    -- push docker image
 
   Per Environment:
     prod|devel up [<args>]            -- Start spryker environment
@@ -194,7 +205,7 @@ COMMANDS:
 
 EXAMPLES:
 
-    - Start devel environment:
+    - Start devel environment (builds containers unless existent locally):
         $0 prod up
 
     - Tear down devel environment incl. their data stores:
@@ -212,9 +223,10 @@ EXAMPLES:
 }
 
 case $1 in
-  build)
+  build|push)
+    a=$1
     shift
-    build_images $*
+    ${a}_images $*
     ;;
   prod|devel)
     configure_env_$1; shift
