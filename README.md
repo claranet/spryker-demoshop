@@ -2,7 +2,8 @@
 
 [![build status badge](https://img.shields.io/travis/claranet/spryker-demoshop/master.svg)](https://travis-ci.org/claranet/spryker-demoshop/branches)
 
-**DEPRECATION NOTICE: We dropped alpine support in favor of debian stretch! If you require alpine, please use versions until 2.28.0**
+**DEPRECATION NOTICE: We dropped alpine support in favor of debian stretch! If you require alpine, please use versions prior 2.28.0**
+**Also note: The parent image switched from `claranet/spryker-base` to `claranet/php`, which breaks the previous `docker/` filesystem structure!**
 
 <!-- vim-markdown-toc GFM -->
 * [What?](#what)
@@ -36,24 +37,25 @@ You can use this repository either as a demonstration for a paradigmatic shop
 based on Spryker Commerce Framework or as starting point for the development of
 your own implementation beginning with a fork of the demoshop.
 
-The build and init procedures along with further tooling are inherited from the
-[claranet/spryker-base](https://github.com/claranet/spryker-base) image. There
-you will find the technical design ideas behind the dockerization and answers
+The build and start procedure along with further tooling are inherited from the
+[claranet/php](https://github.com/claranet/php) image. There
+you will find the technical design ideas behind this dockerization and answers
 to further points like:
 
 * Private Repositories
 * Build Layer
 * Environments
-* Spryker Configuration
+* `docker/` filesystem structure
+* sections / subsection & steps concept
 
 ## Run the Demoshop
 
 Requires: a recent, stable version of [docker](https://docs.docker.com/) and
-[docker-compose](https://docs.docker.com/compose/) on your
-[Linux](https://docs.docker.com/engine/installation/linux/ubuntu/)/[MacOS](https://docs.docker.com/docker-for-mac/install/)
-box.
+[docker-compose](https://docs.docker.com/compose/) (with docker-compose.yml 3.4 support) on your
+[Linux](https://docs.docker.com/engine/installation/linux/ubuntu/) or [MacOS](https://docs.docker.com/docker-for-mac/install/)
+system.
 
-If requisites are met running the shop is fairly easy. Just enter these steps:
+If requisites are met, running the shop is fairly easy. Just enter these steps:
 
     $ git clone https://github.com/claranet/spryker-demoshop.git
     $ cd spryker-demoshop
@@ -62,15 +64,16 @@ If requisites are met running the shop is fairly easy. Just enter these steps:
 This pulls the docker image, create a network, create all the containers, bind
 mounts your local code into the container in order to enable you to live-edit
 from outside, connects the container to each other and finally exposes the
-public services. One of the containers defined in the `docker-compose-deve.yml`
-file will carry out the initialization which populates the data stores with
-dummy data.
+public services. Like Yves, Zed, Jenkins-Master, Postgresql and Elasticsearch.
 
 After the initialization has been finished, you are able to point your browser
 to the following URLs:
 
-* Yves via http://localhost:20100
-* Zed via http://localhost:20200
+* Yves: http://localhost:20100
+* Zed: http://localhost:20200
+* Jenkins-Master: http://localhost:20300
+* Elasticsearch: http://localhost:20500
+* Postgresql: localhost:20600
 
 ## Exposed Services
 
@@ -79,7 +82,7 @@ run stacks in parallel and prevent port collisions we need to align port
 allocation.
 
 Therefore the following scheme has been implemented: The port number is encoded
-like this: **ECCDD**
+like this: **2CC00**
 
 * **E** - Environment
     * 1 - production
@@ -88,22 +91,9 @@ like this: **ECCDD**
     * 01 - yves
     * 02 - zed
     * 03 - jenkins
-    * 04 - redis
     * 05 - elasticsearch
     * 06 - postgresql
-    * 06 - rabbitmq
-* **DD** - Domain
-    * 00 - GLOBAL
-    * 01 - DE
-    * 02 - AT
-    * 02 - CH
-
-For example, to reach the default yves instance in the prod environment use:
-http://localhost:10100/, or the jenkins instance in the development env:
-http://localhost:20300/.
-
-Please note: Only the development environment exposes data services like redis, es
-and postgresql.
+    * 07 - rabbitmq
 
 ## Start Development Environment
 
@@ -121,11 +111,13 @@ Furthermore the `./docker/run` script provides you with shortcuts for common tas
 
 Just to build the docker image use: `./docker/run build`
 
-This applies to both environments since both are based of the very same image.
+This applies to both environments since both are based of the very same image. It will
+build the main spryker-demoshop image as well as a specialized jenkins-slave flavour from
+the spryker-demoshop image.
 
 ### Create/Destroy Setup
 
-* Create devel env: `./docker/run/build devel up`
+* Launch devel env: `./docker/run devel up`
 * Destroy devel env including the removal of allocated unnamed volumes: `./docker/run devel down -v`
 
 ### Operations While Setups is Running
@@ -147,14 +139,14 @@ If you just want to recreate those containers without rebuilding them run:
 While debugging it might be useful instead of letting `/entrypoints.sh`
 initialize the container to skip this steps and check for yourself. You could
 do this by changing the `command: run-zed` directive of the concerning
-container to `command: sleep 1000000` in the `docker-compose-devel.yml` and
+container to `command: sleep 1w` in the `docker-compose-devel.yml` and
 recreate the container by running `./docker/run devel recreate zed`.
 
 ### Interface to `docker-compose`
 
 Since all this is based on `docker-composer` you might need to call it by
-yourself, for example to enter a container via shell: `./docker/run devel
-compose exec yves /bin/sh`
+yourself, for example to enter a container via shell:
+`./docker/run devel compose exec yves bash`
 
 ### Debug Failed Build
 
@@ -174,13 +166,9 @@ And here you go in investigating the cause for the build failure.
 
 If you find a bug not listed here, please [report](https://github.com/claranet/spryker-demoshop/issues) them!
 
-### Yves Links not working
-
-Links which might point the user to /cart, /login or /checkout are not working properly.
-
-Still looking into this. The links aren't build correctly (just pointing to http://<domain>/).
-
 ### Elasticsearch 5.0
+
+**NOTE: will be fixed with the 2.31 spryker-release!**
 
 ES 5 introduced bootstrap checks which enforce some configuration parameter in
 order to prevent misconfigured es cluster in production. Problem is, that one
@@ -198,21 +186,3 @@ For further discussion see:
 * https://www.elastic.co/guide/en/elasticsearch/reference/master/_maximum_map_count_check.html
 * https://discuss.elastic.co/t/elasticsearch-5-0-0-aplha4-wont-start-without-setting-vm-max-map-count/57471/12
 * https://www.elastic.co/blog/bootstrap_checks_annoying_instead_of_devastating
-
-### Redis concurrency
-
-While doing a load test, a bug was found (and it points to redis).
-
-Apparently, there is a limitation in the way [Redis](http://www.redis.io) is configured on the demoshop project in which there can only be no more than 100 requests at a time, otherwise it doesn't behave as expected.
-
-The following log from the demoshop can be seen during the tests:
-
-```
-redis_1          | 1:M 01 Jun 14:46:19.074 * 100 changes in 300 seconds. Saving...
-redis_1          | 1:M 01 Jun 14:46:19.075 * Background saving started by pid 37
-redis_1          | 37:C 01 Jun 14:46:19.271 * DB saved on disk
-redis_1          | 37:C 01 Jun 14:46:19.273 * RDB: 2 MB of memory used by copy-on-write
-redis_1          | 1:M 01 Jun 14:46:19.276 * Background saving terminated with success
-```
-
-which makes us think that it only saves the latest 100 changes every 5 minutes.

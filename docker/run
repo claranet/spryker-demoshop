@@ -1,11 +1,15 @@
 #!/bin/bash
 
-WORKDIR=`dirname $0`
+WORKDIR=$(realpath $0 | xargs dirname | xargs dirname)
+SCRIPT_PATH=$(realpath $0 | xargs dirname)
+SCRIPT_DIRECTORY=$(basename $SCRIPT_PATH) # only the dir name for Dockerfile so we know what to copy
 cd $WORKDIR
 
-[ -e build.conf.sh ] && source build.conf.sh
+[ -e "$SCRIPT_PATH/project.conf.sh" ] && source "$SCRIPT_PATH/project.conf.sh"
 
-for cmd in docker-compose docker; do 
+SECRETS_FILE="$SCRIPT_PATH/secrets.env"
+
+for cmd in docker-compose docker pwgen; do
   if ! which $cmd 2>&1 >/dev/null; then
     echo "ERROR: The command '$cmd' is required. Please install it!"
     exit 1
@@ -13,25 +17,49 @@ for cmd in docker-compose docker; do
 done
 
 
+# Generate per user a secrets env file, if not already present
+# this makes sure, each local setup gets it own passwords
+# and it makes it easy to consume those generated passwords
+# in scripts, as we export them via shell `export`
+# docker-compose will propagate those env vars to its containers
+generate_secrets_env() {
+  if [ -e "$SECRETS_FILE" ]; then
+    return 0
+  fi
+
+  printf "Save uniq passwords for your installation in %s" "$SECRETS_FILE"
+
+  for i in YVES_SESSION_REDIS_PASSWORD ZED_SESSION_REDIS_PASSWORD STORAGE_REDIS_PASSWORD ZED_DATABASE_PASSWORD RABBITMQ_PASSWORD; do
+    local pw=$(pwgen 13 1)
+    printf "export %s=%s\n" $i $pw >> $SECRETS_FILE
+  done
+}
+
+configure_env_devel() {
+  # VOLUMES: enable volumes in docker-compose dev env
+  export ENV="dev" \
+         VOLUMES="
+
+    - ${WORKDIR}/assets:/app/assets
+    - ${WORKDIR}/src/Pyz:/app/src/Pyz
+    - ${WORKDIR}/composer.json:/app/composer.json
+    - ${WORKDIR}/package.json:/app/package.json
+    - ${WORKDIR}/tests:/app/tests
+"
+}
+
+configure_env_prod() {
+  export ENV="prod" \
+         VOLUMES="[]"
+}
+
 # Exec into container and run command
 container_action() {
   target=$1
-  case $2 in
-    yves)
-      echo "Entering Yves container ..."
-      docker_compose exec yves /entrypoint.sh $target
-      ;;
-    zed)
-      echo "Entering Yves container ..."
-      docker_compose exec zed /entrypoint.sh $target
-      ;;
-    *)
-      echo "Entering Yves container ..."
-      docker_compose exec yves /entrypoint.sh $target
-      echo "Entering Yves container ..."
-      docker_compose exec zed /entrypoint.sh $target
-      ;;
-  esac
+  echo "Entering Yves container ..."
+  docker_compose exec yves-phpfpm /entrypoint.sh $target
+  echo "Entering Zed container ..."
+  docker_compose exec zed-phpfpm /entrypoint.sh $target
 }
 
 
@@ -48,48 +76,27 @@ compose_recreate() {
 env_action() {
   action=$1; shift
   case $action in
-    up)
-      docker_compose up $*
-      ;;
-    down)
-      docker_compose down $*
-      ;;
-    build)
-      echo "Building docker image via docker-compose ..."
-      docker_compose build --pull $*
-      ;;
-    rebuild)
-      echo "Rebuilding image ..."
-      docker_compose build --pull $*
-      for c in yves zed; do 
-        compose_recreate $c
-      done
-      ;;
-    reinit)
-      echo "Recreating init container ..."
-      compose_recreate init
-      ;;
     recreate)
       if [ -n "$1" ]; then
           compose_recreate $1
       else 
-        for c in yves zed; do 
+        for c in yves-phpfpm yves-nginx zed-nginx zed-phpfpm init; do 
           compose_recreate $c
         done
       fi
       ;;
     update-deps)
       echo "Updating dependencies in running container ..."
-      container_action build-deps $2
+      container_action build deps
       ;;
     gen-code)
       echo "Generating shop code in running container ..."
-      container_action build-shop $2
+      container_action build shop
       ;;
     enter)
-      docker_compose exec $1 /bin/sh
+      docker_compose exec $1 /bin/bash
       ;;
-    ps|exec|logs)
+    ps|exec|up|down)
       docker_compose $action $*
       ;;
     compose)
@@ -102,17 +109,45 @@ env_action() {
 }
 
 docker_compose() {
-  export IMAGE=$IMAGE
-  netrc
-  echo "Executing: docker-compose -f docker-compose-$ENV.yml -p ${PROJECT}_$ENV $*"
-  docker-compose -f docker-compose-$ENV.yml -p ${PROJECT}_$ENV $*
+  export IMAGE=$IMAGE VERSION=$VERSION
+  generate_secrets_env
+  source $SECRETS_FILE
+
+  echo "Executing: docker-compose -f $SCRIPT_PATH/docker-compose.yml -p ${PROJECT}_$ENV $*"
+  envsubst '$VOLUMES $IMAGE $VERSION' < $SCRIPT_PATH/docker-compose.yml | docker-compose -f - -p ${PROJECT}_$ENV $*
 }
 
 netrc() {
   if [ -e "$HOME/.netrc" ]; then 
     echo "Using local ~/.netrc as credential provider"
-    export NETRC="$(cat $HOME/.netrc)"
+    export NETRC=$(cat $HOME/.netrc)
+    DOCKER_BUILD_ARGS="--build-arg NETRC $DOCKER_BUILD_ARGS"
   fi
+}
+
+build_images() {
+  set -eo pipefail
+
+  if [ -f "$WORKDIR/docker/dockerignore" ]; then
+    cp "$WORKDIR/docker/dockerignore" $WORKDIR/.dockerignore
+  fi
+  netrc
+
+  echo "Build spryker image"
+  docker_build "$IMAGE:$VERSION" $*
+
+  echo "Build spryker jenkins slave image"
+  docker_build "$IMAGE:$VERSION-jenkins" --build-arg ENABLE_JENKINS_BUILD=true $*
+
+  if [ -f "$WORKDIR/docker/dockerignore" ]; then
+    rm $WORKDIR/.dockerignore
+  fi
+}
+
+docker_build() {
+  local image=$1; shift
+  set -x
+  docker build $DOCKER_BUILD_ARGS $* -t $image -f $DOCKERFILE $WORKDIR
 }
 
 help() {
@@ -127,57 +162,45 @@ COMMANDS:
     build [<args>]                    -- build docker image 
 
   Per Environment:
-    prod|devel up [<args>]            -- Creates containers
-    prod|devel down [<args>]          -- Stops containers 
-    prod|devel build                  -- Build docker image via docker-compose
-    prod|devel rebuild                -- Rebuild image and recreates running services 
-    prod|devel reinit                 -- Reinitializes the setup by recreating the init container
-    prod|devel recreate [yves|zed]    -- Just recreates running services
-    prod|devel update-deps [yves|zed] -- Update dependency in running containers
-    prod|devel gen-code [yves|zed]    -- Generate code in running containers
+    prod|devel up [<args>]            -- Start spryker environment
+    prod|devel down [<args>]          -- Stops spryker environment
+    prod|devel recreate init          -- Reinitializes the setup by recreating the init container
+    prod|devel recreate [<svc>]       -- Just recreates running services
+    prod|devel update-deps            -- Update dependency in running containers
+    prod|devel gen-code               -- Generate code in running containers
     prod|devel enter <svc>            -- Exec into svc container and start /bin/sh
     prod|devel compose cmd <args>     -- Interface to docker-compose
     prod|devel ps [<args>]            -- Show running services (same as: compose ps)
-    prod|devel logs [<args>] <svc>    -- Show running services (same as: compose logs)
-    prod|devel exec <svc> [<args>]    -- Exec into container (same as: compose exec) 
+    prod|devel exec <svc> [<args>]    -- Exec into container (same as: compose exec)
 
 EXAMPLES:
 
     - Start devel environment:
-        $0 devel up 
+        $0 prod up
 
     - Tear down devel environment incl. their data stores:
-        $0 devel down -v
+        $0 prod down -v
 
-    - Rebuild image and recreate container:
-        $0 devel rebuild
-
-    - Refetch Spryker dependencies in running containers:
-        $0 devel update-deps
+    - Recreate spryker container
+        $0 prod recreate
 
     - Exec shell in container:
-        $0 devel enter yves
+        $0 prod enter yves
 
     - Exec arbitrary command in container:
-        $0 devel exec yves npm install
+        $0 prod exec yves sleep 1m
 "
 }
 
 case $1 in
   build)
     shift
-    echo "Building docker image ..."
-    pushd ..
-    netrc
-    docker build --build-arg "NETRC=$NETRC" $* -t $IMAGE:$VERSION .
-    popd
+    build_images
     ;;
   prod|devel)
-    export ENV=$1
-    shift
+    configure_env_$1; shift
     env_action $*
     ;;
   *)
     help
-    ;;
 esac
