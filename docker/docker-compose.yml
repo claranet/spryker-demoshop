@@ -4,11 +4,11 @@ version: '3.4'
 
 x-build: &x-build
   build:
-    context: .
+    context: ..
 
 x-jenkins-build: &x-jenkins-build
   build:
-    context: .
+    context: ..
     args:
       ENABLE_JENKINS_BUILD: "true"
 
