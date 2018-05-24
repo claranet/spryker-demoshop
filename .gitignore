@@ -87,5 +87,5 @@ c3.php
 .githook_local
 
 # claranet
-docker/secrets.env
+docker/.secrets.env
 docker/.docker-compose.yml

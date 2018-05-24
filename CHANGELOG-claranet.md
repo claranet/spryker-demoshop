@@ -16,7 +16,12 @@ Spryker now supports PHP 7.2.x, so we update PHP to 7.2.5 as well.
 * switch to PHP 7.2.5 (which includes switching to Debian Stretch, from Jessie)
 * update Demoshop to 2.30.0
 * switch to NodeJS: 10
-* get ride of the `envsubst` (gettext) command in `docker/run`
+* `docker/run`
+    * get rid of the `envsubst` (gettext)
+    * get rid of `pwgen`, used /dev/random instead
+    * auto generation of credentials changed to a template approach
+    * generate `docker-compose.yml` each run instead of piping result into
+      `docker-compose`
 
 # 2.29.0 (2018-05-24)
 

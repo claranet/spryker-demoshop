@@ -7,9 +7,10 @@ cd $WORKDIR
 
 [ -e "$SCRIPT_PATH/project.conf.sh" ] && source "$SCRIPT_PATH/project.conf.sh"
 
-SECRETS_FILE="$SCRIPT_PATH/secrets.env"
+SECRETS_FILE="$SCRIPT_PATH/.secrets.env"
+SECRETS_FILE_TPL="$SCRIPT_PATH/secrets.env"
 
-for cmd in docker-compose docker pwgen; do
+for cmd in docker-compose docker; do
   if ! which $cmd 2>&1 >/dev/null; then
     echo "ERROR: The command '$cmd' is required. Please install it!"
     exit 1
@@ -27,12 +28,21 @@ generate_secrets_env() {
     return 0
   fi
 
-  printf "Save uniq passwords for your installation in %s" "$SECRETS_FILE"
+  echo "Save auto generated passwords in $SECRETS_FILE"
+  (grep -v '^[[:space:]]*#' $SECRETS_FILE_TPL | while read line; do
+   echo $line | grep -q '=$' && printf "%s%s\n" $line $(pw_gen) && continue
+   echo $line
+  done ) > $SECRETS_FILE
+}
 
-  for i in YVES_SESSION_REDIS_PASSWORD ZED_SESSION_REDIS_PASSWORD STORAGE_REDIS_PASSWORD ZED_DATABASE_PASSWORD RABBITMQ_PASSWORD; do
-    local pw=$(pwgen 13 1)
-    printf "export %s=%s\n" $i $pw >> $SECRETS_FILE
+# Simulate pwgen: read arbitray number of characters from /dev/random, base64
+# encode them and extract 16 chars
+pw_gen() {
+  for d in /dev/urandom /dev/random; do
+    [ -e $d ] && base64 < $d | tr -dc _A-Z-a-z-0-9  | head -c 16 && echo "" && return
   done
+  echo "ERROR: could not generate secrets, random devices not found!" >&2
+  exit 1
 }
 
 configure_env_devel() {
