@@ -1,5 +1,5 @@
 
-FROM claranet/php:1.1.7-php7.2.5
+FROM claranet/php:1.1.7-php7.1.17
 
 LABEL org.label-schema.name="claranet/spryker-demoshop" \
       org.label-schema.version="2.29.0" \
@@ -12,8 +12,9 @@ LABEL org.label-schema.name="claranet/spryker-demoshop" \
 
 # Override claranet/php image settings
 ENV NPM_ARGS="--with-dev" \
-    PHP_EXTENSIONS="redis" \
-    SYSTEM_PACKAGES="graphviz redis-tools" \
+    PHP_EXTENSIONS="mcrypt redis" \
+    BUILD_PACKAGES="${BUILD_PACKAGES} libmcrypt-dev" \
+    SYSTEM_PACKAGES="libmcrypt4 graphviz redis-tools" \
     PHP_EXTENSIONS_STARTUP_ONLY="xdebug" \
     NODEJS_VERSION="10" \
     CODECEPTION_ARGS="-x CheckoutAvailabilityCest -x CmsGuiCreatePageCest -x NavigationCRUDCest -x NavigationTreeCest -x ProductRelationCreateRelationCest -x Smoke"
@@ -24,13 +25,14 @@ ENV NPM_ARGS="--with-dev" \
 #   each reference should be relative to the repos path
 #   php files will be omitted
 #   result is e.g.: https://storage.googleapis.com/my-uniq-bucket-name/maintenance/index.html
+#   ASSET_ENV = prod|dev or empty
 ENV STATIC_FILES_YVES="path/within/repo path2/within/repo" \
-    ASSET_ENV="prod" \
+    ASSET_ENV="" \
     ENABLE_DEMO_DATA="true" \
     CLOUDSDK_KEY_FILE="/mnt/gcloudServiceAccount/key.json" \
     ASSET_BUCKET_NAME="to-be-defined-on-gcp" \
     ENABLE_GOOGLE_ASSET_BUCKET="false"
-    
+
 
 # spryker
 # disabled env vars: (so users are foced to set them in docker-compose/k8)
@@ -39,7 +41,9 @@ ENV STATIC_FILES_YVES="path/within/repo path2/within/repo" \
 #    ZED_DB_PASSWORD="" \
 #    RABBITMQ_PASSWORD="" \
 ENV APPLICATION_ENV="production" \
-    STORES="DE AT" \
+    STORES="DE AT US" \
+    DEFAULT_STORE="DE" \
+    DEFAULT_ZED_API_HOST="zed-nginx" \
     INIT_COLLECTOR_CHUNK_SIZE="2000"
 
 # database
