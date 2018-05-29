@@ -6,6 +6,8 @@ real_path() {
   pushd $d >/dev/null; echo "$(pwd)/$b"; popd >/dev/null
 }
 
+real_path $0
+
 WORKDIR=$(real_path $0 | xargs dirname | xargs dirname)
 SCRIPT_PATH=$(real_path $0 | xargs dirname)
 SCRIPT_DIRECTORY=$(basename $SCRIPT_PATH) # only the dir name for Dockerfile so we know what to copy

@@ -13,7 +13,7 @@ Spryker now supports PHP 7.2.x, so we update PHP to 7.2.5 as well.
 * Jenkins-Slave JRE: 8
 
 **changes**
-* switch to PHP 7.2.5 (which includes switching to Debian Stretch, from Jessie)
+* keep to PHP 7.1.17 as the spryker demoshop currently drops some exceptions regarding PHP 7.2
 * update Demoshop to 2.30.0
 * switch to NodeJS: 10
 * `docker/run`
@@ -22,6 +22,11 @@ Spryker now supports PHP 7.2.x, so we update PHP to 7.2.5 as well.
     * auto generation of credentials changed to a template approach
     * generate `docker-compose.yml` each run instead of piping result into
       `docker-compose`
+* let phpfpm logs go to stdout/stderr again
+* add spryker mutlistore support
+    * `docker/config_local.php` switch to _$STORES_ from env to calculate available stores (for multistore)
+    * `Dockerfile` add _$DEFAULT\_STORE_ to define the fallback store
+    * `start > nginx` prepare _/etc/nginx/conf.d/spryker.conf_ mapping for _$DEFAULT\_STORE_ and _$STORES_
 
 # 2.29.0 (2018-05-24)
 

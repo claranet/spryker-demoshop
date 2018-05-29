@@ -77,16 +77,13 @@ to the following URLs:
 
 ## Exposed Services
 
-Several services are being exposed by the docker composable stack. In order to
+Several services are being exposed by the docker-compose stack. In order to
 run stacks in parallel and prevent port collisions we need to align port
 allocation.
 
 Therefore the following scheme has been implemented: The port number is encoded
-like this: **ECC00**
+like this: **2CCDD**
 
-* **E** - Environment
-    * 1 - production
-    * 2 - development
 * **CC** - Component
     * 01 - yves
     * 02 - zed
@@ -94,6 +91,12 @@ like this: **ECC00**
     * 05 - elasticsearch
     * 06 - postgresql
     * 07 - rabbitmq
+* **DD** - Domain
+    * 00 - DE
+    * 01 - AT
+    * 02 - US
+
+So yves DE is reachable via http://localhost:20100/ and yves US via http://localhost:20102
 
 ## Start Development Environment
 
