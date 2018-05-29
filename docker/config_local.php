@@ -15,8 +15,13 @@ use Spryker\Shared\Setup\SetupConstants;
 use Spryker\Shared\Storage\StorageConstants;
 use Spryker\Shared\Twig\TwigConstants;
 use Spryker\Shared\ZedRequest\ZedRequestConstants;
+use Spryker\Shared\Event\EventConstants;
 use Spryker\Shared\Log\LogConstants;
+use Spryker\Yves\Log\Plugin\YvesLoggerConfigPlugin;
+use Spryker\Zed\Log\Communication\Plugin\ZedLoggerConfigPlugin;
 use Spryker\Shared\RabbitMq\RabbitMqConstants;
+
+use Monolog\Logger;
 
 
 $applicationStore = strtoupper(getenv('APPLICATION_STORE'));
@@ -47,10 +52,8 @@ Use REDIS_STORE_DB_FACTOR to avoid store counter collisions between different
 stores.
 */
 
-$availableStores      = require(getenv('WORKDIR').'/config/Shared/stores.php');
-$stores_indexed       = array_keys($availableStores);
-// increase by 1 to avoid "invalid db-index" error
-$redisDatabaseCounter = array_search($applicationStore, $stores_indexed) + 1;
+$stores_indexed       = getenv('STORES');
+$redisDatabaseCounter = array_search($applicationStore, $stores_indexed) + 1; // +1 to avoid "invalid db-index" error
 
 $config[StorageConstants::STORAGE_PREDIS_CLIENT_CONFIGURATION] = [
   'protocol' => 'tcp',
@@ -149,12 +152,16 @@ $config[TwigConstants::ZED_PATH_CACHE_FILE]        = $twigCachePathZed  . '/.pat
 /**
  *   L O G G I N G
  */
+$config[LogConstants::LOGGER_CONFIG_ZED]                = YvesLoggerConfigPlugin::class;
+$config[LogConstants::LOGGER_CONFIG_YVES]               = ZedLoggerConfigPlugin::class;
+$config[LogConstants::LOG_LEVEL]                        = Logger::NOTICE;
 $config[LogConstants::LOG_FILE_PATH]                    = 'php://stdout';
 $config[LogConstants::LOG_FILE_PATH_YVES]               = 'php://stdout';
 $config[LogConstants::LOG_FILE_PATH_ZED]                = 'php://stdout';
 $config[LogConstants::EXCEPTION_LOG_FILE_PATH]          = 'php://stderr';
 $config[LogConstants::EXCEPTION_LOG_FILE_PATH_YVES]     = 'php://stderr';
 $config[LogConstants::EXCEPTION_LOG_FILE_PATH_ZED]      = 'php://stderr';
+$config[EventConstants::LOG_FILE_PATH]                  = 'php://stdout';
 
 
 /**
