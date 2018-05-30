@@ -1,12 +1,10 @@
 
-# 2.30.0 (unreleased)
+# 2.30.0 (2018-05-30)
 
 Updates the Spryker Demoshop to version 2.30.0
 
-Spryker now supports PHP 7.2.x, so we update PHP to 7.2.5 as well.
-
 **versions**
-* PHP: 7.2.5 (claranet/php 1.1.7)
+* PHP: 7.1.17 (claranet/php 1.1.7)
 * PHP Composer: 1.6.5
 * NodeJS: 10
 * Spryker Demoshop: 2.30.0
