@@ -32,9 +32,10 @@ jobs:
   include:
     - stage: Build
       script:
-        - docker build -t $image:$tagci .
+        - export IMAGE=$image VERSION=$tagci
+        - ./docker/run build
         - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-        - docker push $image:$tagci
+        - ./docker/run push
 #    - stage: Test
 #      script:
 #        - export IMAGE=$image VERSION=$tagci ENV=devel

@@ -1,15 +1,24 @@
 #!/bin/bash
+real_path() {
+  file=$1
+  local d=$(dirname $file)
+  local b=$(basename $file)
+  pushd $d >/dev/null; echo "$(pwd)/$b"; popd >/dev/null
+}
 
-WORKDIR=$(realpath $0 | xargs dirname | xargs dirname)
-SCRIPT_PATH=$(realpath $0 | xargs dirname)
+real_path $0
+
+WORKDIR=$(real_path $0 | xargs dirname | xargs dirname)
+SCRIPT_PATH=$(real_path $0 | xargs dirname)
 SCRIPT_DIRECTORY=$(basename $SCRIPT_PATH) # only the dir name for Dockerfile so we know what to copy
 cd $WORKDIR
 
 [ -e "$SCRIPT_PATH/project.conf.sh" ] && source "$SCRIPT_PATH/project.conf.sh"
 
-SECRETS_FILE="$SCRIPT_PATH/secrets.env"
+SECRETS_FILE="$SCRIPT_PATH/.secrets.env"
+SECRETS_FILE_TPL="$SCRIPT_PATH/secrets.env"
 
-for cmd in docker-compose docker pwgen; do
+for cmd in docker-compose docker; do
   if ! which $cmd 2>&1 >/dev/null; then
     echo "ERROR: The command '$cmd' is required. Please install it!"
     exit 1
@@ -27,19 +36,27 @@ generate_secrets_env() {
     return 0
   fi
 
-  printf "Save uniq passwords for your installation in %s" "$SECRETS_FILE"
+  echo "Save auto generated passwords in $SECRETS_FILE"
+  (grep -v '^[[:space:]]*#' $SECRETS_FILE_TPL | while read line; do
+   echo $line | grep -q '=$' && printf "%s%s\n" $line $(pw_gen) && continue
+   echo $line
+  done ) > $SECRETS_FILE
+}
 
-  for i in YVES_SESSION_REDIS_PASSWORD ZED_SESSION_REDIS_PASSWORD STORAGE_REDIS_PASSWORD ZED_DATABASE_PASSWORD RABBITMQ_PASSWORD; do
-    local pw=$(pwgen 13 1)
-    printf "export %s=%s\n" $i $pw >> $SECRETS_FILE
+# Simulate pwgen: read arbitray number of characters from /dev/random, base64
+# encode them and extract 16 chars
+pw_gen() {
+  for d in /dev/urandom /dev/random; do
+    [ -e $d ] && base64 < $d | tr -dc _A-Z-a-z-0-9  | head -c 16 && echo "" && return
   done
+  echo "ERROR: could not generate secrets, random devices not found!" >&2
+  exit 1
 }
 
 configure_env_devel() {
   # VOLUMES: enable volumes in docker-compose dev env
   export ENV="dev" \
          VOLUMES="
-
     - ${WORKDIR}/assets:/app/assets
     - ${WORKDIR}/src/Pyz:/app/src/Pyz
     - ${WORKDIR}/composer.json:/app/composer.json
@@ -79,8 +96,8 @@ env_action() {
     recreate)
       if [ -n "$1" ]; then
           compose_recreate $1
-      else 
-        for c in yves-phpfpm yves-nginx zed-nginx zed-phpfpm init; do 
+      else
+        for c in yves-phpfpm yves-nginx zed-nginx zed-phpfpm init; do
           compose_recreate $c
         done
       fi
@@ -96,7 +113,7 @@ env_action() {
     enter)
       docker_compose exec $1 /bin/bash
       ;;
-    ps|exec|up|down)
+    ps|exec|up|down|pull)
       docker_compose $action $*
       ;;
     compose)
@@ -113,12 +130,16 @@ docker_compose() {
   generate_secrets_env
   source $SECRETS_FILE
 
-  echo "Executing: docker-compose -f $SCRIPT_PATH/docker-compose.yml -p ${PROJECT}_$ENV $*"
-  envsubst '$VOLUMES $IMAGE $VERSION' < $SCRIPT_PATH/docker-compose.yml | docker-compose -f - -p ${PROJECT}_$ENV $*
+  in=$SCRIPT_PATH/docker-compose.yml
+  out=$SCRIPT_PATH/.docker-compose.yml
+
+  perl -p -e 's/__VOLUMES__/$ENV{VOLUMES}/' < $in > $out
+  echo "Executing: docker-compose -f $out -p ${PROJECT}_$ENV $*"
+  docker-compose -f $out -p ${PROJECT}_$ENV $*
 }
 
 netrc() {
-  if [ -e "$HOME/.netrc" ]; then 
+  if [ -e "$HOME/.netrc" ]; then
     echo "Using local ~/.netrc as credential provider"
     export NETRC=$(cat $HOME/.netrc)
     DOCKER_BUILD_ARGS="--build-arg NETRC $DOCKER_BUILD_ARGS"
@@ -147,7 +168,17 @@ build_images() {
 docker_build() {
   local image=$1; shift
   set -x
-  docker build $DOCKER_BUILD_ARGS $* -t $image -f $DOCKERFILE $WORKDIR
+  docker build $DOCKER_BUILD_ARGS -t $image -f $DOCKERFILE $* $WORKDIR
+}
+
+push_images() {
+  set -exo pipefail
+
+  echo "Push spryker image"
+  docker push $* "$IMAGE:$VERSION"
+
+  echo "Push spryker jenkins slave image"
+  docker push $* "$IMAGE:$VERSION-jenkins"
 }
 
 help() {
@@ -159,7 +190,8 @@ USAGE: $0 <cmd> | <env> <cmd> <args>
 COMMANDS:
 
   Global:
-    build [<args>]                    -- build docker image 
+    build [<args>]                    -- build docker image
+    push  [<args>]                    -- push docker image
 
   Per Environment:
     prod|devel up [<args>]            -- Start spryker environment
@@ -175,7 +207,7 @@ COMMANDS:
 
 EXAMPLES:
 
-    - Start devel environment:
+    - Start devel environment (builds containers unless existent locally):
         $0 prod up
 
     - Tear down devel environment incl. their data stores:
@@ -193,9 +225,10 @@ EXAMPLES:
 }
 
 case $1 in
-  build)
+  build|push)
+    a=$1
     shift
-    build_images
+    ${a}_images $*
     ;;
   prod|devel)
     configure_env_$1; shift

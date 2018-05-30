@@ -6,6 +6,7 @@
 **Also note: The parent image switched from `claranet/spryker-base` to `claranet/php`, which breaks the previous `docker/` filesystem structure!**
 
 <!-- vim-markdown-toc GFM -->
+
 * [What?](#what)
 * [Run the Demoshop](#run-the-demoshop)
 * [Exposed Services](#exposed-services)
@@ -19,9 +20,7 @@
     * [Interface to `docker-compose`](#interface-to-docker-compose)
     * [Debug Failed Build](#debug-failed-build)
 * [Known Issues](#known-issues)
-    * [Yves Links not working](#yves-links-not-working)
     * [Elasticsearch 5.0](#elasticsearch-50)
-    * [Redis concurrency](#redis-concurrency)
 
 <!-- vim-markdown-toc -->
 
@@ -34,7 +33,7 @@ a stack comprising PostgreSQL, Redis, Elasticsearch and Jenkins. During runtime
 each of the services gets initialized.
 
 You can use this repository either as a demonstration for a paradigmatic shop
-based on Spryker Commerce Framework or as starting point for the development of
+based on Spryker Commerce OS or as starting point for the development of
 your own implementation beginning with a fork of the demoshop.
 
 The build and start procedure along with further tooling are inherited from the
@@ -59,6 +58,7 @@ If requisites are met, running the shop is fairly easy. Just enter these steps:
 
     $ git clone https://github.com/claranet/spryker-demoshop.git
     $ cd spryker-demoshop
+    $ ./docker/run devel pull
     $ ./docker/run devel up
 
 This pulls the docker image, create a network, create all the containers, bind
@@ -77,16 +77,13 @@ to the following URLs:
 
 ## Exposed Services
 
-Several services are being exposed by the docker composable stack. In order to
+Several services are being exposed by the docker-compose stack. In order to
 run stacks in parallel and prevent port collisions we need to align port
 allocation.
 
 Therefore the following scheme has been implemented: The port number is encoded
-like this: **2CC00**
+like this: **2CCDD**
 
-* **E** - Environment
-    * 1 - production
-    * 2 - development
 * **CC** - Component
     * 01 - yves
     * 02 - zed
@@ -94,6 +91,12 @@ like this: **2CC00**
     * 05 - elasticsearch
     * 06 - postgresql
     * 07 - rabbitmq
+* **DD** - Domain
+    * 00 - DE
+    * 01 - AT
+    * 02 - US
+
+So yves DE is reachable via http://localhost:20100/ and yves US via http://localhost:20102
 
 ## Start Development Environment
 

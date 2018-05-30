@@ -1,7 +1,15 @@
 #!/bin/sh
 
-sectionText "Building assets for Zed [$ASSET_ENV]"
-$NPM run "zed:$ASSET_ENV"
+ZED_JOB="zed"
+YVES_JOB="yves"
 
-sectionText "Building assets for Yves [$ASSET_ENV]"
-$NPM run "yves:$ASSET_ENV"
+if [ ! -z "$ASSET_ENV" ]; then
+    ZED_JOB="$ZED_JOB:$ASSET_ENV"
+    YVES_JOB="$YVES_JOB:$ASSET_ENV"
+fi
+
+sectionText "Build assets for Zed [$ASSET_ENV]"
+$NPM run $ZED_JOB
+
+sectionText "Build assets for Yves [$ASSET_ENV]"
+$NPM run $YVES_JOB

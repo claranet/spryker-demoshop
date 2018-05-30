@@ -8,14 +8,25 @@ Spryker now supports PHP 7.2.x, so we update PHP to 7.2.5 as well.
 **versions**
 * PHP: 7.2.5 (claranet/php 1.1.7)
 * PHP Composer: 1.6.5
-* NodeJS: 8.x.x
-* Spryker Demoshop: 2.29.0
+* NodeJS: 10
+* Spryker Demoshop: 2.30.0
 * Jenkins-Slave JRE: 8
 
 **changes**
-* switch to PHP 7.2.5
-* update Demoshop to 2.29.0
+* keep to PHP 7.1.17 as the spryker demoshop currently drops some exceptions regarding PHP 7.2
+* update Demoshop to 2.30.0
 * switch to NodeJS: 10
+* `docker/run`
+    * get rid of the `envsubst` (gettext)
+    * get rid of `pwgen`, used /dev/random instead
+    * auto generation of credentials changed to a template approach
+    * generate `docker-compose.yml` each run instead of piping result into
+      `docker-compose`
+* let phpfpm logs go to stdout/stderr again
+* add spryker mutlistore support
+    * `docker/config_local.php` switch to _$STORES_ from env to calculate available stores (for multistore)
+    * `Dockerfile` add _$DEFAULT\_STORE_ to define the fallback store
+    * `start > nginx` prepare _/etc/nginx/conf.d/spryker.conf_ mapping for _$DEFAULT\_STORE_ and _$STORES_
 
 # 2.29.0 (2018-05-24)
 

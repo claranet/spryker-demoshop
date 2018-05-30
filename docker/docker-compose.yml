@@ -2,28 +2,46 @@
 
 version: '3.4'
 
-x-service_config: &x-service_config
+x-build: &x-build
+  build:
+    context: ..
+
+x-jenkins-build: &x-jenkins-build
+  build:
+    context: ..
+    args:
+      ENABLE_JENKINS_BUILD: "true"
+
+x-service-config: &x-service-config
   image: "${IMAGE}:${VERSION}"
   restart: always
-  volumes: ${VOLUMES}
+  volumes: __VOLUMES__
 
 x-zed_environment: &zed_environment
-  - ZED_SESSION_REDIS_PASSWORD
-  - STORAGE_REDIS_PASSWORD
-  - ZED_DATABASE_PASSWORD
-  - RABBITMQ_PASSWORD
-  - DOCUMENT_ROOT=/app/public/Zed
-  - PHPFPM_HOST=zed-phpfpm
+  ZED_SESSION_REDIS_PASSWORD:
+  STORAGE_REDIS_PASSWORD:
+  ZED_DATABASE_PASSWORD:
+  RABBITMQ_PASSWORD:
+  DOCUMENT_ROOT: "/app/public/Zed"
+  PHPFPM_HOST: "zed-phpfpm"
 
 x-yves_environment: &yves_environment
-  - YVES_SESSION_REDIS_PASSWORD
-  - STORAGE_REDIS_PASSWORD
-  - DOCUMENT_ROOT=/app/public/Yves
-  - PHPFPM_HOST=yves-phpfpm
+  YVES_SESSION_REDIS_PASSWORD:
+  STORAGE_REDIS_PASSWORD:
+  DOCUMENT_ROOT: "/app/public/Yves"
+  PHPFPM_HOST: "yves-phpfpm"
+
+x-spryker-nginx: &x-spryker-nginx
+  <<: *x-build
+  <<: *x-service-config
+  command:
+    - start
+    - nginx
 
 services:
   init:
-    <<: *x-service_config
+    <<: *x-build
+    <<: *x-service-config
     command:
       - start
       - init
@@ -31,33 +49,64 @@ services:
     environment: *zed_environment
     volumes: []
 
-  yves-nginx:
-    <<: *x-service_config
-    command:
-      - start
-      - nginx
+  yves-nginx-de:
+    <<: *x-spryker-nginx
     ports:
       - "20100:80"
-    environment: *yves_environment
+    environment:
+      <<: *yves_environment
+      DEFAULT_STORE: "DE"
+      DEFAULT_ZED_API_HOST: "zed-nginx-de"
+  yves-nginx-at:
+    <<: *x-spryker-nginx
+    ports:
+      - "20101:80"
+    environment:
+      <<: *yves_environment
+      DEFAULT_STORE: "AT"
+      DEFAULT_ZED_API_HOST: "zed-nginx-at"
+  yves-nginx-us:
+    <<: *x-spryker-nginx
+    ports:
+      - "20102:80"
+    environment:
+      <<: *yves_environment
+      DEFAULT_STORE: "US"
+      DEFAULT_ZED_API_HOST: "zed-nginx-us"
 
   yves-phpfpm:
-    <<: *x-service_config
+    <<: *x-build
+    <<: *x-service-config
     command:
       - start
       - phpfpm
     environment: *yves_environment
 
-  zed-nginx:
-    <<: *x-service_config
-    command:
-      - start
-      - nginx
+  zed-nginx-de:
+    <<: *x-spryker-nginx
     ports:
       - "20200:80"
-    environment: *zed_environment
+    environment:
+      <<: *zed_environment
+      DEFAULT_STORE: "DE"
+  zed-nginx-at:
+    <<: *x-spryker-nginx
+    ports:
+      - "20201:80"
+    environment:
+      <<: *zed_environment
+      DEFAULT_STORE: "AT"
+  zed-nginx-us:
+    <<: *x-spryker-nginx
+    ports:
+      - "20202:80"
+    environment:
+      <<: *zed_environment
+      DEFAULT_STORE: "US"
 
   zed-phpfpm:
-    <<: *x-service_config
+    <<: *x-build
+    <<: *x-service-config
     command:
       - start
       - phpfpm
@@ -116,7 +165,8 @@ services:
       - /var/jenkins_home
 
   jenkins-slave:
-    <<: *x-service_config
+    <<: *x-jenkins-build
+    <<: *x-service-config
     image: "${IMAGE}:${VERSION}-jenkins"
     command:
       - start
