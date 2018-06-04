@@ -137,7 +137,7 @@ services:
       - /data
 
   elasticsearch:
-    image: "elasticsearch:2.4-alpine"
+    image: "elasticsearch:5.6.9-alpine"
     ports:
       - "20500:9200"
     volumes:
