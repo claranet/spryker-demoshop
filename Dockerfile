@@ -1,5 +1,5 @@
 
-FROM claranet/php:1.1.8-php7.1.18
+FROM claranet/php:1.1.9-php7.1.18
 
 LABEL org.label-schema.name="claranet/spryker-demoshop" \
       org.label-schema.version="2.31.0" \
@@ -19,7 +19,8 @@ ENV NPM_ARGS="--with-dev" \
     NODEJS_VERSION="10" \
     CODECEPTION_ARGS="-x CheckoutAvailabilityCest -x CmsGuiCreatePageCest -x NavigationCRUDCest -x NavigationTreeCest -x ProductRelationCreateRelationCest -x Smoke" \
     COMPOSER_ARGS="" \
-    PHP_INI_OPCACHE_ENABLE="1"
+    PHP_INI_OPCACHE_ENABLE="1" \
+    PHP_INI_OPCACHE_OPTIMIZATION_LEVEL="0x7FFFBFFF"
 
 
 # STATIC_FILES_YVES:
