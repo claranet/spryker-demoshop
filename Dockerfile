@@ -1,5 +1,5 @@
 
-FROM claranet/php:1.1.7-php7.1.17
+FROM claranet/php:1.1.8-php7.1.18
 
 LABEL org.label-schema.name="claranet/spryker-demoshop" \
       org.label-schema.version="2.30.0" \
@@ -14,10 +14,12 @@ LABEL org.label-schema.name="claranet/spryker-demoshop" \
 ENV NPM_ARGS="--with-dev" \
     PHP_EXTENSIONS="mcrypt redis" \
     BUILD_PACKAGES="${BUILD_PACKAGES} libmcrypt-dev" \
-    SYSTEM_PACKAGES="libmcrypt4 graphviz redis-tools" \
+    SYSTEM_PACKAGES="libmcrypt4 graphviz redis-tools sudo" \
     PHP_EXTENSIONS_STARTUP_ONLY="xdebug" \
     NODEJS_VERSION="10" \
-    CODECEPTION_ARGS="-x CheckoutAvailabilityCest -x CmsGuiCreatePageCest -x NavigationCRUDCest -x NavigationTreeCest -x ProductRelationCreateRelationCest -x Smoke"
+    CODECEPTION_ARGS="-x CheckoutAvailabilityCest -x CmsGuiCreatePageCest -x NavigationCRUDCest -x NavigationTreeCest -x ProductRelationCreateRelationCest -x Smoke" \
+    COMPOSER_ARGS="" \
+    PHP_INI_OPCACHE_ENABLE="1"
 
 
 # STATIC_FILES_YVES:
@@ -40,7 +42,7 @@ ENV STATIC_FILES_YVES="path/within/repo path2/within/repo" \
 #    REDIS_SESSION_PASSWORD="" \
 #    ZED_DB_PASSWORD="" \
 #    RABBITMQ_PASSWORD="" \
-ENV APPLICATION_ENV="production" \
+ENV APPLICATION_ENV="development" \
     STORES="DE AT US" \
     DEFAULT_STORE="DE" \
     DEFAULT_ZED_API_HOST="zed-nginx" \
@@ -85,7 +87,7 @@ COPY docker/etc /etc/
 COPY . ${WORKDIR}/
 
 RUN /entrypoint.sh build deps
-RUN /entrypoint.sh build shop
 
 ARG ENABLE_JENKINS_BUILD=false
+ENV SYSTEM_PACKAGES=""
 RUN if [ "${ENABLE_JENKINS_BUILD}" = "true" ]; then /entrypoint.sh build jenkins; fi

@@ -19,6 +19,19 @@ is_init_done() {
     return $?
 }
 
+spryker_installer() {
+    sectionText "Spryker install: $*"
+    $WORKDIR/vendor/bin/install --no-interaction --recipe=claranet $*
+}
+
+
+upper() {
+    echo "$1" | tr '[:lower:]' '[:upper:]'
+}
+lower() {
+    echo "$1" | tr '[:upper:]' '[:lower:]'
+}
+
 # =============================
 #          R E D I S
 # =============================

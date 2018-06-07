@@ -4,4 +4,3 @@
 ./docker/docker-compose*
 vendor
 scripts
-config/Zed/propel*.yml
