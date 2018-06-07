@@ -19,8 +19,7 @@ ENV NPM_ARGS="--with-dev" \
     NODEJS_VERSION="10" \
     CODECEPTION_ARGS="-x CheckoutAvailabilityCest -x CmsGuiCreatePageCest -x NavigationCRUDCest -x NavigationTreeCest -x ProductRelationCreateRelationCest -x Smoke" \
     COMPOSER_ARGS="" \
-    PHP_INI_OPCACHE_ENABLE="1" \
-    PHP_INI_OPCACHE_OPTIMIZATION_LEVEL="0x7FFFBFFF"
+    PHP_INI_OPCACHE_ENABLE="0"
 
 
 # STATIC_FILES_YVES:

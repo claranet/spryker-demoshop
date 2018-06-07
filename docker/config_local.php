@@ -123,7 +123,7 @@ $config[PropelConstants::ZED_DB_PORT]     = getenv('ZED_DATABASE_PORT');
 unset($database2store);
 
 
-$config[ApplicationConstants::HOST_YVES]           = $httpScheme . '://' . $httpAddress;
+$config[ApplicationConstants::HOST_YVES]           = $httpAddress;
 $config[ProductManagementConstants::BASE_URL_YVES] = $httpScheme . '://' . $httpAddress;
 $config[CustomerConstants::BASE_URL_YVES]          = $httpScheme . '://' . $httpAddress;
 
