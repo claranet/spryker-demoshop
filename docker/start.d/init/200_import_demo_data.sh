@@ -5,6 +5,5 @@ if ! is_true $ENABLE_DEMO_DATA; then
     return 0
 fi
 
-sectionText "Import demo data"
-$CONSOLE data:import
+spryker_installer --sections=demodata
 

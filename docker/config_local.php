@@ -24,7 +24,7 @@ use Spryker\Shared\RabbitMq\RabbitMqConstants;
 use Monolog\Logger;
 
 
-$applicationStore = strtoupper(getenv('APPLICATION_STORE'));
+$applicationStore = strtoupper(Store::getInstance()->getStoreName());
 
 $httpHost       = $_SERVER['SERVER_NAME'] ?? 'localhost';
 $httpAddress    = $_SERVER['HTTP_HOST'] ?? $httpHost;
@@ -52,7 +52,7 @@ Use REDIS_STORE_DB_FACTOR to avoid store counter collisions between different
 stores.
 */
 
-$stores_indexed       = getenv('STORES');
+$stores_indexed       = explode(' ',getenv('STORES'));
 $redisDatabaseCounter = array_search($applicationStore, $stores_indexed) + 1; // +1 to avoid "invalid db-index" error
 
 $config[StorageConstants::STORAGE_PREDIS_CLIENT_CONFIGURATION] = [
@@ -76,7 +76,7 @@ $config[SessionConstants::ZED_SESSION_REDIS_HOST]      = getenv('ZED_SESSION_RED
 $config[SessionConstants::ZED_SESSION_REDIS_PORT]      = getenv('ZED_SESSION_REDIS_PORT');
 $config[SessionConstants::ZED_SESSION_REDIS_PASSWORD]  = getenv('ZED_SESSION_REDIS_PASSWORD');
 $config[SessionConstants::ZED_SESSION_PERSISTENT_CONNECTION] = true;
-
+unset($stores_indexed, $redisDatabaseCounter);
 
 /**
  *   J E N K I N S
@@ -89,19 +89,38 @@ $config[SetupConstants::JENKINS_DIRECTORY] = '/tmp/jenkins/jobs';
  */
 $config[RabbitMqConstants::RABBITMQ_HOST] = getenv('RABBITMQ_HOST');
 $config[RabbitMqConstants::RABBITMQ_PORT] = getenv('RABBITMQ_PORT');
-$config[RabbitMqConstants::RABBITMQ_VIRTUAL_HOST] = getenv('RABBITMQ_VIRTUAL_HOST');
 $config[RabbitMqConstants::RABBITMQ_USERNAME] = getenv('RABBITMQ_USERNAME');
 $config[RabbitMqConstants::RABBITMQ_PASSWORD] = getenv('RABBITMQ_PASSWORD');
+$config[RabbitMqConstants::RABBITMQ_VIRTUAL_HOST] = getenv('RABBITMQ_VIRTUAL_HOST');
+
+// $config[RabbitMqEnv::RABBITMQ_CONNECTIONS] = [
+//     $applicationStore => [
+//         RabbitMqEnv::RABBITMQ_CONNECTION_NAME => $applicationStore.'-connection',
+//         RabbitMqEnv::RABBITMQ_HOST => getenv('RABBITMQ_HOST'),
+//         RabbitMqEnv::RABBITMQ_PORT => getenv('RABBITMQ_PORT'),
+//         RabbitMqEnv::RABBITMQ_PASSWORD => getenv('RABBITMQ_PASSWORD'),
+//         RabbitMqEnv::RABBITMQ_USERNAME => getenv('RABBITMQ_USERNAME'),
+//         RabbitMqEnv::RABBITMQ_VIRTUAL_HOST => getenv('RABBITMQ_VIRTUAL_HOST'),
+//         RabbitMqEnv::RABBITMQ_STORE_NAMES => [$applicationStore],
+//         RabbitMqEnv::RABBITMQ_DEFAULT_CONNECTION => true
+//     ],
+// ];
 
 /**
  *   P O S T G R E S
  */
+$database2store = [
+  'DE' => getenv('ZED_DATABASE_DATABASE').'_de',
+  'AT' => getenv('ZED_DATABASE_DATABASE').'_de',
+  'US' => getenv('ZED_DATABASE_DATABASE').'_us',
+];
 $config[PropelConstants::ZED_DB_ENGINE]   = $config[PropelConstants::ZED_DB_ENGINE_PGSQL];
 $config[PropelConstants::ZED_DB_USERNAME] = getenv('ZED_DATABASE_USERNAME');
 $config[PropelConstants::ZED_DB_PASSWORD] = getenv('ZED_DATABASE_PASSWORD');
-$config[PropelConstants::ZED_DB_DATABASE] = getenv('ZED_DATABASE_DATABASE');
+$config[PropelConstants::ZED_DB_DATABASE] = $database2store[$applicationStore];
 $config[PropelConstants::ZED_DB_HOST]     = getenv('ZED_DATABASE_HOST');
 $config[PropelConstants::ZED_DB_PORT]     = getenv('ZED_DATABASE_PORT');
+unset($database2store);
 
 
 $config[ApplicationConstants::HOST_YVES]           = $httpScheme . '://' . $httpAddress;

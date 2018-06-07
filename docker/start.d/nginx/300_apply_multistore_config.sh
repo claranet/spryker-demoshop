@@ -2,13 +2,6 @@
 
 NGINX_SPRYKER_CONFIG_FILE="/etc/nginx/conf.d/spryker.conf"
 
-upper() {
-    echo "$1" | tr '[:lower:]' '[:upper:]'
-}
-lower() {
-    echo "$1" | tr '[:upper:]' '[:lower:]'
-}
-
 update_nginx_spryker_config_map() {
     local id=$1
     local id_lower=$(lower $id)

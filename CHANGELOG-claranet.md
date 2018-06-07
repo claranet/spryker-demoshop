@@ -1,12 +1,33 @@
 
-# 2.30.0 (unreleased)
+# 2.31.0 (2018-06-07)
+
+Updates the Spryker Demoshop to version 2.31.0
+
+**versions**
+* PHP: 7.1.18 (claranet/php 1.1.8)
+* PHP Composer: 1.6.5
+* NodeJS: 10
+* Spryker Demoshop: 2.31
+* Jenkins-Slave JRE: 8
+
+**changes**
+* stick with PHP 7.1 as there is an opcache bug in 7.2: https://bugs.php.net/bug.php?id=76029
+* use the [Spryker Installer](https://academy.spryker.com/developing_with_spryker/module_guide/utilities/install_tool.html) to build and init the Spryker Shop parts
+    * introduces a `config/installer/claranet.yml` file, derived from the `development` manifest
+* switch to APPLICATION_ENV=development on default
+* install composer with dev bundles to solve some missing includes
+* don't install system-packages again, in the jenkins build step
+* switch to ElasticSearch 5 as Spryker 2.31 supports and depends on it
+* adds backport patch to fix the stores config
+* adds support for different databases, based on the STORE
+    * and add a store2db map in `docker/config_local.php`
+
+# 2.30.0 (2018-05-30)
 
 Updates the Spryker Demoshop to version 2.30.0
 
-Spryker now supports PHP 7.2.x, so we update PHP to 7.2.5 as well.
-
 **versions**
-* PHP: 7.2.5 (claranet/php 1.1.7)
+* PHP: 7.1.17 (claranet/php 1.1.7)
 * PHP Composer: 1.6.5
 * NodeJS: 10
 * Spryker Demoshop: 2.30.0
