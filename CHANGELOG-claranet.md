@@ -1,4 +1,19 @@
 
+# 2.32.0 (2018-06-08)
+
+Updates the Spryker Demoshop to version 2.32.0
+
+**versions**
+* PHP: 7.1.18 (claranet/php 1.1.9)
+* PHP Composer: 1.6.5
+* NodeJS: 10
+* Spryker Demoshop: 2.32
+* Jenkins-Slave JRE: 8
+
+**changes**
+* fix HOST_YVES and HOST_ZED vars in `docker/config_local.php`
+* disable opcache, as it breaks the Demoshop since this version
+
 # 2.31.0 (2018-06-07)
 
 Updates the Spryker Demoshop to version 2.31.0
