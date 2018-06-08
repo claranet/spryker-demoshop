@@ -123,7 +123,7 @@ $config[PropelConstants::ZED_DB_PORT]     = getenv('ZED_DATABASE_PORT');
 unset($database2store);
 
 
-$config[ApplicationConstants::HOST_YVES]           = $httpScheme . '://' . $httpAddress;
+$config[ApplicationConstants::HOST_YVES]           = $httpAddress;
 $config[ProductManagementConstants::BASE_URL_YVES] = $httpScheme . '://' . $httpAddress;
 $config[CustomerConstants::BASE_URL_YVES]          = $httpScheme . '://' . $httpAddress;
 
@@ -143,6 +143,7 @@ $config[ApplicationConstants::YVES_SSL_ENABLED]     = $sslEnabled;
 $config[ApplicationConstants::YVES_TRUSTED_PROXIES] = $trustedProxies;
 
 
+$config[ApplicationConstants::HOST_ZED]            = $httpAddress;
 $config[ApplicationConstants::BASE_URL_ZED]        = $httpScheme . '://' . $httpAddress;
 $config[ApplicationConstants::BASE_URL_SSL_ZED]    = $httpScheme . '://' . $httpAddress;
 $config[ZedRequestConstants::BASE_URL_ZED_API]     = $zedApiDomain;

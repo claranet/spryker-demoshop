@@ -172,3 +172,7 @@ If you find a bug not listed here, please [report](https://github.com/claranet/s
 ### PHP 7.2
 
 We won't ship the demoshop until https://bugs.php.net/bug.php?id=76029 is fixed and we can enable opcache. Opcache is essential in prod environments, and it doesn't make sense to use 7.2 in dev and 7.1 in production...
+
+### PHP OPCACHE
+
+Since Spryker Demoshop `2.32` it seems, that there is a bug which causes the OPCACHE to throws exceptions. So we were forced to disable OPCACHE.
