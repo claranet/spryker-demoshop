@@ -12,13 +12,6 @@ prepare_collector_export_chunk_size() {
   fi
 }
 
-create_spryker_databases() {
-  for store in $STORES; do
-    local lower_store=`lower $store`
-    echo "CREATE DATABASE spryker_$lower_store;" | PGPASSWORD=$ZED_DATABASE_PASSWORD psql -h $ZED_DATABASE_HOST -p $ZED_DATABASE_PORT -U $ZED_DATABASE_USERNAME
-  done
-}
-
 wait_for_http_service http://$ELASTICSEARCH_HOST:$ELASTICSEARCH_PORT/_cluster/health
 wait_for_tcp_service $ZED_DATABASE_HOST $ZED_DATABASE_PORT
 
@@ -26,9 +19,6 @@ sectionText "Set elasticsearch index properties: shards=$ES_INDEX_NUMBER_OF_SHAR
 prepare_elasticsearch_index_descriptions
 
 prepare_collector_export_chunk_size
-
-sectionText "Create STORE databases"
-create_spryker_databases
 
 sectionText "Run spryker installer"
 spryker_installer --sections=database-migrate

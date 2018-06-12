@@ -120,6 +120,7 @@ $config[PropelConstants::ZED_DB_PASSWORD] = getenv('ZED_DATABASE_PASSWORD');
 $config[PropelConstants::ZED_DB_DATABASE] = $database2store[$applicationStore];
 $config[PropelConstants::ZED_DB_HOST]     = getenv('ZED_DATABASE_HOST');
 $config[PropelConstants::ZED_DB_PORT]     = getenv('ZED_DATABASE_PORT');
+$config[PropelConstants::USE_SUDO_TO_MANAGE_DATABASE] = false; // this is required to support a remote postgres installation (propel task createdb)
 unset($database2store);
 
 

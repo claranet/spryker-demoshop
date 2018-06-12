@@ -1,4 +1,9 @@
 
+# unreleased
+
+**changes**
+* fix propel:createdb
+
 # 2.32.0 (2018-06-08)
 
 Updates the Spryker Demoshop to version 2.32.0
