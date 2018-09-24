@@ -188,8 +188,8 @@ docker_build_jenkins() {
   if [ -e $DF_JENKINS ]; then
     echo "Using locally supplied Dockerfile for building jenkins: $DF_JENKINS"
     cat $DF_JENKINS > $DF_JENKINS_GENERATED
-    perl -i -e 's/\$\{IMAGE\}/$ENV{"IMAGE"}/g' $DF_JENKINS_GENERATED
-    perl -i -e 's/\$\{VERSION\}/$ENV{"VERSION"}/g' $DF_JENKINS_GENERATED
+    perl -i -pe 's/\${IMAGE}/$ENV{"IMAGE"}/g' $DF_JENKINS_GENERATED
+    perl -i -pe 's/\${VERSION}/$ENV{"VERSION"}/g' $DF_JENKINS_GENERATED
   else
     echo "No Dockerfile for jenkins given, creating one."
     cat > $DF_JENKINS_GENERATED <<EOF
