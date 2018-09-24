@@ -24,22 +24,22 @@ env:
 
 before_script:
   - env | sort
-  - export image="claranet/spryker-demoshop"
-  - export tag="${TRAVIS_BRANCH:-${TRAVIS_TAG}}${VARIANT:+-$VARIANT}"
-  - export tagci="ci${VARIANT:+-$VARIANT}"
+  - export IMAGE="claranet/spryker-demoshop"
+  - export VERSION="${TRAVIS_BRANCH:-${TRAVIS_TAG}}${VARIANT:+-$VARIANT}"
+  - export VERSION_CI="ci${VARIANT:+-$VARIANT}"
 
 jobs:
   include:
     - stage: Build
       script:
-        - export IMAGE=$image VERSION=$tagci
+        - export VERSION="${VERSION_CI}" 
         - ./docker/run build
         - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
         - ./docker/run push
 #    - stage: Test
 #      script:
-#        - export IMAGE=$image VERSION=$tagci ENV=devel
-#        - docker pull $IMAGE:$VERSION
+#        - export VERSION=$VERSION_CI ENV=devel
+#        - docker pull $IMAGE:$VERSION_CI
 #        - ./docker/run $ENV up -d --no-build
 #        - ./scripts/ci/run_tests.sh
     - stage: Publish
