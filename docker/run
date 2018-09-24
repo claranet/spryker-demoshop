@@ -84,6 +84,10 @@ container_action() {
 }
 
 
+compose_get_spryker_services() {
+  docker_compose config --services | egrep `(nginx|php|init)`
+}
+
 compose_recreate() {
   c=$1
   echo "\nRecreating $c container ..."
@@ -97,11 +101,18 @@ compose_recreate() {
 env_action() {
   action=$1; shift
   case $action in
+    rebuild)
+        echo "Going to rebuild shop images ..."
+        build_images
+        for c in $(compose_get_spryker_services); do
+          compose_recreate $c
+        done
+        ;;
     recreate)
       if [ -n "$1" ]; then
           compose_recreate $1
       else
-        for c in yves-phpfpm yves-nginx zed-nginx zed-phpfpm init; do
+        for c in $(compose_get_spryker_services); do
           compose_recreate $c
         done
       fi
@@ -117,7 +128,7 @@ env_action() {
     enter)
       docker_compose exec $1 /bin/bash
       ;;
-    ps|exec|up|down|pull)
+    ps|exec|up|down|pull|logs)
       docker_compose $action $*
       ;;
     compose)
@@ -162,11 +173,33 @@ build_images() {
   docker_build "$IMAGE:$VERSION" $*
 
   echo "Build spryker jenkins slave image"
-  docker_build "$IMAGE:$VERSION-jenkins" --build-arg ENABLE_JENKINS_BUILD=true $*
+  docker_build_jenkins "$IMAGE:$VERSION" $*
 
   if [ -f "$WORKDIR/docker/dockerignore" ]; then
     rm $WORKDIR/.dockerignore
   fi
+}
+
+# Build jenkins docker image derived from the one just being built.
+docker_build_jenkins() {
+  local image=$1; shift
+  DF_JENKINS_GENERATED="$(mktemp)"
+  local DF_JENKINS=$DOCKERFILE-jenkins
+  if [ -e $DF_JENKINS ]; then
+    echo "Using locally supplied Dockerfile for building jenkins: $DF_JENKINS"
+    cat $DF_JENKINS > $DF_JENKINS_GENERATED
+    sed -i '' "s#\${IMAGE}#$IMAGE#g" $DF_JENKINS_GENERATED
+    sed -i '' "s#\${VERSION}#$VERSION#g" $DF_JENKINS_GENERATED
+  else
+    echo "No Dockerfile for jenkins given, creating one."
+    cat > $DF_JENKINS_GENERATED <<EOF
+FROM $IMAGE:$VERSION
+RUN /entrypoint.sh build jenkins
+EOF
+  fi
+
+  docker_build "${image}-jenkins" -f $DF_JENKINS_GENERATED $*
+  rm $DF_JENKINS_GENERATED
 }
 
 docker_build() {
@@ -200,31 +233,39 @@ COMMANDS:
   Per Environment:
     prod|devel up [<args>]            -- Start spryker environment
     prod|devel down [<args>]          -- Stops spryker environment
+    prod|devel rebuild                -- Rebuild shop image and recreate relevant containers
     prod|devel recreate init          -- Reinitializes the setup by recreating the init container
     prod|devel recreate [<svc>]       -- Just recreates running services
     prod|devel update-deps            -- Update dependency in running containers
     prod|devel gen-code               -- Generate code in running containers
     prod|devel enter <svc>            -- Exec into svc container and start /bin/sh
-    prod|devel compose cmd <args>     -- Interface to docker-compose
     prod|devel ps [<args>]            -- Show running services (same as: compose ps)
     prod|devel exec <svc> [<args>]    -- Exec into container (same as: compose exec)
+    prod|devel logs <svc> [<args>]    -- Show logs of given service (same as: compose logs)
+    prod|devel compose cmd <args>     -- Interface to docker-compose
 
 EXAMPLES:
 
-    - Start devel environment (builds containers unless existent locally):
-        $0 prod up
+  - Start devel environment (builds containers unless existent locally):
+      $0 prod up
 
-    - Tear down devel environment incl. their data stores:
-        $0 prod down -v
+  - Show running containers and their exposed ports
+      $0 prod ps
 
-    - Recreate spryker container
-        $0 prod recreate
+  - Show and follow logs of particular container
+      $0 prod logs -f init
 
-    - Exec shell in container:
-        $0 prod enter yves
+  - Tear down devel environment incl. their data stores:
+      $0 prod down -v
 
-    - Exec arbitrary command in container:
-        $0 prod exec yves sleep 1m
+  - Rebuild and recreate spryker container
+      $0 prod rebuild
+
+  - Exec shell in container:
+      $0 prod enter yves
+
+  - Exec arbitrary command in container:
+      $0 prod exec yves sleep 1m
 "
 }
 
