@@ -56,6 +56,8 @@ pw_gen() {
 configure_env_devel() {
   # VOLUMES: enable volumes in docker-compose dev env
   export ENV="dev" \
+         APPLICATION_ENV=development \
+         BASE_PORT=2 \
          VOLUMES="
     - ${WORKDIR}/assets:/app/assets
     - ${WORKDIR}/src/Pyz:/app/src/Pyz
@@ -67,6 +69,8 @@ configure_env_devel() {
 
 configure_env_prod() {
   export ENV="prod" \
+         APPLICATION_ENV=production  \
+         BASE_PORT=1 \
          VOLUMES="[]"
 }
 
