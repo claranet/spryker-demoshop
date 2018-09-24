@@ -65,7 +65,8 @@ ENV RABBITMQ_HOST="rabbitmq" \
 ENV JENKINS_HOST="jenkins" \
     JENKINS_WORKDIR="/home/jenkins/agent" \
     JENKINS_HOME="/home/jenkins" \
-    JENKINS_JRE_PACKAGE="openjdk-8-jre"
+    JENKINS_JRE_PACKAGE="openjdk-8-jre" \
+    destination_release_dir="${WORKDIR}"
 
 # redis
 ENV STORAGE_REDIS_HOST="storage-redis" \
