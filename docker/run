@@ -85,16 +85,24 @@ container_action() {
 
 
 compose_get_spryker_services() {
-  docker_compose config --services | egrep `(nginx|php|init)`
+  docker_compose config --services | egrep '(nginx|php|init|slave)'
 }
 
 compose_recreate() {
-  c=$1
-  echo "\nRecreating $c container ..."
-  docker_compose stop $c
-  docker_compose rm -f $c
-  docker_compose create $c
-  docker_compose start $c
+  containers=( $* )
+
+  if [ ${#containers[@]} -eq 0 ]; then
+    # if not containers has been given, choose all the spryker containers
+    containers=( $(compose_get_spryker_services) )
+  fi
+
+  for c in ${containers[*]}; do
+    echo "\nRecreating $c container ..."
+    docker_compose stop $c
+    docker_compose rm -f $c
+    docker_compose create $c
+    docker_compose start $c
+  done
 }
 
 
@@ -104,19 +112,18 @@ env_action() {
     rebuild)
         echo "Going to rebuild shop images ..."
         build_images
-        for c in $(compose_get_spryker_services); do
-          compose_recreate $c
-        done
+        compose_recreate $(compose_get_spryker_services)
         ;;
     recreate)
       if [ -n "$1" ]; then
-          compose_recreate $1
+        compose_recreate $1
       else
-        for c in $(compose_get_spryker_services); do
-          compose_recreate $c
-        done
+        compose_recreate $(compose_get_spryker_services)
       fi
       ;;
+    reinit)
+          compose_recreate init
+        ;;
     update-deps)
       echo "Updating dependencies in running container ..."
       container_action build deps
@@ -204,6 +211,7 @@ docker_build() {
   local image=$1; shift
   set -x
   docker build $DOCKER_BUILD_ARGS -t $image -f $DOCKERFILE $* $WORKDIR
+  set +x
 }
 
 push_images() {
@@ -214,6 +222,7 @@ push_images() {
 
   echo "Push spryker jenkins slave image"
   docker push $* "$IMAGE:$VERSION-jenkins"
+  set +x
 }
 
 help() {
@@ -231,9 +240,10 @@ COMMANDS:
   Per Environment:
     prod|devel up [<args>]            -- Start spryker environment
     prod|devel down [<args>]          -- Stops spryker environment
-    prod|devel rebuild                -- Rebuild shop image and recreate relevant containers
-    prod|devel recreate init          -- Reinitializes the setup by recreating the init container
+    prod|devel rebuild                -- Rebuild shop image and recreate shop containers
+    prod|devel recreate               -- Recreate all shop containers
     prod|devel recreate [<svc>]       -- Just recreates running services
+    prod|devel reinit                 -- Recreate the init container
     prod|devel update-deps            -- Update dependency in running containers
     prod|devel gen-code               -- Generate code in running containers
     prod|devel enter <svc>            -- Exec into svc container and start /bin/sh
@@ -245,25 +255,27 @@ COMMANDS:
 EXAMPLES:
 
   - Start devel environment (builds containers unless existent locally):
-      $0 prod up
+      $0 devel up
 
   - Show running containers and their exposed ports
-      $0 prod ps
+      $0 devel ps
 
   - Show and follow logs of particular container
-      $0 prod logs -f init
+      $0 devel logs -f init
 
   - Tear down devel environment incl. their data stores:
-      $0 prod down -v
+      $0 devel down -v
 
-  - Rebuild and recreate spryker container
-      $0 prod rebuild
+  - Rebuild and recreate spryker containers except the init container. This is
+    useful in cases where you want to update the dependencies. All stateful
+    services are not touched in any way.
+      $0 devel rebuild
 
   - Exec shell in container:
-      $0 prod enter yves
+      $0 devel enter yves
 
   - Exec arbitrary command in container:
-      $0 prod exec yves sleep 1m
+      $0 devel exec yves sleep 1m
 "
 }
 
@@ -279,4 +291,5 @@ case $1 in
     ;;
   *)
     help
+    ;;
 esac

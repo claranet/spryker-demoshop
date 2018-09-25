@@ -17,7 +17,6 @@
     * [Build Image](#build-image)
     * [Start Development Environment](#start-development-environment)
     * [Rebuilding / Recreating](#rebuilding--recreating)
-    * [Refetch Dependencies](#refetch-dependencies)
     * [Interface to `docker-compose`](#interface-to-docker-compose)
     * [Debug Failed Build](#debug-failed-build)
 * [Deprecations](#deprecations)
@@ -52,6 +51,11 @@ mounts your local code into the container in order to enable you to live-edit
 from outside, connects the container to each other and finally exposes the
 public services. Like Yves, Zed, Jenkins-Master, Postgresql and Elasticsearch.
 
+**Please be patient while the spryker stack is being created, because the
+initialization routine takes quite some time for all the data to be imported
+into the database and then exported to redis and elasticsearch. Currently this
+takes about 10 minutes.**
+
 After the initialization has been finished, you are able to point your browser
 to the following URLs:
 
@@ -69,9 +73,6 @@ This is a dockerized version of the official reference implementation of the
 out-of-the-box by automatically pulling all required dependencies and creating
 a stack comprising PostgreSQL, Redis, Elasticsearch and Jenkins. During runtime
 each of the services gets initialized.
-
-![Spryk Container Stack](./docker/docs/container-stack.png)
-
 
 You can use this repository either as a demonstration for a paradigmatic shop
 based on Spryker Commerce OS or as starting point for the development of
@@ -99,6 +100,8 @@ Benefits of containerization:
 * Seamless deployment form local development into prod environment
 
 ## Services
+
+![Spryk Container Stack](./docker/docs/container-stack.png)
 
 Several services are being exposed by the docker-compose stack. In order to
 run stacks in parallel and prevent port collisions we need to align port
@@ -133,7 +136,7 @@ is doing this distinction based on the actual domain name.
 
 ### Build Time Environment
 
-Another premise is - and this one is crucial for your understanding of this
+A central premise is - and this one is crucial for your understanding of this
 stack - to build one unified image across development and production
 environments. This affects the usage of `APPLICATION_ENV` which gets evaluated
 by the Spryker App itself.
@@ -143,7 +146,7 @@ This variable has the following impact:
 1. During Build Time:
     1. Which packages are going to be installed via dependency resolution
      (composer, npm)?
-    1. Differnt modes in assets building
+    1. Different modes in assets building
 1. During Run Time:
     1. Where does the application is about to find configuration files (propel config)?
     1. Where are external resources to be found?
@@ -196,10 +199,17 @@ specific extensions.
 ### Spryker Configuration
 
 Since in a dockerized environment external services are reachable on different
-addresses depending on the environment the code is running in we need some
-configuration to be adjusted container spin up times. We therefore use the
-Spryker native mechanism of configuration file precedence in order to inject
-our configurations via the site local configuration file
+addresses depending on the environment the code is running in, the
+container/image needs to be configurable from the outside via environment
+variables. These need to be consumed by the spryker app. Therefore this image
+is expecting specific environment variables injected as docker env vars and
+which are being consiumed via a prepared `config_local.php`.
+
+We're leveraging the Spryker native mechanism of a configuration file hierarchy
+which defines order, precedence and the scheme of to be considered
+configuration files. This image provides its own site local configuration file
+which could be found in this repository under `docker/config_local.php` and
+which could be found in the resulting docker image under
 `config/Shared/config_local.php`. Since this file is the one which overrides
 all the others.
 
@@ -218,7 +228,7 @@ settings, which this idea is originating from.
 
 Currently both environments `devel` and `prod` using unnamed volumes which is
 due to the assumption of a transient environment. This means, the whole stack
-gets create for the sole purpose of checking your code base aginst it. **Its is
+gets created for the sole purpose of checking your code base aginst it. **Its is
 under no circumstance meant as some production grade setup, where data needs to
 persisted over recreations of containers!!!**
 
@@ -242,9 +252,19 @@ to the local repository and its configuration:
 
 Just to build the docker image use: `./docker/run build`
 
-This applies to both environments since both are based of the very same image. It will
-build the main spryker-demoshop image as well as a specialized jenkins-slave flavour from
-the spryker-demoshop image.
+This applies to both environments since both are based on the very same image.
+It will build the main spryker-demoshop image as well as a specialized
+jenkins-slave flavour from the spryker-demoshop image.
+
+Actually 2 images are being built, one for the actual shop image which is being
+used for the nginx and the php containers in both the yves and the zed layer,
+and one for the jenkins slave container. The latter only extends the shop image
+by all required Jenkins components in order to create Jenkins slave/worker. The
+reason for doing this in top of the actual shop image is that all the backend
+jobs being ran via Jenkins require the full spryker code base.
+
+The build time on a regular workstation with SSDs built in currently takes
+aprpoximately 10 minutes for both images.
 
 
 ### Start Development Environment
@@ -259,6 +279,14 @@ Just run `./docker/run devel up` and there you go.
 Destroy devel stack including all of the allocated unnamed volumes:
 `./docker/run devel down -v`
 
+The following pathes are bind mounted into the container:
+
+    * `./assets:/app/assets`
+    * `./src/Pyz:/app/src/Pyz`
+    * `./composer.json:/app/composer.json`
+    * `./package.json:/app/package.json`
+    * `./tests:/app/tests`
+
 
 ### Rebuilding / Recreating
 
@@ -269,26 +297,16 @@ running: `./docker/run devel rebuild`
 If you just want to recreate those containers without rebuilding them run:
 `./docker/run devel recreate`
 
-While debugging it might be useful instead of letting `/entrypoints.sh`
+While debugging it might be useful instead of letting `/entrypoint.sh`
 initialize the container to skip this steps and check for yourself. You could
 do this by changing the `command: run-zed` directive of the concerning
 container to `command: sleep 1w` in the `docker-compose-devel.yml` and
 recreate the container by running `./docker/run devel recreate zed`.
 
 
-### Refetch Dependencies
-
-Rerun the process which resolves the PHP and Node dependencies within the
-running Yves/Zed containers: `./docker/run devel build-deps`
-
-Caution: This only works if you are not using private repository and therefore
-your dependencies are publicly available. Otherwise you need to rebuild the
-image entirely as described above.
-
-
 ### Interface to `docker-compose`
 
-Since all this is based on `docker-composer` you might need to call it by
+Since all this is based on `docker-compose(1)` you might need to call it by
 yourself, for example to enter a container via shell:
 `./docker/run devel compose exec yves bash`
 
