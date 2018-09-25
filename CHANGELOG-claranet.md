@@ -1,6 +1,11 @@
 
 # unreleased
 
+# 2.32.2 (2018-09-24)
+
+**changes**
+* fix travis ci
+
 # 2.32.1 (2018-09-24)
 
 **changes**

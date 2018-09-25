@@ -1,24 +1,20 @@
 # Rationale:
-#   - Build only: master, tags and PR
-#   - Master is the most current not yet released state
-#   - Tags representing releases versions
+#   - Build only within PRs
+#   - Merge PRs and tag them in order to release a new version
+#   - Tags representing released versions
 #   - If tag matches the latest version configured here, the floating tag
 #     `:latest` will be conferred to this particular image.
 #   - PR are being built and tested, but not published
 #   - Concurrency is disabled; Newer jobs are spooled 
 #   - To share image between stages the intermediate product will be taged with
 #     `:ci-$variant` and pushed to docker hub
+#
 sudo: false
 #dist: trusty
 language: bash
 services:
   - docker
   
-branches:
-  only:
-    - master
-    - /^\d+\.\d+\.\d+$/
-
 env:
   - LATEST=2.32.1
 
