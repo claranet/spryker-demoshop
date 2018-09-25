@@ -16,7 +16,7 @@ services:
   - docker
   
 env:
-  - LATEST=2.32.1
+  - LATEST=2.32.2
 
 before_script:
   - env | sort
