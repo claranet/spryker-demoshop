@@ -183,11 +183,11 @@ build_images() {
 # Build jenkins docker image derived from the one just being built.
 docker_build_jenkins() {
   local image=$1; shift
-  DF_JENKINS_GENERATED="$(mktemp)"
+  DF_JENKINS_GENERATED="$(dirname $DOCKERFILE_JENKINS)/.$(basename $DOCKERFILE_JENKINS)"
   local DF_JENKINS=$DOCKERFILE-jenkins
-  if [ -e $DF_JENKINS ]; then
-    echo "Using locally supplied Dockerfile for building jenkins: $DF_JENKINS"
-    cat $DF_JENKINS > $DF_JENKINS_GENERATED
+  if [ -e $DOCKERFILE_JENKINS ]; then
+    echo "Using locally supplied Dockerfile for building jenkins: $DOCKERFFILE_JENKINS"
+    cat $DOCKERFILE_JENKINS > $DF_JENKINS_GENERATED
     perl -i -pe 's/\${IMAGE}/$ENV{"IMAGE"}/g' $DF_JENKINS_GENERATED
     perl -i -pe 's/\${VERSION}/$ENV{"VERSION"}/g' $DF_JENKINS_GENERATED
   else
@@ -197,9 +197,7 @@ FROM $IMAGE:$VERSION
 RUN /entrypoint.sh build jenkins
 EOF
   fi
-
   docker_build "${image}-jenkins" -f $DF_JENKINS_GENERATED $*
-  rm $DF_JENKINS_GENERATED
 }
 
 docker_build() {
