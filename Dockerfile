@@ -2,7 +2,7 @@
 FROM claranet/php:1.1.9-php7.1.18
 
 LABEL org.label-schema.name="claranet/spryker-demoshop" \
-      org.label-schema.version="2.32.0" \
+      org.label-schema.version="2.32.1" \
       org.label-schema.description="Dockerized Spyker Demoshop" \
       org.label-schema.vendor="Claranet GmbH" \
       org.label-schema.schema-version="1.0" \
@@ -65,7 +65,8 @@ ENV RABBITMQ_HOST="rabbitmq" \
 ENV JENKINS_HOST="jenkins" \
     JENKINS_WORKDIR="/home/jenkins/agent" \
     JENKINS_HOME="/home/jenkins" \
-    JENKINS_JRE_PACKAGE="openjdk-8-jre"
+    JENKINS_JRE_PACKAGE="openjdk-8-jre" \
+    destination_release_dir="${WORKDIR}"
 
 # redis
 ENV STORAGE_REDIS_HOST="storage-redis" \
@@ -87,7 +88,3 @@ COPY docker/etc /etc/
 COPY . ${WORKDIR}/
 
 RUN /entrypoint.sh build deps
-
-ARG ENABLE_JENKINS_BUILD=false
-ENV SYSTEM_PACKAGES=""
-RUN if [ "${ENABLE_JENKINS_BUILD}" = "true" ]; then /entrypoint.sh build jenkins; fi

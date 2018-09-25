@@ -56,6 +56,8 @@ pw_gen() {
 configure_env_devel() {
   # VOLUMES: enable volumes in docker-compose dev env
   export ENV="dev" \
+         APPLICATION_ENV=development \
+         BASE_PORT=2 \
          VOLUMES="
     - ${WORKDIR}/assets:/app/assets
     - ${WORKDIR}/src/Pyz:/app/src/Pyz
@@ -67,6 +69,8 @@ configure_env_devel() {
 
 configure_env_prod() {
   export ENV="prod" \
+         APPLICATION_ENV=production  \
+         BASE_PORT=1 \
          VOLUMES="[]"
 }
 
@@ -80,28 +84,46 @@ container_action() {
 }
 
 
+compose_get_spryker_services() {
+  docker_compose config --services | egrep '(nginx|php|init|slave)'
+}
+
 compose_recreate() {
-  c=$1
-  echo "\nRecreating $c container ..."
-  docker_compose stop $c
-  docker_compose rm -f $c
-  docker_compose create $c
-  docker_compose start $c
+  containers=( $* )
+
+  if [ ${#containers[@]} -eq 0 ]; then
+    # if not containers has been given, choose all the spryker containers
+    containers=( $(compose_get_spryker_services) )
+  fi
+
+  for c in ${containers[*]}; do
+    echo "\nRecreating $c container ..."
+    docker_compose stop $c
+    docker_compose rm -f $c
+    docker_compose create $c
+    docker_compose start $c
+  done
 }
 
 
 env_action() {
   action=$1; shift
   case $action in
+    rebuild)
+        echo "Going to rebuild shop images ..."
+        build_images
+        compose_recreate $(compose_get_spryker_services)
+        ;;
     recreate)
       if [ -n "$1" ]; then
-          compose_recreate $1
+        compose_recreate $1
       else
-        for c in yves-phpfpm yves-nginx zed-nginx zed-phpfpm init; do
-          compose_recreate $c
-        done
+        compose_recreate $(compose_get_spryker_services)
       fi
       ;;
+    reinit)
+          compose_recreate init
+        ;;
     update-deps)
       echo "Updating dependencies in running container ..."
       container_action build deps
@@ -113,7 +135,7 @@ env_action() {
     enter)
       docker_compose exec $1 /bin/bash
       ;;
-    ps|exec|up|down|pull)
+    ps|exec|up|down|pull|logs)
       docker_compose $action $*
       ;;
     compose)
@@ -158,17 +180,38 @@ build_images() {
   docker_build "$IMAGE:$VERSION" $*
 
   echo "Build spryker jenkins slave image"
-  docker_build "$IMAGE:$VERSION-jenkins" --build-arg ENABLE_JENKINS_BUILD=true $*
+  docker_build_jenkins "$IMAGE:$VERSION" $*
 
   if [ -f "$WORKDIR/docker/dockerignore" ]; then
     rm $WORKDIR/.dockerignore
   fi
 }
 
+# Build jenkins docker image derived from the one just being built.
+docker_build_jenkins() {
+  local image=$1; shift
+  DF_JENKINS_GENERATED="$(dirname $DOCKERFILE_JENKINS)/.$(basename $DOCKERFILE_JENKINS)"
+  local DF_JENKINS=$DOCKERFILE-jenkins
+  if [ -e $DOCKERFILE_JENKINS ]; then
+    echo "Using locally supplied Dockerfile for building jenkins: $DOCKERFFILE_JENKINS"
+    cat $DOCKERFILE_JENKINS > $DF_JENKINS_GENERATED
+    perl -i -pe 's/\${IMAGE}/$ENV{"IMAGE"}/g' $DF_JENKINS_GENERATED
+    perl -i -pe 's/\${VERSION}/$ENV{"VERSION"}/g' $DF_JENKINS_GENERATED
+  else
+    echo "No Dockerfile for jenkins given, creating one."
+    cat > $DF_JENKINS_GENERATED <<EOF
+FROM $IMAGE:$VERSION
+RUN /entrypoint.sh build jenkins
+EOF
+  fi
+  docker_build "${image}-jenkins" -f $DF_JENKINS_GENERATED $*
+}
+
 docker_build() {
   local image=$1; shift
   set -x
   docker build $DOCKER_BUILD_ARGS -t $image -f $DOCKERFILE $* $WORKDIR
+  set +x
 }
 
 push_images() {
@@ -179,6 +222,7 @@ push_images() {
 
   echo "Push spryker jenkins slave image"
   docker push $* "$IMAGE:$VERSION-jenkins"
+  set +x
 }
 
 help() {
@@ -196,31 +240,42 @@ COMMANDS:
   Per Environment:
     prod|devel up [<args>]            -- Start spryker environment
     prod|devel down [<args>]          -- Stops spryker environment
-    prod|devel recreate init          -- Reinitializes the setup by recreating the init container
+    prod|devel rebuild                -- Rebuild shop image and recreate shop containers
+    prod|devel recreate               -- Recreate all shop containers
     prod|devel recreate [<svc>]       -- Just recreates running services
+    prod|devel reinit                 -- Recreate the init container
     prod|devel update-deps            -- Update dependency in running containers
     prod|devel gen-code               -- Generate code in running containers
     prod|devel enter <svc>            -- Exec into svc container and start /bin/sh
-    prod|devel compose cmd <args>     -- Interface to docker-compose
     prod|devel ps [<args>]            -- Show running services (same as: compose ps)
     prod|devel exec <svc> [<args>]    -- Exec into container (same as: compose exec)
+    prod|devel logs <svc> [<args>]    -- Show logs of given service (same as: compose logs)
+    prod|devel compose cmd <args>     -- Interface to docker-compose
 
 EXAMPLES:
 
-    - Start devel environment (builds containers unless existent locally):
-        $0 prod up
+  - Start devel environment (builds containers unless existent locally):
+      $0 devel up
 
-    - Tear down devel environment incl. their data stores:
-        $0 prod down -v
+  - Show running containers and their exposed ports
+      $0 devel ps
 
-    - Recreate spryker container
-        $0 prod recreate
+  - Show and follow logs of particular container
+      $0 devel logs -f init
 
-    - Exec shell in container:
-        $0 prod enter yves
+  - Tear down devel environment incl. their data stores:
+      $0 devel down -v
 
-    - Exec arbitrary command in container:
-        $0 prod exec yves sleep 1m
+  - Rebuild and recreate spryker containers except the init container. This is
+    useful in cases where you want to update the dependencies. All stateful
+    services are not touched in any way.
+      $0 devel rebuild
+
+  - Exec shell in container:
+      $0 devel enter yves
+
+  - Exec arbitrary command in container:
+      $0 devel exec yves sleep 1m
 "
 }
 
@@ -236,4 +291,5 @@ case $1 in
     ;;
   *)
     help
+    ;;
 esac

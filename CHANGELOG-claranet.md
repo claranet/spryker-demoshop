@@ -1,8 +1,15 @@
 
 # unreleased
 
+# 2.32.1 (2018-09-24)
+
 **changes**
 * fix propel:createdb
+* Reintroduce distinction of devel/prod via APPLICATION_ENV
+* Reduce build time by building the jenkins slave image as a child of the shop
+  image
+* Fix wrong spryker pathes in jenkins jobs
+* Add figure to depict spryker container stack
 
 # 2.32.0 (2018-06-08)
 
