@@ -20,6 +20,8 @@
     * [Interface to `docker-compose`](#interface-to-docker-compose)
     * [Debug Failed Build](#debug-failed-build)
 * [Deprecations](#deprecations)
+    * [2.31.0](#2310)
+    * [2.28.0](#2280)
 * [Known Issues](#known-issues)
     * [PHP 7.2](#php-72)
     * [PHP OPCACHE](#php-opcache)
@@ -327,10 +329,27 @@ And here you go in investigating the cause for the build failure.
 
 ## Deprecations
 
-* We dropped alpine support in favor of debian stretch! If you require alpine,
-  please use versions prior 2.28.0
-* Also note: The parent image switched from `claranet/spryker-base` to
- `claranet/php`, which breaks the previous `docker/` filesystem structure!
+### 2.31.0
+
+We introduced the usage of the Spryker Installer. Prior to this version we have
+rendered the whole sprykwer build, install and provisioning process in shell
+scripts residing in the base and the spryker image. This has been dropped in
+favor of the new Spryker Installer which represents nothing more than a
+contract between the application and the infrastructure. This contract
+explicitly hilights all the necessary actions to be taken in order to build the
+shop. We've prepared such a contract of an installation routine via
+`config/installer/claranet.yml`.
+
+### 2.28.0
+
+We dropped alpine support in favor of debian stretch! If you require alpine,
+please use versions prior 2.28.0, but we do not further support alpine.
+
+Also note: The parent image switched from `claranet/spryker-base` to
+`claranet/php`, which breaks the previous `docker/` filesystem structure! We
+have chose this path because the former base image could be even further
+generalized to match not only spryker requirements, but rather any PHP based
+application requirements.
 
 
 ## Known Issues
