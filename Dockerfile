@@ -1,5 +1,5 @@
 
-FROM claranet/php:1.1.9-php7.1.18
+FROM claranet/php:1.1.14-php7.2.11
 
 LABEL org.label-schema.name="claranet/spryker-demoshop" \
       org.label-schema.version="2.32.2" \
@@ -12,9 +12,8 @@ LABEL org.label-schema.name="claranet/spryker-demoshop" \
 
 # Override claranet/php image settings
 ENV NPM_ARGS="--with-dev" \
-    PHP_EXTENSIONS="mcrypt redis" \
-    BUILD_PACKAGES="${BUILD_PACKAGES} libmcrypt-dev" \
-    SYSTEM_PACKAGES="libmcrypt4 graphviz redis-tools" \
+    PHP_EXTENSIONS="redis" \
+    SYSTEM_PACKAGES="graphviz redis-tools" \
     PHP_EXTENSIONS_STARTUP_ONLY="xdebug" \
     NODEJS_VERSION="10" \
     CODECEPTION_ARGS="-x CheckoutAvailabilityCest -x CmsGuiCreatePageCest -x NavigationCRUDCest -x NavigationTreeCest -x ProductRelationCreateRelationCest -x Smoke" \
