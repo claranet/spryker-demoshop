@@ -1,14 +1,39 @@
 
 # unreleased
 
+## security
+
+* commit 07b32e085 fixes a potential low priority security issue
+
+> Extend .dockerignore to exclude sesible temporary secrets from image build
+>  
+> This security issue has low impact, but you should update to a version
+> which includes this commit!
+>  
+> If an docker image gets build AFTER the local stack was already run on
+> the system that builds the image, it might be, that the docker build
+> process adds the `docker/.secret.env` file which contains secrets for
+> a local build, dynamically created for the users local dev stack.
+
+## versions
+
+* PHP: 7.2.11 (claranet/php 1.1.14)
+
+## changes
+
+* revert splitting Jenkins Dockerfile and the main Dockerfile, [more detailed docs here](docs/jenkins.md)
+
+
 # 2.32.2 (2018-09-24)
 
-**changes**
+## changes
+
 * fix travis ci
 
 # 2.32.1 (2018-09-24)
 
-**changes**
+## changes
+
 * fix propel:createdb
 * Reintroduce distinction of devel/prod via APPLICATION_ENV
 * Reduce build time by building the jenkins slave image as a child of the shop
@@ -20,14 +45,15 @@
 
 Updates the Spryker Demoshop to version 2.32.0
 
-**versions**
+## versions
 * PHP: 7.1.18 (claranet/php 1.1.9)
 * PHP Composer: 1.6.5
 * NodeJS: 10
 * Spryker Demoshop: 2.32
 * Jenkins-Slave JRE: 8
 
-**changes**
+## changes
+
 * fix HOST_YVES and HOST_ZED vars in `docker/config_local.php`
 * disable opcache, as it breaks the Demoshop since this version
 
@@ -35,14 +61,15 @@ Updates the Spryker Demoshop to version 2.32.0
 
 Updates the Spryker Demoshop to version 2.31.0
 
-**versions**
+## versions
 * PHP: 7.1.18 (claranet/php 1.1.8)
 * PHP Composer: 1.6.5
 * NodeJS: 10
 * Spryker Demoshop: 2.31
 * Jenkins-Slave JRE: 8
 
-**changes**
+## changes
+
 * stick with PHP 7.1 as there is an opcache bug in 7.2: https://bugs.php.net/bug.php?id=76029
 * use the [Spryker Installer](https://academy.spryker.com/developing_with_spryker/module_guide/utilities/install_tool.html) to build and init the Spryker Shop parts
     * introduces a `config/installer/claranet.yml` file, derived from the `development` manifest
@@ -58,14 +85,15 @@ Updates the Spryker Demoshop to version 2.31.0
 
 Updates the Spryker Demoshop to version 2.30.0
 
-**versions**
+## versions
 * PHP: 7.1.17 (claranet/php 1.1.7)
 * PHP Composer: 1.6.5
 * NodeJS: 10
 * Spryker Demoshop: 2.30.0
 * Jenkins-Slave JRE: 8
 
-**changes**
+## changes
+
 * keep to PHP 7.1.17 as the spryker demoshop currently drops some exceptions regarding PHP 7.2
 * update Demoshop to 2.30.0
 * switch to NodeJS: 10
@@ -85,14 +113,15 @@ Updates the Spryker Demoshop to version 2.30.0
 
 Updates the Spryker Demoshop to version 2.29.0
 
-**versions**
+## versions
 * PHP: 7.1.17 (claranet/php 1.1.7)
 * PHP Composer: 1.6.5
 * NodeJS: 6.x.x
 * Spryker Demoshop: 2.29.0
 * Jenkins-Slave JRE: 8
 
-**changes**
+## changes
+
 * add rabbitmq to docker-compose, config_local.php and Dockerfile
 * update spryker demoshop to 2.29.0
 
@@ -111,14 +140,15 @@ to see which steps are available.
 Use this repo as a skeleton for your new spryker projects, so you can benefit
 from the dockerized stack, we built for you.
 
-**versions**
+## versions
 * PHP: 7.1.17 (claranet/php 1.1.7)
 * PHP Composer: 1.6.5
 * NodeJS: 6.x.x
 * Spryker Demoshop: 2.28.0
 * Jenkins-Slave JRE: 8
 
-**changes**
+## changes
+
 * switch to claranet/php parent image
 * switch to PHP 7.1.17
 * add jenkins master/slave with specialized jenkins slave flavoured spryker image
