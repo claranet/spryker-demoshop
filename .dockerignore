@@ -2,5 +2,10 @@
 ./setup
 ./deploy
 ./docker/docker-compose*
+./docker/.docker-compose
+./docker/run
+./docker/secrets.env
+./docker/.secrets.env
 vendor
 scripts
+docs/
