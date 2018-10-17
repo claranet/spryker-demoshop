@@ -180,31 +180,11 @@ build_images() {
   docker_build "$IMAGE:$VERSION" $*
 
   echo "Build spryker jenkins slave image"
-  docker_build_jenkins "$IMAGE:$VERSION" $*
+  docker_build "$IMAGE:$VERSION-jenkins" --build-arg ENABLE_JENKINS_BUILD=true $*
 
   if [ -f "$WORKDIR/docker/dockerignore" ]; then
     rm $WORKDIR/.dockerignore
   fi
-}
-
-# Build jenkins docker image derived from the one just being built.
-docker_build_jenkins() {
-  local image=$1; shift
-  DF_JENKINS_GENERATED="$(dirname $DOCKERFILE_JENKINS)/.$(basename $DOCKERFILE_JENKINS)"
-  local DF_JENKINS=$DOCKERFILE-jenkins
-  if [ -e $DOCKERFILE_JENKINS ]; then
-    echo "Using locally supplied Dockerfile for building jenkins: $DOCKERFFILE_JENKINS"
-    cat $DOCKERFILE_JENKINS > $DF_JENKINS_GENERATED
-    perl -i -pe 's/\${IMAGE}/$ENV{"IMAGE"}/g' $DF_JENKINS_GENERATED
-    perl -i -pe 's/\${VERSION}/$ENV{"VERSION"}/g' $DF_JENKINS_GENERATED
-  else
-    echo "No Dockerfile for jenkins given, creating one."
-    cat > $DF_JENKINS_GENERATED <<EOF
-FROM $IMAGE:$VERSION
-RUN /entrypoint.sh build jenkins
-EOF
-  fi
-  docker_build "${image}-jenkins" -f $DF_JENKINS_GENERATED $*
 }
 
 docker_build() {
