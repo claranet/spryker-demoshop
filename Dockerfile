@@ -2,7 +2,7 @@
 FROM claranet/php:1.1.14-php7.2.11
 
 LABEL org.label-schema.name="claranet/spryker-demoshop" \
-      org.label-schema.version="2.32.2" \
+      org.label-schema.version="2.32.3" \
       org.label-schema.description="Dockerized Spyker Demoshop" \
       org.label-schema.vendor="Claranet GmbH" \
       org.label-schema.schema-version="1.0" \
