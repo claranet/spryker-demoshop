@@ -90,5 +90,4 @@ RUN /entrypoint.sh build deps
 
 # Only build jenkins on demand
 ARG ENABLE_JENKINS_BUILD=false
-ENV SYSTEM_PACKAGES=""
 RUN if [ "${ENABLE_JENKINS_BUILD}" = "true" ]; then /entrypoint.sh build jenkins; fi
