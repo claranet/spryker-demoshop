@@ -18,6 +18,9 @@
 ## versions
 
 * PHP: 7.2.11 (claranet/php 1.1.14)
+* Redis: 4.0.11
+* Elasticsearch: 5.6.12
+* postgresql: 9.6.10
 
 ## changes
 
