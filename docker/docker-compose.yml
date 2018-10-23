@@ -115,7 +115,7 @@ services:
     environment: *zed_environment
 
   yves-session-redis:
-    image: "redis:4.0.9-alpine"
+    image: "redis:4.0.11-alpine"
     command: >
       --requirepass $YVES_SESSION_REDIS_PASSWORD
       --appendonly yes
@@ -123,7 +123,7 @@ services:
       - /data
 
   zed-session-redis:
-    image: "redis:4.0.9-alpine"
+    image: "redis:4.0.11-alpine"
     command: >
       --requirepass $ZED_SESSION_REDIS_PASSWORD
       --appendonly yes
@@ -131,7 +131,7 @@ services:
       - /data
 
   storage-redis:
-    image: "redis:4.0.9-alpine"
+    image: "redis:4.0.11-alpine"
     command: >
       --requirepass $STORAGE_REDIS_PASSWORD
       --appendonly yes
@@ -139,14 +139,14 @@ services:
       - /data
 
   elasticsearch:
-    image: "elasticsearch:5.6.9-alpine"
+    image: "elasticsearch:5.6.12-alpine"
     ports:
       - "${BASE_PORT:-1}0500:9200"
     volumes:
       - /usr/share/elasticsearch/data
 
   database:
-    image: "postgres:9.6.9-alpine"
+    image: "postgres:9.6.10-alpine"
     ports:
       - "${BASE_PORT:-1}0600:5432"
     environment:
