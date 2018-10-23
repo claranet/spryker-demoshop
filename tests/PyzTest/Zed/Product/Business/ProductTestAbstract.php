@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -24,7 +24,6 @@ use Orm\Zed\Stock\Persistence\SpyStock;
 use Orm\Zed\Tax\Persistence\SpyTaxRate;
 use Orm\Zed\Tax\Persistence\SpyTaxSet;
 use Orm\Zed\Tax\Persistence\SpyTaxSetTax;
-use Pyz\Zed\Product\Business\ProductBusinessFactory;
 use Spryker\Service\UtilEncoding\UtilEncodingService;
 use Spryker\Service\UtilText\UtilTextService;
 use Spryker\Zed\Currency\Business\CurrencyFacade;
@@ -33,6 +32,7 @@ use Spryker\Zed\PriceProduct\Business\PriceProductFacade;
 use Spryker\Zed\PriceProduct\Persistence\PriceProductQueryContainer;
 use Spryker\Zed\Product\Business\Product\ProductManager;
 use Spryker\Zed\Product\Business\Product\Url\ProductUrlManager;
+use Spryker\Zed\Product\Business\ProductBusinessFactory;
 use Spryker\Zed\Product\Business\ProductFacade;
 use Spryker\Zed\Product\Dependency\Facade\ProductToLocaleBridge;
 use Spryker\Zed\Product\Dependency\Facade\ProductToTouchBridge;

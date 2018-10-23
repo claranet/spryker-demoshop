@@ -1,13 +1,13 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Orm\Zed\ProductSetPageSearch\Persistence;
 
-use Orm\Zed\ProductSetPageSearch\Persistence\Base\SpyProductSetPageSearchQuery as BaseSpyProductSetPageSearchQuery;
+use Spryker\Zed\ProductSetPageSearch\Persistence\Propel\AbstractSpyProductSetPageSearchQuery;
 
 /**
  * Skeleton subclass for performing query and update operations on the 'spy_product_set_page_search' table.
@@ -19,6 +19,6 @@ use Orm\Zed\ProductSetPageSearch\Persistence\Base\SpyProductSetPageSearchQuery a
  * long as it does not already exist in the output directory.
  *
  */
-class SpyProductSetPageSearchQuery extends BaseSpyProductSetPageSearchQuery
+class SpyProductSetPageSearchQuery extends AbstractSpyProductSetPageSearchQuery
 {
 }

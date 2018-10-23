@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -15,9 +15,12 @@ use Orm\Zed\ProductImage\Persistence\SpyProductImageSetToProductImageQuery;
 use Pyz\Zed\DataImport\Business\Model\Locale\Repository\LocaleRepositoryInterface;
 use Pyz\Zed\DataImport\Business\Model\Product\Repository\ProductRepositoryInterface;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
+use Spryker\Zed\DataImport\Business\Model\DataImportStep\PublishAwareStep;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
+use Spryker\Zed\Product\Dependency\ProductEvents;
+use Spryker\Zed\ProductImage\Dependency\ProductImageEvents;
 
-class ProductImageWriterStep implements DataImportStepInterface
+class ProductImageWriterStep extends PublishAwareStep implements DataImportStepInterface
 {
     const BULK_SIZE = 100;
 
@@ -87,6 +90,8 @@ class ProductImageWriterStep implements DataImportStepInterface
         $productImageSetEntity = $query->findOneOrCreate();
         if ($productImageSetEntity->isNew() || $productImageSetEntity->isModified()) {
             $productImageSetEntity->save();
+
+            $this->addImagePublishEvents($productImageSetEntity);
         }
 
         return $productImageSetEntity;
@@ -149,6 +154,21 @@ class ProductImageWriterStep implements DataImportStepInterface
 
         if ($productImageSetToProductImageEntity->isNew() || $productImageSetToProductImageEntity->isModified()) {
             $productImageSetToProductImageEntity->save();
+        }
+    }
+
+    /**
+     * @param \Orm\Zed\ProductImage\Persistence\SpyProductImageSet $productImageSetEntity
+     *
+     * @return void
+     */
+    protected function addImagePublishEvents(SpyProductImageSet $productImageSetEntity)
+    {
+        if ($productImageSetEntity->getFkProductAbstract()) {
+            $this->addPublishEvents(ProductImageEvents::PRODUCT_IMAGE_PRODUCT_ABSTRACT_PUBLISH, $productImageSetEntity->getFkProductAbstract());
+            $this->addPublishEvents(ProductEvents::PRODUCT_ABSTRACT_PUBLISH, $productImageSetEntity->getFkProductAbstract());
+        } elseif ($productImageSetEntity->getFkProduct()) {
+            $this->addPublishEvents(ProductImageEvents::PRODUCT_IMAGE_PRODUCT_CONCRETE_PUBLISH, $productImageSetEntity->getFkProduct());
         }
     }
 }

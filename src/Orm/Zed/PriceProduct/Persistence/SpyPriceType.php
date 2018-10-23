@@ -1,13 +1,13 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Orm\Zed\PriceProduct\Persistence;
 
-use Spryker\Zed\PriceProduct\Persistence\Propel\AbstractSpyPriceType as BaseSpyPriceType;
+use Spryker\Zed\PriceProduct\Persistence\Propel\AbstractSpyPriceType;
 
 /**
  * Skeleton subclass for representing a row from the 'spy_price_type' table.
@@ -17,7 +17,8 @@ use Spryker\Zed\PriceProduct\Persistence\Propel\AbstractSpyPriceType as BaseSpyP
  * You should add additional methods to this class to meet the
  * application requirements. This class will only be generated as
  * long as it does not already exist in the output directory.
+ *
  */
-class SpyPriceType extends BaseSpyPriceType
+class SpyPriceType extends AbstractSpyPriceType
 {
 }

@@ -1,7 +1,6 @@
 <?php
 
 use Monolog\Logger;
-use Pyz\Shared\Newsletter\NewsletterConstants;
 use Spryker\Shared\Acl\AclConstants;
 use Spryker\Shared\Application\ApplicationConstants;
 use Spryker\Shared\Auth\AuthConstants;
@@ -16,8 +15,8 @@ use Spryker\Shared\Kernel\KernelConstants;
 use Spryker\Shared\Kernel\Store;
 use Spryker\Shared\Log\LogConstants;
 use Spryker\Shared\NewRelic\NewRelicConstants;
+use Spryker\Shared\Newsletter\NewsletterConstants;
 use Spryker\Shared\Oms\OmsConstants;
-use Spryker\Shared\Payolution\PayolutionConstants;
 use Spryker\Shared\Propel\PropelConstants;
 use Spryker\Shared\Queue\QueueConstants;
 use Spryker\Shared\Sales\SalesConstants;
@@ -38,6 +37,7 @@ $config[KernelConstants::PROJECT_NAMESPACES] = [
 ];
 
 $config[KernelConstants::CORE_NAMESPACES] = [
+    'SprykerShop',
     'SprykerEco',
     'Spryker',
 ];
@@ -98,7 +98,6 @@ $config[SearchConstants::SEARCH_INDEX_NAME_SUFFIX] = '';
  * In production you probably use a CDN for static content
  */
 $config[ApplicationConstants::HOST_YVES]
-    = $config[PayolutionConstants::HOST_YVES]
     = $config[NewsletterConstants::HOST_YVES]
     = $config[ApplicationConstants::HOST_STATIC_ASSETS]
     = $config[ApplicationConstants::HOST_STATIC_MEDIA]
@@ -369,7 +368,7 @@ $config[PropelConstants::ZED_DB_SUPPORTED_ENGINES] = [
 $config[PropelConstants::SCHEMA_FILE_PATH_PATTERN] = APPLICATION_VENDOR_DIR . '/*/*/src/*/Zed/*/Persistence/Propel/Schema/';
 
 $config[KernelConstants::DEPENDENCY_INJECTOR_YVES] = [
-    'Checkout' => [
+    'CheckoutPage' => [
         'DummyPayment',
     ],
 ];
@@ -400,7 +399,7 @@ $config[SalesConstants::PAYMENT_METHOD_STATEMACHINE_MAPPING] = [
 $config[TaxConstants::DEFAULT_TAX_RATE] = 19;
 
 $config[QueueConstants::QUEUE_SERVER_ID] = (gethostname()) ?: php_uname('n');
-$config[QueueConstants::QUEUE_WORKER_INTERVAL_MILLISECONDS] = 10000;
+$config[QueueConstants::QUEUE_WORKER_INTERVAL_MILLISECONDS] = 1000;
 $config[QueueConstants::QUEUE_WORKER_MAX_THRESHOLD_SECONDS] = 59;
 
 /*

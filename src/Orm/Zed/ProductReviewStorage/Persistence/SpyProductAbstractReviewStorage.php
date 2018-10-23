@@ -1,13 +1,13 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Orm\Zed\ProductReviewStorage\Persistence;
 
-use Orm\Zed\ProductReviewStorage\Persistence\Base\SpyProductAbstractReviewStorage as BaseSpyProductAbstractReviewStorage;
+use Spryker\Zed\ProductReviewStorage\Persistence\Propel\AbstractSpyProductAbstractReviewStorage;
 
 /**
  * Skeleton subclass for representing a row from the 'spy_product_abstract_review_storage' table.
@@ -19,6 +19,6 @@ use Orm\Zed\ProductReviewStorage\Persistence\Base\SpyProductAbstractReviewStorag
  * long as it does not already exist in the output directory.
  *
  */
-class SpyProductAbstractReviewStorage extends BaseSpyProductAbstractReviewStorage
+class SpyProductAbstractReviewStorage extends AbstractSpyProductAbstractReviewStorage
 {
 }

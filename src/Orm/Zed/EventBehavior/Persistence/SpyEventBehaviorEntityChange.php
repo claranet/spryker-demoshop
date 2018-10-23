@@ -1,13 +1,13 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Orm\Zed\EventBehavior\Persistence;
 
-use Spryker\Zed\EventBehavior\Persistence\Propel\AbstractSpyEventBehaviorEntityChange as BaseSpyEventBehaviorEntityChange;
+use Spryker\Zed\EventBehavior\Persistence\Propel\AbstractSpyEventBehaviorEntityChange;
 
 /**
  * Skeleton subclass for representing a row from the 'spy_event_behavior_entity_change' table.
@@ -19,6 +19,6 @@ use Spryker\Zed\EventBehavior\Persistence\Propel\AbstractSpyEventBehaviorEntityC
  * long as it does not already exist in the output directory.
  *
  */
-class SpyEventBehaviorEntityChange extends BaseSpyEventBehaviorEntityChange
+class SpyEventBehaviorEntityChange extends AbstractSpyEventBehaviorEntityChange
 {
 }

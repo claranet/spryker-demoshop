@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -18,11 +18,11 @@ use Orm\Zed\Country\Persistence\SpyCountryQuery;
 use Orm\Zed\Customer\Persistence\SpyCustomer;
 use Orm\Zed\Customer\Persistence\SpyCustomerAddress;
 use Orm\Zed\Customer\Persistence\SpyCustomerQuery;
-use Pyz\Shared\Newsletter\NewsletterConstants;
 use PyzTest\Yves\Customer\PageObject\Customer;
 use PyzTest\Yves\Customer\PageObject\CustomerAddressesPage;
 use PyzTest\Yves\Customer\PageObject\CustomerLoginPage;
 use Spryker\Client\Session\SessionClient;
+use Spryker\Shared\Newsletter\NewsletterConstants;
 use Spryker\Zed\Customer\CustomerDependencyProvider;
 use Spryker\Zed\Customer\Dependency\Facade\CustomerToMailBridge;
 use Spryker\Zed\Mail\Business\MailFacadeInterface;
@@ -30,6 +30,7 @@ use Spryker\Zed\Newsletter\Business\NewsletterFacade;
 use SprykerTest\Shared\Testify\Helper\DependencyHelperTrait;
 use SprykerTest\Shared\Testify\Helper\LocatorHelperTrait;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 class CustomerHelper extends Module
 {
@@ -196,7 +197,7 @@ class CustomerHelper extends Module
      *
      * @return void
      */
-    public function addNewsletterSubscription($email, $type = NewsletterConstants::EDITORIAL_NEWSLETTER)
+    public function addNewsletterSubscription($email, $type = NewsletterConstants::DEFAULT_NEWSLETTER_TYPE)
     {
         $customerEntity = $this->loadCustomerByEmail($email);
         $newsletterSubscriberTransfer = new NewsletterSubscriberTransfer();
@@ -249,7 +250,7 @@ class CustomerHelper extends Module
      */
     protected function setupSession()
     {
-        $sessionContainer = new Session();
+        $sessionContainer = new Session(new MockArraySessionStorage());
         $sessionClient = new SessionClient();
         $sessionClient->setContainer($sessionContainer);
     }

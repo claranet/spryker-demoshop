@@ -1,13 +1,13 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Orm\Zed\PriceProductStorage\Persistence;
 
-use Orm\Zed\PriceProductStorage\Persistence\Base\SpyPriceProductConcreteStorage as BaseSpyPriceProductConcreteStorage;
+use Spryker\Zed\PriceProductStorage\Persistence\Propel\AbstractSpyPriceProductConcreteStorage;
 
 /**
  * Skeleton subclass for representing a row from the 'spy_price_product_concrete_storage' table.
@@ -19,6 +19,6 @@ use Orm\Zed\PriceProductStorage\Persistence\Base\SpyPriceProductConcreteStorage 
  * long as it does not already exist in the output directory.
  *
  */
-class SpyPriceProductConcreteStorage extends BaseSpyPriceProductConcreteStorage
+class SpyPriceProductConcreteStorage extends AbstractSpyPriceProductConcreteStorage
 {
 }

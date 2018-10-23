@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -10,6 +10,7 @@ namespace Pyz\Zed\Console;
 use Pyz\Zed\DataImport\DataImportConfig;
 use Silex\Provider\TwigServiceProvider as SilexTwigServiceProvider;
 use Spryker\Shared\Config\Environment;
+use Spryker\Zed\BusinessOnBehalfDataImport\BusinessOnBehalfDataImportConfig;
 use Spryker\Zed\Cache\Communication\Console\EmptyAllCachesConsole;
 use Spryker\Zed\CodeGenerator\Communication\Console\BundleClientCodeGeneratorConsole;
 use Spryker\Zed\CodeGenerator\Communication\Console\BundleCodeGeneratorConsole;
@@ -17,11 +18,14 @@ use Spryker\Zed\CodeGenerator\Communication\Console\BundleServiceCodeGeneratorCo
 use Spryker\Zed\CodeGenerator\Communication\Console\BundleSharedCodeGeneratorConsole;
 use Spryker\Zed\CodeGenerator\Communication\Console\BundleYvesCodeGeneratorConsole;
 use Spryker\Zed\CodeGenerator\Communication\Console\BundleZedCodeGeneratorConsole;
-use Spryker\Zed\Collector\Communication\Console\CollectorSearchExportConsole;
-use Spryker\Zed\Collector\Communication\Console\CollectorStorageExportConsole;
+use Spryker\Zed\CompanyBusinessUnitDataImport\CompanyBusinessUnitDataImportConfig;
+use Spryker\Zed\CompanyDataImport\CompanyDataImportConfig;
+use Spryker\Zed\CompanyUnitAddressDataImport\CompanyUnitAddressDataImportConfig;
+use Spryker\Zed\CompanyUnitAddressLabelDataImport\CompanyUnitAddressLabelDataImportConfig;
 use Spryker\Zed\Console\Communication\Plugin\ConsoleLogPlugin;
 use Spryker\Zed\Console\ConsoleDependencyProvider as SprykerConsoleDependencyProvider;
 use Spryker\Zed\DataImport\Communication\Console\DataImportConsole;
+use Spryker\Zed\DataImport\Communication\Console\DataImportDumpConsole;
 use Spryker\Zed\Development\Communication\Console\CodeArchitectureSnifferConsole;
 use Spryker\Zed\Development\Communication\Console\CodePhpMessDetectorConsole;
 use Spryker\Zed\Development\Communication\Console\CodePhpstanConsole;
@@ -32,7 +36,10 @@ use Spryker\Zed\Development\Communication\Console\GenerateIdeAutoCompletionConso
 use Spryker\Zed\Development\Communication\Console\GenerateServiceIdeAutoCompletionConsole;
 use Spryker\Zed\Development\Communication\Console\GenerateYvesIdeAutoCompletionConsole;
 use Spryker\Zed\Development\Communication\Console\GenerateZedIdeAutoCompletionConsole;
+use Spryker\Zed\Development\Communication\Console\ModuleBridgeCreateConsole;
+use Spryker\Zed\Development\Communication\Console\ModuleCreateConsole;
 use Spryker\Zed\EventBehavior\Communication\Console\EventBehaviorTriggerTimeoutConsole;
+use Spryker\Zed\EventBehavior\Communication\Plugin\Console\EventBehaviorPostHookPlugin;
 use Spryker\Zed\Installer\Communication\Console\InitializeDatabaseConsole;
 use Spryker\Zed\Kernel\Container;
 use Spryker\Zed\Log\Communication\Console\DeleteLogFilesConsole;
@@ -44,12 +51,9 @@ use Spryker\Zed\NewRelic\Communication\Plugin\NewRelicConsolePlugin;
 use Spryker\Zed\Oms\Communication\Console\CheckConditionConsole as OmsCheckConditionConsole;
 use Spryker\Zed\Oms\Communication\Console\CheckTimeoutConsole as OmsCheckTimeoutConsole;
 use Spryker\Zed\Oms\Communication\Console\ClearLocksConsole as OmsClearLocksConsole;
-use Spryker\Zed\Oms\Communication\Console\ExportReservationConsole;
-use Spryker\Zed\Product\Communication\Console\ProductTouchConsole;
 use Spryker\Zed\ProductLabel\Communication\Console\ProductLabelRelationUpdaterConsole;
 use Spryker\Zed\ProductLabel\Communication\Console\ProductLabelValidityConsole;
 use Spryker\Zed\ProductRelation\Communication\Console\ProductRelationUpdaterConsole;
-use Spryker\Zed\ProductValidity\Communication\Console\ProductValidityConsole;
 use Spryker\Zed\Propel\Communication\Console\DatabaseDropConsole;
 use Spryker\Zed\Propel\Communication\Console\DatabaseExportConsole;
 use Spryker\Zed\Propel\Communication\Console\DatabaseImportConsole;
@@ -92,7 +96,6 @@ use Spryker\Zed\StateMachine\Communication\Console\ClearLocksConsole as StateMac
 use Spryker\Zed\Storage\Communication\Console\StorageDeleteAllConsole;
 use Spryker\Zed\Storage\Communication\Console\StorageExportRdbConsole;
 use Spryker\Zed\Storage\Communication\Console\StorageImportRdbConsole;
-use Spryker\Zed\Touch\Communication\Console\TouchCleanUpConsole;
 use Spryker\Zed\Transfer\Communication\Console\DataBuilderGeneratorConsole;
 use Spryker\Zed\Transfer\Communication\Console\GeneratorConsole;
 use Spryker\Zed\Transfer\Communication\Console\ValidatorConsole;
@@ -116,9 +119,6 @@ class ConsoleDependencyProvider extends SprykerConsoleDependencyProvider
         $commands = [
             new CacheWarmerConsole(),
             new BuildNavigationConsole(),
-            new CollectorStorageExportConsole(),
-            new CollectorSearchExportConsole(),
-            new TouchCleanUpConsole(),
             new EmptyAllCachesConsole(),
             new GeneratorConsole(),
             new InitializeDatabaseConsole(),
@@ -137,12 +137,10 @@ class ConsoleDependencyProvider extends SprykerConsoleDependencyProvider
             new ProductRelationUpdaterConsole(),
             new ProductLabelValidityConsole(),
             new ProductLabelRelationUpdaterConsole(),
-            new ProductValidityConsole(),
             new DataImportConsole(),
             new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_STORE),
             new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_CURRENCY),
             new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_CATEGORY_TEMPLATE),
-            new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_CATEGORY),
             new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_CUSTOMER),
             new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_GLOSSARY),
             new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_NAVIGATION),
@@ -173,21 +171,21 @@ class ConsoleDependencyProvider extends SprykerConsoleDependencyProvider
             new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_PRODUCT_SET),
             new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_PRODUCT_SEARCH_ATTRIBUTE_MAP),
             new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_PRODUCT_SEARCH_ATTRIBUTE),
-            new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_PRODUCT_CUSTOMER_PERMISSION),
-            new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_ABSTRACT_GIFT_CARD_CONFIGURATION),
-            new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_CONCRETE_GIFT_CARD_CONFIGURATION),
             new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_SHIPMENT),
             new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_SHIPMENT_PRICE),
             new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_STOCK),
             new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_TAX),
             new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_DISCOUNT_AMOUNT),
-            new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_COMPANY),
-            new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_COMPANY_UNIT_ADDRESS_LABEL),
-            new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_COMPANY_UNIT_ADDRESS),
-            new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_COMPANY_BUSINESS_UNIT),
-            new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_COMPANY_SUPPLIER),
+            new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . DataImportConfig::IMPORT_TYPE_ORDER_SOURCE),
+            //core data importers
+            new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . CompanyDataImportConfig::IMPORT_TYPE_COMPANY),
+            new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . CompanyBusinessUnitDataImportConfig::IMPORT_TYPE_COMPANY_BUSINESS_UNIT),
+            new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . CompanyUnitAddressDataImportConfig::IMPORT_TYPE_COMPANY_UNIT_ADDRESS),
+            new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . CompanyUnitAddressLabelDataImportConfig::IMPORT_TYPE_COMPANY_UNIT_ADDRESS_LABEL),
+            new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . CompanyUnitAddressLabelDataImportConfig::IMPORT_TYPE_COMPANY_UNIT_ADDRESS_LABEL_RELATION),
+            new DataImportConsole(DataImportConsole::DEFAULT_NAME . ':' . BusinessOnBehalfDataImportConfig::IMPORT_TYPE_COMPANY_USER),
+
             new EventBehaviorTriggerTimeoutConsole(),
-            new ExportReservationConsole(),
 
             // Setup commands
             new RunnerConsole(),
@@ -243,8 +241,9 @@ class ConsoleDependencyProvider extends SprykerConsoleDependencyProvider
             $commands[] = new CodeStyleSnifferConsole();
             $commands[] = new CodeArchitectureSnifferConsole();
             $commands[] = new CodePhpstanConsole();
+            $commands[] = new ModuleBridgeCreateConsole();
+            $commands[] = new ModuleCreateConsole();
             $commands[] = new CodePhpMessDetectorConsole();
-            $commands[] = new ProductTouchConsole();
             $commands[] = new ValidatorConsole();
             $commands[] = new BundleCodeGeneratorConsole();
             $commands[] = new BundleYvesCodeGeneratorConsole();
@@ -261,6 +260,7 @@ class ConsoleDependencyProvider extends SprykerConsoleDependencyProvider
             $commands[] = new CompletionCommand();
             $commands[] = new DataBuilderGeneratorConsole();
             $commands[] = new PropelSchemaValidatorConsole();
+            $commands[] = new DataImportDumpConsole();
         }
 
         return $commands;
@@ -281,6 +281,18 @@ class ConsoleDependencyProvider extends SprykerConsoleDependencyProvider
         }
 
         return $eventSubscriber;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return array
+     */
+    public function getConsolePostRunHookPlugins(Container $container)
+    {
+        return [
+            new EventBehaviorPostHookPlugin(),
+        ];
     }
 
     /**

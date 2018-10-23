@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -14,11 +14,11 @@ use Orm\Zed\ProductOption\Persistence\SpyProductOptionValueQuery;
 use Orm\Zed\Store\Persistence\SpyStoreQuery;
 use Pyz\Zed\DataImport\Business\Exception\InvalidDataException;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
-use Spryker\Zed\DataImport\Business\Model\DataImportStep\TouchAwareStep;
+use Spryker\Zed\DataImport\Business\Model\DataImportStep\PublishAwareStep;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
-use Spryker\Zed\ProductOption\ProductOptionConfig;
+use Spryker\Zed\ProductOption\Dependency\ProductOptionEvents;
 
-class ProductOptionPriceWriterStep extends TouchAwareStep implements DataImportStepInterface
+class ProductOptionPriceWriterStep extends PublishAwareStep implements DataImportStepInterface
 {
     const BULK_SIZE = 100;
 
@@ -67,7 +67,7 @@ class ProductOptionPriceWriterStep extends TouchAwareStep implements DataImportS
             ->setNetPrice($this->formatPrice($dataSet[static::KEY_NET_AMOUNT]))
             ->save();
 
-        $this->touchRelatedProductAbstracts($priceEntity->getFkProductOptionValue());
+        $this->publishRelatedProductAbstracts($priceEntity->getFkProductOptionValue());
     }
 
     /**
@@ -75,7 +75,7 @@ class ProductOptionPriceWriterStep extends TouchAwareStep implements DataImportS
      *
      * @return void
      */
-    protected function touchRelatedProductAbstracts($idProductOptionValue)
+    protected function publishRelatedProductAbstracts($idProductOptionValue)
     {
         $productAbstractCollection = SpyProductAbstractQuery::create()
             ->joinSpyProductAbstractProductOptionGroup()
@@ -91,7 +91,7 @@ class ProductOptionPriceWriterStep extends TouchAwareStep implements DataImportS
             ->find();
 
         foreach ($productAbstractCollection as $productAbstractEntity) {
-            $this->addSubTouchable(ProductOptionConfig::RESOURCE_TYPE_PRODUCT_OPTION, $productAbstractEntity->getIdProductAbstract());
+            $this->addPublishEvents(ProductOptionEvents::PRODUCT_ABSTRACT_PRODUCT_OPTION_PUBLISH, $productAbstractEntity->getIdProductAbstract());
         }
     }
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -10,9 +10,10 @@ namespace PyzTest\Yves\Checkout\Process\Steps;
 use Codeception\Test\Unit;
 use Generated\Shared\Transfer\ItemTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
-use Pyz\Client\Customer\CustomerClientInterface;
-use Pyz\Yves\Checkout\Process\Steps\SuccessStep;
-use Spryker\Client\Cart\CartClientInterface;
+use SprykerShop\Yves\CheckoutPage\CheckoutPageConfig;
+use SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCartClientInterface;
+use SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCustomerClientInterface;
+use SprykerShop\Yves\CheckoutPage\Process\Steps\SuccessStep;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -71,9 +72,9 @@ class SuccessStepTest extends Unit
     }
 
     /**
-     * @param \Pyz\Client\Customer\CustomerClientInterface|null $customerClientMock
+     * @param \SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCustomerClientInterface|null $customerClientMock
      *
-     * @return \Pyz\Yves\Checkout\Process\Steps\SuccessStep
+     * @return \SprykerShop\Yves\CheckoutPage\Process\Steps\SuccessStep
      */
     protected function createSuccessStep($customerClientMock = null)
     {
@@ -82,21 +83,23 @@ class SuccessStepTest extends Unit
         }
 
         $cartClientMock = $this->createCartClientMock();
+        $checkoutPageConfigMock = $this->createCheckoutPageConfigMock();
 
         return new SuccessStep(
             $customerClientMock,
             $cartClientMock,
+            $checkoutPageConfigMock,
             'success_route',
             'escape_route'
         );
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Spryker\Client\Cart\CartClientInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|\SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCartClientInterface
      */
     protected function createCartClientMock()
     {
-        return $this->getMockBuilder(CartClientInterface::class)->getMock();
+        return $this->getMockBuilder(CheckoutPageToCartClientInterface::class)->getMock();
     }
 
     /**
@@ -108,10 +111,20 @@ class SuccessStepTest extends Unit
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Pyz\Client\Customer\CustomerClientInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|\SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCustomerClientInterface
      */
     protected function createCustomerClientMock()
     {
-        return $this->getMockBuilder(CustomerClientInterface::class)->getMock();
+        return $this->getMockBuilder(CheckoutPageToCustomerClientInterface::class)->getMock();
+    }
+
+    /**
+     * @return \PHPUnit\Framework\MockObject\MockObject|\SprykerShop\Yves\CheckoutPage\CheckoutPageConfig
+     */
+    protected function createCheckoutPageConfigMock()
+    {
+        $checkoutPageConfigMock = $this->getMockBuilder(CheckoutPageConfig::class)->setMethods(['cleanCartAfterOrderCreation'])->getMock();
+        $checkoutPageConfigMock->method('cleanCartAfterOrderCreation')->willReturn(true);
+        return $checkoutPageConfigMock;
     }
 }

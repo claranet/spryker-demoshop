@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -19,15 +19,15 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Pyz\Zed\DataImport\Business\Model\Product\ProductLocalizedAttributesExtractorStep;
 use Pyz\Zed\DataImport\Business\Model\Tax\TaxSetNameToIdTaxSetStep;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
-use Spryker\Zed\DataImport\Business\Model\DataImportStep\TouchAwareStep;
+use Spryker\Zed\DataImport\Business\Model\DataImportStep\PublishAwareStep;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
-use Spryker\Zed\Glossary\GlossaryConfig;
-use Spryker\Zed\ProductOption\ProductOptionConfig;
+use Spryker\Zed\Glossary\Dependency\GlossaryEvents;
+use Spryker\Zed\ProductOption\Dependency\ProductOptionEvents;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ProductOptionWriterStep extends TouchAwareStep implements DataImportStepInterface
+class ProductOptionWriterStep extends PublishAwareStep implements DataImportStepInterface
 {
     const BULK_SIZE = 100;
 
@@ -80,7 +80,7 @@ class ProductOptionWriterStep extends TouchAwareStep implements DataImportStepIn
                     ->findOneOrCreate()
                     ->save();
 
-                $this->addSubTouchable(ProductOptionConfig::RESOURCE_TYPE_PRODUCT_OPTION, $idProductAbstract);
+                $this->addPublishEvents(ProductOptionEvents::PRODUCT_ABSTRACT_PRODUCT_OPTION_PUBLISH, $idProductAbstract);
             }
         }
 
@@ -129,6 +129,6 @@ class ProductOptionWriterStep extends TouchAwareStep implements DataImportStepIn
             ->setValue($translation)
             ->save();
 
-        $this->addMainTouchable(GlossaryConfig::RESOURCE_TYPE_TRANSLATION, $glossaryTranslationEntity->getIdGlossaryTranslation());
+        $this->addPublishEvents(GlossaryEvents::GLOSSARY_KEY_PUBLISH, $glossaryTranslationEntity->getFkGlossaryKey());
     }
 }

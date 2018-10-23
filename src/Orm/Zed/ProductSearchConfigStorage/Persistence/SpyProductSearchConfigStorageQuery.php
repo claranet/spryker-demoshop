@@ -1,13 +1,13 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Orm\Zed\ProductSearchConfigStorage\Persistence;
 
-use Orm\Zed\ProductSearchConfigStorage\Persistence\Base\SpyProductSearchConfigStorageQuery as BaseSpyProductSearchConfigStorageQuery;
+use Spryker\Zed\ProductSearchConfigStorage\Persistence\Propel\AbstractSpyProductSearchConfigStorageQuery;
 
 /**
  * Skeleton subclass for performing query and update operations on the 'spy_product_search_config_storage' table.
@@ -19,6 +19,6 @@ use Orm\Zed\ProductSearchConfigStorage\Persistence\Base\SpyProductSearchConfigSt
  * long as it does not already exist in the output directory.
  *
  */
-class SpyProductSearchConfigStorageQuery extends BaseSpyProductSearchConfigStorageQuery
+class SpyProductSearchConfigStorageQuery extends AbstractSpyProductSearchConfigStorageQuery
 {
 }

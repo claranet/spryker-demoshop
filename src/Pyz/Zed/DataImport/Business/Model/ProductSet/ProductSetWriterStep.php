@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -15,19 +15,18 @@ use Orm\Zed\ProductSet\Persistence\SpyProductSet;
 use Orm\Zed\ProductSet\Persistence\SpyProductSetDataQuery;
 use Orm\Zed\ProductSet\Persistence\SpyProductSetQuery;
 use Orm\Zed\Url\Persistence\SpyUrlQuery;
-use Pyz\Zed\DataImport\Business\Model\DataImportStep\LocalizedAttributesExtractorStep;
 use Pyz\Zed\DataImport\Business\Model\Product\Repository\ProductRepositoryInterface;
-use Spryker\Shared\ProductSet\ProductSetConfig;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
-use Spryker\Zed\DataImport\Business\Model\DataImportStep\TouchAwareStep;
+use Spryker\Zed\DataImport\Business\Model\DataImportStep\LocalizedAttributesExtractorStep;
+use Spryker\Zed\DataImport\Business\Model\DataImportStep\PublishAwareStep;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
-use Spryker\Zed\DataImport\Dependency\Facade\DataImportToTouchInterface;
-use Spryker\Zed\Url\UrlConfig;
+use Spryker\Zed\ProductSet\Dependency\ProductSetEvents;
+use Spryker\Zed\Url\Dependency\UrlEvents;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ProductSetWriterStep extends TouchAwareStep implements DataImportStepInterface
+class ProductSetWriterStep extends PublishAwareStep implements DataImportStepInterface
 {
     const BULK_SIZE = 100;
 
@@ -52,13 +51,9 @@ class ProductSetWriterStep extends TouchAwareStep implements DataImportStepInter
 
     /**
      * @param \Pyz\Zed\DataImport\Business\Model\Product\Repository\ProductRepositoryInterface $productRepository
-     * @param \Spryker\Zed\DataImport\Dependency\Facade\DataImportToTouchInterface $touchFacade
-     * @param null|int $bulkSize
      */
-    public function __construct(ProductRepositoryInterface $productRepository, DataImportToTouchInterface $touchFacade, $bulkSize = null)
+    public function __construct(ProductRepositoryInterface $productRepository)
     {
-        parent::__construct($touchFacade, $bulkSize);
-
         $this->productRepository = $productRepository;
     }
 
@@ -93,7 +88,7 @@ class ProductSetWriterStep extends TouchAwareStep implements DataImportStepInter
 
         if ($productSetEntity->isNew() || $productSetEntity->isModified()) {
             $productSetEntity->save();
-            $this->addMainTouchable(ProductSetConfig::RESOURCE_TYPE_PRODUCT_SET, $productSetEntity->getIdProductSet());
+            $this->addPublishEvents(ProductSetEvents::PRODUCT_SET_PUBLISH, $productSetEntity->getIdProductSet());
         }
 
         return $productSetEntity;
@@ -163,7 +158,7 @@ class ProductSetWriterStep extends TouchAwareStep implements DataImportStepInter
 
             if ($productSetUrlEntity->isNew() || $productSetUrlEntity->isModified()) {
                 $productSetUrlEntity->save();
-                $this->addSubTouchable(UrlConfig::RESOURCE_TYPE_URL, $productSetUrlEntity->getIdUrl());
+                $this->addPublishEvents(UrlEvents::URL_PUBLISH, $productSetUrlEntity->getIdUrl());
             }
         }
     }

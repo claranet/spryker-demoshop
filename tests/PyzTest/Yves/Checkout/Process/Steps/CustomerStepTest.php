@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -10,9 +10,9 @@ namespace PyzTest\Yves\Checkout\Process\Steps;
 use Codeception\Test\Unit;
 use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
-use Pyz\Client\Customer\CustomerClientInterface;
-use Pyz\Yves\Checkout\Process\Steps\CustomerStep;
 use Spryker\Yves\StepEngine\Dependency\Plugin\Handler\StepHandlerPluginInterface;
+use SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCustomerClientInterface;
+use SprykerShop\Yves\CheckoutPage\Process\Steps\CustomerStep;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -127,10 +127,10 @@ class CustomerStepTest extends Unit
     }
 
     /**
-     * @param \PHPUnit_Framework_MockObject_MockObject|\Pyz\Client\Customer\CustomerClientInterface|null $customerClientMock
+     * @param \PHPUnit_Framework_MockObject_MockObject|\SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCustomerClientInterface|null $customerClientMock
      * @param \PHPUnit_Framework_MockObject_MockObject|\Spryker\Yves\StepEngine\Dependency\Plugin\Handler\StepHandlerPluginInterface|null $authHandlerMock
      *
-     * @return \Pyz\Yves\Checkout\Process\Steps\CustomerStep
+     * @return \SprykerShop\Yves\CheckoutPage\Process\Steps\CustomerStep
      */
     protected function createCustomerStep($customerClientMock = null, $authHandlerMock = null)
     {
@@ -167,10 +167,10 @@ class CustomerStepTest extends Unit
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Pyz\Client\Customer\CustomerClientInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|\SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCustomerClientInterface
      */
     protected function createCustomerClientMock()
     {
-        return $this->getMockBuilder(CustomerClientInterface::class)->getMock();
+        return $this->getMockBuilder(CheckoutPageToCustomerClientInterface::class)->getMock();
     }
 }

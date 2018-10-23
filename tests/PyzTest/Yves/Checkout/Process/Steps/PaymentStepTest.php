@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -10,12 +10,11 @@ namespace PyzTest\Yves\Checkout\Process\Steps;
 use Codeception\Test\Unit;
 use Generated\Shared\Transfer\PaymentTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
-use Pyz\Yves\Checkout\Process\Steps\PaymentStep;
-use Spryker\Client\Calculation\CalculationClientInterface;
-use Spryker\Client\Payment\PaymentClientInterface;
 use Spryker\Yves\Messenger\FlashMessenger\FlashMessengerInterface;
 use Spryker\Yves\StepEngine\Dependency\Plugin\Handler\StepHandlerPluginCollection;
 use Spryker\Yves\StepEngine\Dependency\Plugin\Handler\StepHandlerPluginInterface;
+use SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCalculationClientBridge;
+use SprykerShop\Yves\CheckoutPage\Process\Steps\PaymentStep;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -54,6 +53,21 @@ class PaymentStepTest extends Unit
     /**
      * @return void
      */
+    public function testPostConditionsShouldReturnTrueWhenPaymentSet()
+    {
+        $quoteTransfer = new QuoteTransfer();
+        $paymentTransfer = new PaymentTransfer();
+        $paymentTransfer->setPaymentProvider('test');
+        $quoteTransfer->setPayment($paymentTransfer);
+
+        $paymentStep = $this->createPaymentStep(new StepHandlerPluginCollection());
+
+        $this->assertTrue($paymentStep->postCondition($quoteTransfer));
+    }
+
+    /**
+     * @return void
+     */
     public function testShipmentRequireInputShouldReturnTrue()
     {
         $paymentStep = $this->createPaymentStep(new StepHandlerPluginCollection());
@@ -63,12 +77,11 @@ class PaymentStepTest extends Unit
     /**
      * @param \Spryker\Yves\StepEngine\Dependency\Plugin\Handler\StepHandlerPluginCollection $paymentPlugins
      *
-     * @return \Pyz\Yves\Checkout\Process\Steps\PaymentStep
+     * @return \SprykerShop\Yves\CheckoutPage\Process\Steps\PaymentStep
      */
     protected function createPaymentStep(StepHandlerPluginCollection $paymentPlugins)
     {
         return new PaymentStep(
-            $this->getPaymentClientMock(),
             $paymentPlugins,
             'payment',
             'escape_route',
@@ -94,19 +107,11 @@ class PaymentStepTest extends Unit
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Spryker\Client\Payment\PaymentClientInterface
-     */
-    protected function getPaymentClientMock()
-    {
-        return $this->getMockBuilder(PaymentClientInterface::class)->getMock();
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|\Spryker\Client\Calculation\CalculationClientInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|\SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCalculationClientInterface
      */
     protected function getCalculationClientMock()
     {
-        return $this->getMockBuilder(CalculationClientInterface::class)->getMock();
+        return $this->getMockBuilder(CheckoutPageToCalculationClientBridge::class)->disableOriginalConstructor()->getMock();
     }
 
     /**

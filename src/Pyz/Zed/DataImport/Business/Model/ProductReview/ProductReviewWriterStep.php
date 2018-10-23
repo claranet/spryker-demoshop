@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -11,14 +11,12 @@ use Orm\Zed\ProductReview\Persistence\Map\SpyProductReviewTableMap;
 use Orm\Zed\ProductReview\Persistence\SpyProductReviewQuery;
 use Pyz\Zed\DataImport\Business\Model\Locale\Repository\LocaleRepositoryInterface;
 use Pyz\Zed\DataImport\Business\Model\Product\Repository\ProductRepositoryInterface;
-use Spryker\Shared\Product\ProductConfig;
-use Spryker\Shared\ProductReview\ProductReviewConfig;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
-use Spryker\Zed\DataImport\Business\Model\DataImportStep\TouchAwareStep;
+use Spryker\Zed\DataImport\Business\Model\DataImportStep\PublishAwareStep;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
-use Spryker\Zed\DataImport\Dependency\Facade\DataImportToTouchInterface;
+use Spryker\Zed\ProductReview\Dependency\ProductReviewEvents;
 
-class ProductReviewWriterStep extends TouchAwareStep implements DataImportStepInterface
+class ProductReviewWriterStep extends PublishAwareStep implements DataImportStepInterface
 {
     /**
      * @var \Pyz\Zed\DataImport\Business\Model\Product\Repository\ProductRepositoryInterface
@@ -33,13 +31,9 @@ class ProductReviewWriterStep extends TouchAwareStep implements DataImportStepIn
     /**
      * @param \Pyz\Zed\DataImport\Business\Model\Product\Repository\ProductRepositoryInterface $productRepository
      * @param \Pyz\Zed\DataImport\Business\Model\Locale\Repository\LocaleRepositoryInterface $localeRepository
-     * @param \Spryker\Zed\DataImport\Dependency\Facade\DataImportToTouchInterface $touchFacade
-     * @param int|null $bulkSize
      */
-    public function __construct(ProductRepositoryInterface $productRepository, LocaleRepositoryInterface $localeRepository, DataImportToTouchInterface $touchFacade, $bulkSize = null)
+    public function __construct(ProductRepositoryInterface $productRepository, LocaleRepositoryInterface $localeRepository)
     {
-        parent::__construct($touchFacade, $bulkSize);
-
         $this->productRepository = $productRepository;
         $this->localeRepository = $localeRepository;
     }
@@ -67,11 +61,9 @@ class ProductReviewWriterStep extends TouchAwareStep implements DataImportStepIn
             $productReviewEntity->save();
 
             if ($productReviewEntity->getStatus() === SpyProductReviewTableMap::COL_STATUS_APPROVED) {
-                $this->addMainTouchable(ProductReviewConfig::RESOURCE_TYPE_PRODUCT_REVIEW, $productReviewEntity->getIdProductReview());
+                $this->addPublishEvents(ProductReviewEvents::PRODUCT_REVIEW_PUBLISH, $productReviewEntity->getIdProductReview());
             }
-
-            $this->addSubTouchable(ProductReviewConfig::RESOURCE_TYPE_PRODUCT_ABSTRACT_REVIEW, $productReviewEntity->getFkProductAbstract());
-            $this->addSubTouchable(ProductConfig::RESOURCE_TYPE_PRODUCT_ABSTRACT, $productReviewEntity->getFkProductAbstract());
+            $this->addPublishEvents(ProductReviewEvents::PRODUCT_ABSTRACT_REVIEW_PUBLISH, $productReviewEntity->getFkProductAbstract());
         }
     }
 

@@ -1,13 +1,13 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Orm\Zed\CmsBlockCategoryStorage\Persistence;
 
-use Orm\Zed\CmsBlockCategoryStorage\Persistence\Base\SpyCmsBlockCategoryStorage as BaseSpyCmsBlockCategoryStorage;
+use Spryker\Zed\CmsBlockCategoryStorage\Persistence\Propel\AbstractSpyCmsBlockCategoryStorage;
 
 /**
  * Skeleton subclass for representing a row from the 'spy_cms_block_category_storage' table.
@@ -19,6 +19,6 @@ use Orm\Zed\CmsBlockCategoryStorage\Persistence\Base\SpyCmsBlockCategoryStorage 
  * long as it does not already exist in the output directory.
  *
  */
-class SpyCmsBlockCategoryStorage extends BaseSpyCmsBlockCategoryStorage
+class SpyCmsBlockCategoryStorage extends AbstractSpyCmsBlockCategoryStorage
 {
 }

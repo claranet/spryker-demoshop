@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -16,7 +16,6 @@ use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
 class CmsBlockStoreWriterStep implements DataImportStepInterface
 {
     const BULK_SIZE = 100;
-
     const KEY_BLOCK_NAME = 'block_name';
     const KEY_STORE_NAME = 'store_name';
 
@@ -55,7 +54,6 @@ class CmsBlockStoreWriterStep implements DataImportStepInterface
             static::$idCmsBlockBuffer[$cmsBlockName] =
                 SpyCmsBlockQuery::create()->findOneByName($cmsBlockName)->getIdCmsBlock();
         }
-
         return static::$idCmsBlockBuffer[$cmsBlockName];
     }
 
@@ -70,7 +68,6 @@ class CmsBlockStoreWriterStep implements DataImportStepInterface
             static::$idStoreBuffer[$storeName] =
                 SpyStoreQuery::create()->findOneByName($storeName)->getIdStore();
         }
-
         return static::$idStoreBuffer[$storeName];
     }
 }
