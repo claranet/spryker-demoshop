@@ -100,6 +100,10 @@ compose_recreate() {
     echo "\nRecreating $c container ..."
     docker_compose stop $c
     docker_compose rm -f $c
+    # check conainer have named volume
+    if docker volume list | grep -E "$c-$ENV-*" 2>&1 >/dev/null ; then
+      docker volume rm $(docker volume list | grep -E "$c-$ENV-*" | awk '{print $2}') 2>&1 >/dev/null
+    fi    
     docker_compose create $c
     docker_compose start $c
   done
