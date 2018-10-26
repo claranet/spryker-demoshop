@@ -19,7 +19,7 @@ use Spryker\Shared\Event\EventConstants;
 use Spryker\Shared\Log\LogConstants;
 use Spryker\Yves\Log\Plugin\YvesLoggerConfigPlugin;
 use Spryker\Zed\Log\Communication\Plugin\ZedLoggerConfigPlugin;
-use Spryker\Shared\RabbitMq\RabbitMqConstants;
+use Spryker\Shared\RabbitMq\RabbitMqEnv;
 
 use Monolog\Logger;
 
@@ -87,24 +87,24 @@ $config[SetupConstants::JENKINS_DIRECTORY] = '/tmp/jenkins/jobs';
 /**
  *   R A B B I T M Q
  */
-$config[RabbitMqConstants::RABBITMQ_HOST] = getenv('RABBITMQ_HOST');
-$config[RabbitMqConstants::RABBITMQ_PORT] = getenv('RABBITMQ_PORT');
-$config[RabbitMqConstants::RABBITMQ_USERNAME] = getenv('RABBITMQ_USERNAME');
-$config[RabbitMqConstants::RABBITMQ_PASSWORD] = getenv('RABBITMQ_PASSWORD');
-$config[RabbitMqConstants::RABBITMQ_VIRTUAL_HOST] = getenv('RABBITMQ_VIRTUAL_HOST');
+// $config[RabbitMqEnv::RABBITMQ_HOST] = getenv('RABBITMQ_HOST');
+// $config[RabbitMqEnv::RABBITMQ_PORT] = getenv('RABBITMQ_PORT');
+// $config[RabbitMqEnv::RABBITMQ_USERNAME] = getenv('RABBITMQ_USERNAME');
+// $config[RabbitMqEnv::RABBITMQ_PASSWORD] = getenv('RABBITMQ_PASSWORD');
+// $config[RabbitMqEnv::RABBITMQ_VIRTUAL_HOST] = getenv('RABBITMQ_VIRTUAL_HOST');
 
-// $config[RabbitMqEnv::RABBITMQ_CONNECTIONS] = [
-//     $applicationStore => [
-//         RabbitMqEnv::RABBITMQ_CONNECTION_NAME => $applicationStore.'-connection',
-//         RabbitMqEnv::RABBITMQ_HOST => getenv('RABBITMQ_HOST'),
-//         RabbitMqEnv::RABBITMQ_PORT => getenv('RABBITMQ_PORT'),
-//         RabbitMqEnv::RABBITMQ_PASSWORD => getenv('RABBITMQ_PASSWORD'),
-//         RabbitMqEnv::RABBITMQ_USERNAME => getenv('RABBITMQ_USERNAME'),
-//         RabbitMqEnv::RABBITMQ_VIRTUAL_HOST => getenv('RABBITMQ_VIRTUAL_HOST'),
-//         RabbitMqEnv::RABBITMQ_STORE_NAMES => [$applicationStore],
-//         RabbitMqEnv::RABBITMQ_DEFAULT_CONNECTION => true
-//     ],
-// ];
+$config[RabbitMqEnv::RABBITMQ_CONNECTIONS] = [
+    $applicationStore => [
+        RabbitMqEnv::RABBITMQ_CONNECTION_NAME => $applicationStore.'-connection',
+        RabbitMqEnv::RABBITMQ_HOST => getenv('RABBITMQ_HOST'),
+        RabbitMqEnv::RABBITMQ_PORT => getenv('RABBITMQ_PORT'),
+        RabbitMqEnv::RABBITMQ_PASSWORD => getenv('RABBITMQ_PASSWORD'),
+        RabbitMqEnv::RABBITMQ_USERNAME => getenv('RABBITMQ_USERNAME'),
+        RabbitMqEnv::RABBITMQ_VIRTUAL_HOST => getenv('RABBITMQ_VIRTUAL_HOST'),
+        RabbitMqEnv::RABBITMQ_STORE_NAMES => [$applicationStore],
+        RabbitMqEnv::RABBITMQ_DEFAULT_CONNECTION => true
+    ],
+];
 
 /**
  *   P O S T G R E S

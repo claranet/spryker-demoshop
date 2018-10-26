@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -9,8 +9,8 @@ namespace PyzTest\Yves\Checkout\Process\Steps;
 
 use Codeception\Test\Unit;
 use Generated\Shared\Transfer\QuoteTransfer;
-use Pyz\Client\Customer\CustomerClient;
-use Pyz\Yves\Checkout\Process\Steps\EntryStep;
+use Spryker\Client\Customer\CustomerClient;
+use SprykerShop\Yves\CheckoutPage\Process\Steps\EntryStep;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -54,7 +54,7 @@ class EntryStepTest extends Unit
     }
 
     /**
-     * @return \Pyz\Yves\Checkout\Process\Steps\EntryStep
+     * @return \SprykerShop\Yves\CheckoutPage\Process\Steps\EntryStep
      */
     protected function createEntryStep()
     {
@@ -73,7 +73,7 @@ class EntryStepTest extends Unit
     }
 
     /**
-     * @return \Pyz\Client\Customer\CustomerClient
+     * @return \Spryker\Client\Customer\CustomerClient
      */
     protected function createCustomerClient()
     {

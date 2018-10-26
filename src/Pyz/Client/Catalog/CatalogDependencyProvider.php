@@ -1,20 +1,27 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Pyz\Client\Catalog;
 
-use Pyz\Client\Catalog\Plugin\Config\CatalogSearchConfigBuilder;
-use Pyz\Client\Catalog\Plugin\Elasticsearch\Query\CatalogSearchQueryPlugin;
 use Spryker\Client\Catalog\CatalogDependencyProvider as SprykerCatalogDependencyProvider;
+use Spryker\Client\Catalog\Plugin\ConfigTransferBuilder\AscendingNameSortConfigTransferBuilderPlugin;
+use Spryker\Client\Catalog\Plugin\ConfigTransferBuilder\CategoryFacetConfigTransferBuilderPlugin;
+use Spryker\Client\Catalog\Plugin\ConfigTransferBuilder\DescendingNameSortConfigTransferBuilderPlugin;
+use Spryker\Client\Catalog\Plugin\Elasticsearch\Query\ProductCatalogSearchQueryPlugin;
 use Spryker\Client\Catalog\Plugin\Elasticsearch\ResultFormatter\RawCatalogSearchResultFormatterPlugin;
+use Spryker\Client\CatalogPriceProductConnector\Plugin\ConfigTransferBuilder\AscendingPriceSortConfigTransferBuilderPlugin;
+use Spryker\Client\CatalogPriceProductConnector\Plugin\ConfigTransferBuilder\DescendingPriceSortConfigTransferBuilderPlugin;
+use Spryker\Client\CatalogPriceProductConnector\Plugin\ConfigTransferBuilder\PriceFacetConfigTransferBuilderPlugin;
 use Spryker\Client\CatalogPriceProductConnector\Plugin\CurrencyAwareCatalogSearchResultFormatterPlugin;
 use Spryker\Client\CatalogPriceProductConnector\Plugin\CurrencyAwareSuggestionByTypeResultFormatter;
 use Spryker\Client\CatalogPriceProductConnector\Plugin\ProductPriceQueryExpanderPlugin;
-use Spryker\Client\Kernel\Container;
+use Spryker\Client\ProductLabelStorage\Plugin\ProductLabelFacetConfigTransferBuilderPlugin;
+use Spryker\Client\ProductReview\Plugin\RatingFacetConfigTransferBuilderPlugin;
+use Spryker\Client\ProductReview\Plugin\RatingSortConfigTransferBuilderPlugin;
 use Spryker\Client\Search\Plugin\Elasticsearch\QueryExpander\CompletionQueryExpanderPlugin;
 use Spryker\Client\Search\Plugin\Elasticsearch\QueryExpander\FacetQueryExpanderPlugin;
 use Spryker\Client\Search\Plugin\Elasticsearch\QueryExpander\IsActiveInDateRangeQueryExpanderPlugin;
@@ -35,56 +42,31 @@ use Spryker\Client\Search\Plugin\Elasticsearch\ResultFormatter\SuggestionByTypeR
 
 class CatalogDependencyProvider extends SprykerCatalogDependencyProvider
 {
-    const FEATURED_PRODUCTS_RESULT_FORMATTER_PLUGINS = 'FEATURED_PRODUCTS_RESULT_FORMATTER_PLUGINS';
-    const FEATURED_PRODUCTS_QUERY_EXPANDER_PLUGINS = 'FEATURED_PRODUCTS_QUERY_EXPANDER_PLUGINS';
-
-    const CLIENT_CURRENCY = 'CLIENT_CURRENCY';
-    const CLIENT_PRICE = 'CLIENT_PRICE';
-    const CLIENT_PRICE_PRODUCT = 'CLIENT_PRICE_PRODUCT';
-    const CLIENT_PRICE_PRODUCT_CONNECTOR_CLIENT = 'client price product connector client';
-
     /**
-     * @param \Spryker\Client\Kernel\Container $container
-     *
-     * @return \Spryker\Client\Kernel\Container
+     * @return \Spryker\Client\Catalog\Dependency\Plugin\FacetConfigTransferBuilderPluginInterface[]
      */
-    public function provideServiceLayerDependencies(Container $container)
+    protected function getFacetConfigTransferBuilderPlugins()
     {
-        $container = parent::provideServiceLayerDependencies($container);
-
-        $container = $this->provideFeatureProductsResultFormatterPlugins($container);
-        $container = $this->provideFeatureProductsQueryExpanderPlugins($container);
-        $container = $this->addCatalogPriceProductConnectorClient($container);
-
-        return $container;
+        return [
+            new CategoryFacetConfigTransferBuilderPlugin(),
+            new PriceFacetConfigTransferBuilderPlugin(),
+            new RatingFacetConfigTransferBuilderPlugin(),
+            new ProductLabelFacetConfigTransferBuilderPlugin(),
+        ];
     }
 
     /**
-     * @param \Spryker\Client\Kernel\Container $container
-     *
-     * @return \Spryker\Client\Kernel\Container
+     * @return \Spryker\Client\Catalog\Dependency\Plugin\SortConfigTransferBuilderPluginInterface[]
      */
-    protected function addPriceClient(Container $container)
+    protected function getSortConfigTransferBuilderPlugins()
     {
-        $container[static::CLIENT_PRICE] = function (Container $container) {
-            return $container->getLocator()->price()->client();
-        };
-
-        return $container;
-    }
-
-    /**
-     * @param \Spryker\Client\Kernel\Container $container
-     *
-     * @return \Spryker\Client\Kernel\Container
-     */
-    protected function addCatalogPriceProductConnectorClient(Container $container)
-    {
-        $container[static::CLIENT_PRICE_PRODUCT_CONNECTOR_CLIENT] = function (Container $container) {
-            return $container->getLocator()->catalogPriceProductConnector()->client();
-        };
-
-        return $container;
+        return [
+            new RatingSortConfigTransferBuilderPlugin(),
+            new AscendingNameSortConfigTransferBuilderPlugin(),
+            new DescendingNameSortConfigTransferBuilderPlugin(),
+            new AscendingPriceSortConfigTransferBuilderPlugin(),
+            new DescendingPriceSortConfigTransferBuilderPlugin(),
+        ];
     }
 
     /**
@@ -92,7 +74,7 @@ class CatalogDependencyProvider extends SprykerCatalogDependencyProvider
      */
     protected function createCatalogSearchQueryPlugin()
     {
-        return new CatalogSearchQueryPlugin();
+        return new ProductCatalogSearchQueryPlugin();
     }
 
     /**
@@ -106,7 +88,7 @@ class CatalogDependencyProvider extends SprykerCatalogDependencyProvider
             new ProductPriceQueryExpanderPlugin(),
             new FacetQueryExpanderPlugin(),
             new SortedQueryExpanderPlugin(),
-            new SortedCategoryQueryExpanderPlugin(CatalogSearchConfigBuilder::CATEGORY_FACET_PARAM_NAME),
+            new SortedCategoryQueryExpanderPlugin(CategoryFacetConfigTransferBuilderPlugin::PARAMETER_NAME),
             new PaginatedQueryExpanderPlugin(),
             new SpellingSuggestionQueryExpanderPlugin(),
             new IsActiveQueryExpanderPlugin(),
@@ -156,41 +138,5 @@ class CatalogDependencyProvider extends SprykerCatalogDependencyProvider
                 new SuggestionByTypeResultFormatterPlugin()
             ),
         ];
-    }
-
-    /**
-     * @param \Spryker\Client\Kernel\Container $container
-     *
-     * @return \Spryker\Client\Kernel\Container
-     */
-    protected function provideFeatureProductsResultFormatterPlugins(Container $container)
-    {
-        $container[self::FEATURED_PRODUCTS_RESULT_FORMATTER_PLUGINS] = function () {
-            return [
-                new CurrencyAwareCatalogSearchResultFormatterPlugin(
-                    new RawCatalogSearchResultFormatterPlugin()
-                ),
-            ];
-        };
-
-        return $container;
-    }
-
-    /**
-     * @param \Spryker\Client\Kernel\Container $container
-     *
-     * @return \Spryker\Client\Kernel\Container
-     */
-    protected function provideFeatureProductsQueryExpanderPlugins(Container $container)
-    {
-        $container[self::FEATURED_PRODUCTS_QUERY_EXPANDER_PLUGINS] = function () {
-            return [
-                new StoreQueryExpanderPlugin(),
-                new LocalizedQueryExpanderPlugin(),
-                new ProductPriceQueryExpanderPlugin(),
-            ];
-        };
-
-        return $container;
     }
 }

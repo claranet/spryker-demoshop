@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -13,24 +13,23 @@ use Orm\Zed\Product\Persistence\SpyProductAbstractQuery;
 use Orm\Zed\ProductCategory\Persistence\SpyProductCategoryQuery;
 use Orm\Zed\Url\Persistence\SpyUrlQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Pyz\Shared\Product\ProductConfig;
 use Pyz\Zed\DataImport\Business\Model\Product\ProductLocalizedAttributesExtractorStep;
 use Pyz\Zed\DataImport\Business\Model\Product\Repository\ProductRepository;
 use Spryker\Zed\DataImport\Business\Exception\DataKeyNotFoundInDataSetException;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
-use Spryker\Zed\DataImport\Business\Model\DataImportStep\TouchAwareStep;
+use Spryker\Zed\DataImport\Business\Model\DataImportStep\PublishAwareStep;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
-use Spryker\Zed\DataImport\Dependency\Facade\DataImportToTouchInterface;
-use Spryker\Zed\Url\UrlConfig;
+use Spryker\Zed\Product\Dependency\ProductEvents;
+use Spryker\Zed\ProductCategory\Dependency\ProductCategoryEvents;
+use Spryker\Zed\Url\Dependency\UrlEvents;
 
 /**
  */
-class ProductAbstractWriterStep extends TouchAwareStep implements DataImportStepInterface
+class ProductAbstractWriterStep extends PublishAwareStep implements DataImportStepInterface
 {
     const BULK_SIZE = 100;
 
     const KEY_ABSTRACT_SKU = 'abstract_sku';
-    const KEY_IS_FEATURED = 'is_featured';
     const KEY_COLOR_CODE = 'color_code';
     const KEY_ID_TAX_SET = 'idTaxSet';
     const KEY_ATTRIBUTES = 'attributes';
@@ -55,13 +54,9 @@ class ProductAbstractWriterStep extends TouchAwareStep implements DataImportStep
 
     /**
      * @param \Pyz\Zed\DataImport\Business\Model\Product\Repository\ProductRepository $productRepository
-     * @param \Spryker\Zed\DataImport\Dependency\Facade\DataImportToTouchInterface $touchFacade
-     * @param int|null $bulkSize
      */
-    public function __construct(ProductRepository $productRepository, DataImportToTouchInterface $touchFacade, $bulkSize = null)
+    public function __construct(ProductRepository $productRepository)
     {
-        parent::__construct($touchFacade, $bulkSize);
-
         $this->productRepository = $productRepository;
     }
 
@@ -80,8 +75,7 @@ class ProductAbstractWriterStep extends TouchAwareStep implements DataImportStep
         $this->importProductCategories($dataSet, $productAbstractEntity);
         $this->importProductUrls($dataSet, $productAbstractEntity);
 
-        $this->addMainTouchable(ProductConfig::RESOURCE_TYPE_PRODUCT_ABSTRACT, $productAbstractEntity->getIdProductAbstract());
-        $this->addSubTouchable(ProductConfig::RESOURCE_TYPE_ATTRIBUTE_MAP, $productAbstractEntity->getIdProductAbstract());
+        $this->addPublishEvents(ProductEvents::PRODUCT_ABSTRACT_PUBLISH, $productAbstractEntity->getIdProductAbstract());
     }
 
     /**
@@ -96,7 +90,6 @@ class ProductAbstractWriterStep extends TouchAwareStep implements DataImportStep
             ->findOneOrCreate();
 
         $productAbstractEntity
-            ->setIsFeatured($dataSet[static::KEY_IS_FEATURED])
             ->setColorCode($dataSet[static::KEY_COLOR_CODE])
             ->setFkTaxSet($dataSet[static::KEY_ID_TAX_SET])
             ->setAttributes(json_encode($dataSet[static::KEY_ATTRIBUTES]))
@@ -174,6 +167,9 @@ class ProductAbstractWriterStep extends TouchAwareStep implements DataImportStep
 
             if ($productCategoryEntity->isNew() || $productCategoryEntity->isModified()) {
                 $productCategoryEntity->save();
+
+                $this->addPublishEvents(ProductCategoryEvents::PRODUCT_CATEGORY_PUBLISH, $productAbstractEntity->getIdProductAbstract());
+                $this->addPublishEvents(ProductEvents::PRODUCT_ABSTRACT_PUBLISH, $productAbstractEntity->getIdProductAbstract());
             }
         }
     }
@@ -224,7 +220,8 @@ class ProductAbstractWriterStep extends TouchAwareStep implements DataImportStep
 
             if ($urlEntity->isNew() || $urlEntity->isModified()) {
                 $urlEntity->save();
-                $this->addSubTouchable(UrlConfig::RESOURCE_TYPE_URL, $urlEntity->getIdUrl());
+
+                $this->addPublishEvents(UrlEvents::URL_PUBLISH, $urlEntity->getIdUrl());
             }
         }
     }

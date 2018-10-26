@@ -1,34 +1,26 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Pyz\Yves\CmsContentWidgetProductConnector;
 
-use Pyz\Yves\Product\Plugin\StorageProductMapperPlugin;
-use Spryker\Yves\CmsContentWidgetProductConnector\CmsContentWidgetProductConnectorDependencyProvider as SprykerCmsContentWidgetProductConnectorDependencyProvider;
-use Spryker\Yves\Kernel\Container;
+use SprykerShop\Yves\CmsContentWidgetProductConnector\CmsContentWidgetProductConnectorDependencyProvider as SprykerShopCmsContentWidgetProductConnectorDependencyProvider;
+use SprykerShop\Yves\ProductWidget\Plugin\CmsContentWidget\ProductGroupWidgetPlugin;
+use SprykerShop\Yves\ProductWidget\Plugin\CmsContentWidget\ProductWidgetPlugin;
 
-class CmsContentWidgetProductConnectorDependencyProvider extends SprykerCmsContentWidgetProductConnectorDependencyProvider
+class CmsContentWidgetProductConnectorDependencyProvider extends SprykerShopCmsContentWidgetProductConnectorDependencyProvider
 {
-    const CLIENT_PRODUCT = 'product';
-    const STORAGE_PRODUCT_MAPPER_PLUGIN = 'storage product mapper plugin';
-
     /**
-     * @param \Spryker\Yves\Kernel\Container $container
-     *
-     * @return \Spryker\Yves\Kernel\Container
+     * @return string[]
      */
-    public function provideDependencies(Container $container)
+    protected function getCmsProductContentWidgetPlugins()
     {
-        $container = parent::provideDependencies($container);
-
-        $container[static::STORAGE_PRODUCT_MAPPER_PLUGIN] = function (Container $container) {
-            return new StorageProductMapperPlugin();
-        };
-
-        return $container;
+        return [
+            ProductWidgetPlugin::class,
+            ProductGroupWidgetPlugin::class,
+        ];
     }
 }

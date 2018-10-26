@@ -39,34 +39,6 @@ $jobs[] = [
     'stores' => $allStores,
 ];
 
-$jobs[] = [
-    'name' => 'check-product-validity',
-    'command' => '$PHP_BIN vendor/bin/console product:check-validity',
-    'schedule' => '* * * * *',
-    'enable' => true,
-    'run_on_non_production' => true,
-    'stores' => $allStores,
-];
-
-/* Collectors */
-$jobs[] = [
-    'name' => 'export-kv',
-    'command' => '$PHP_BIN vendor/bin/console collector:storage:export',
-    'schedule' => '* * * * *',
-    'enable' => true,
-    'run_on_non_production' => true,
-    'stores' => $allStores,
-];
-
-$jobs[] = [
-    'name' => 'export-search',
-    'command' => '$PHP_BIN vendor/bin/console collector:search:export',
-    'schedule' => '* * * * *',
-    'enable' => true,
-    'run_on_non_production' => true,
-    'stores' => $allStores,
-];
-
 /* Oms */
 $jobs[] = [
     'name' => 'check-oms-conditions',
@@ -97,10 +69,10 @@ $jobs[] = [
 
 $jobs[] = [
     'name' => 'queue-worker-start',
-    'command' => '$PHP_BIN vendor/bin/console queue:worker:start -vvv',
+    'command' => '$PHP_BIN vendor/bin/console queue:worker:start',
     'schedule' => '* * * * *',
-    'enable' => false,
-    'run_on_non_production' => false,
+    'enable' => true,
+    'run_on_non_production' => true,
     'stores' => $allStores,
 ];
 
@@ -111,6 +83,15 @@ $jobs[] = [
     'enable' => true,
     'run_on_non_production' => true,
     'stores' => $allStores,
+];
+
+$jobs[] = [
+  'name' => 'event-trigger-timeout',
+  'command' => '$PHP_BIN vendor/bin/console event:trigger:timeout -vvv',
+  'schedule' => '*/5 * * * *',
+  'enable' => true,
+  'run_on_non_production' => true,
+'stores' => $allStores,
 ];
 
 /* StateMachine */

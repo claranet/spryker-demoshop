@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -12,14 +12,13 @@ use Orm\Zed\Glossary\Persistence\SpyGlossaryTranslationQuery;
 use Orm\Zed\ProductSearch\Persistence\SpyProductSearchAttributeQuery;
 use Pyz\Zed\DataImport\Business\Model\Product\ProductLocalizedAttributesExtractorStep;
 use Pyz\Zed\DataImport\Business\Model\ProductAttributeKey\AddProductAttributeKeysStep;
-use Pyz\Zed\Glossary\GlossaryConfig;
 use Spryker\Shared\ProductSearch\Code\KeyBuilder\GlossaryKeyBuilderInterface;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
-use Spryker\Zed\DataImport\Business\Model\DataImportStep\TouchAwareStep;
+use Spryker\Zed\DataImport\Business\Model\DataImportStep\PublishAwareStep;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
-use Spryker\Zed\DataImport\Dependency\Facade\DataImportToTouchInterface;
+use Spryker\Zed\Glossary\Dependency\GlossaryEvents;
 
-class ProductSearchAttributeWriter extends TouchAwareStep implements DataImportStepInterface
+class ProductSearchAttributeWriter extends PublishAwareStep implements DataImportStepInterface
 {
     const BULK_SIZE = 100;
 
@@ -32,13 +31,9 @@ class ProductSearchAttributeWriter extends TouchAwareStep implements DataImportS
 
     /**
      * @param \Spryker\Shared\ProductSearch\Code\KeyBuilder\GlossaryKeyBuilderInterface $glossaryKeyBuilder
-     * @param \Spryker\Zed\DataImport\Dependency\Facade\DataImportToTouchInterface $touchFacade
-     * @param int|null $bulkSize
      */
-    public function __construct(GlossaryKeyBuilderInterface $glossaryKeyBuilder, DataImportToTouchInterface $touchFacade, $bulkSize = null)
+    public function __construct(GlossaryKeyBuilderInterface $glossaryKeyBuilder)
     {
-        parent::__construct($touchFacade, $bulkSize);
-
         $this->glossaryKeyBuilder = $glossaryKeyBuilder;
     }
 
@@ -75,7 +70,7 @@ class ProductSearchAttributeWriter extends TouchAwareStep implements DataImportS
             $glossaryTranslationEntity->setValue($localizedAttribute['key']);
             $glossaryTranslationEntity->save();
 
-            $this->addMainTouchable(GlossaryConfig::RESOURCE_TYPE_TRANSLATION, $glossaryTranslationEntity->getIdGlossaryTranslation());
+            $this->addPublishEvents(GlossaryEvents::GLOSSARY_KEY_PUBLISH, $glossaryTranslationEntity->getFkGlossaryKey());
         }
     }
 }

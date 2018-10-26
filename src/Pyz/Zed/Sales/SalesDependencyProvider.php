@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -9,9 +9,11 @@ namespace Pyz\Zed\Sales;
 
 use Spryker\Zed\Customer\Communication\Plugin\Sales\CustomerOrderHydratePlugin;
 use Spryker\Zed\Discount\Communication\Plugin\Sales\DiscountOrderHydratePlugin;
+use Spryker\Zed\ManualOrderEntry\Communication\Plugin\Sales\OrderSourceExpanderPreSavePlugin;
 use Spryker\Zed\Payment\Communication\Plugin\Sales\PaymentOrderHydratePlugin;
 use Spryker\Zed\ProductBundle\Communication\Plugin\Sales\ProductBundleIdHydratorPlugin;
 use Spryker\Zed\ProductBundle\Communication\Plugin\Sales\ProductBundleOrderHydratePlugin;
+use Spryker\Zed\ProductMeasurementUnit\Communication\Plugin\SalesExtension\QuantitySalesUnitOrderItemExpanderPreSavePlugin;
 use Spryker\Zed\ProductOption\Communication\Plugin\Sales\ProductOptionGroupIdHydratorPlugin;
 use Spryker\Zed\ProductOption\Communication\Plugin\Sales\ProductOptionOrderHydratePlugin;
 use Spryker\Zed\ProductOption\Communication\Plugin\Sales\ProductOptionSortHydratePlugin;
@@ -23,6 +25,16 @@ use Spryker\Zed\Shipment\Communication\Plugin\ShipmentOrderHydratePlugin;
 
 class SalesDependencyProvider extends SprykerSalesDependencyProvider
 {
+    /**
+     * @return \Spryker\Zed\Sales\Dependency\Plugin\OrderExpanderPreSavePluginInterface[]
+     */
+    protected function getOrderExpanderPreSavePlugins()
+    {
+        return [
+            new OrderSourceExpanderPreSavePlugin(),
+        ];
+    }
+
     /**
      * @return \Spryker\Zed\Sales\Dependency\Plugin\HydrateOrderPluginInterface[]
      */
@@ -40,6 +52,16 @@ class SalesDependencyProvider extends SprykerSalesDependencyProvider
             new ItemMetadataHydratorPlugin(),
             new ProductBundleIdHydratorPlugin(),
             new ProductOptionGroupIdHydratorPlugin(),
+        ];
+    }
+
+    /**
+     * @return \Spryker\Zed\SalesExtension\Dependency\Plugin\OrderItemExpanderPreSavePluginInterface[]
+     */
+    protected function getOrderItemExpanderPreSavePlugins()
+    {
+        return [
+            new QuantitySalesUnitOrderItemExpanderPreSavePlugin(),
         ];
     }
 

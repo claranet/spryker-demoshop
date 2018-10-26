@@ -1,32 +1,50 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Pyz\Client\Customer;
 
+use Spryker\Client\Cart\Plugin\CustomerChangeCartUpdatePlugin;
 use Spryker\Client\Customer\CustomerDependencyProvider as SprykerCustomerDependencyProvider;
-use Spryker\Client\Kernel\Container;
+use Spryker\Client\Customer\Plugin\CustomerAddressSessionUpdatePlugin;
+use Spryker\Client\Customer\Plugin\CustomerTransferRefreshPlugin;
+use Spryker\Client\MultiCart\Plugin\GuestCartSaveCustomerSessionSetPlugin;
+use Spryker\Client\PersistentCart\Plugin\GuestCartUpdateCustomerSessionSetPlugin;
 
 class CustomerDependencyProvider extends SprykerCustomerDependencyProvider
 {
-    const CART_CLIENT = 'cart client';
+    /**
+     * @return \Spryker\Client\Customer\Dependency\Plugin\CustomerSessionGetPluginInterface[]
+     */
+    protected function getCustomerSessionGetPlugins()
+    {
+        return [
+            new CustomerTransferRefreshPlugin(),
+        ];
+    }
 
     /**
-     * @param \Spryker\Client\Kernel\Container $container
-     *
-     * @return \Spryker\Client\Kernel\Container
+     * @return \Spryker\Client\Customer\Dependency\Plugin\CustomerSessionSetPluginInterface[]
      */
-    public function provideServiceLayerDependencies(Container $container)
+    protected function getCustomerSessionSetPlugins()
     {
-        $container = parent::provideServiceLayerDependencies($container);
+        return [
+            new GuestCartSaveCustomerSessionSetPlugin(), #MultiCartFeature
+            new GuestCartUpdateCustomerSessionSetPlugin(), #PersistentCartFeature
+            new CustomerChangeCartUpdatePlugin(),
+        ];
+    }
 
-        $container[self::CART_CLIENT] = function (Container $container) {
-            return $container->getLocator()->cart()->client();
-        };
-
-        return $container;
+    /**
+     * @return \Spryker\Client\Customer\Dependency\Plugin\DefaultAddressChangePluginInterface[]
+     */
+    protected function getDefaultAddressChangePlugins()
+    {
+        return [
+            new CustomerAddressSessionUpdatePlugin(),
+        ];
     }
 }

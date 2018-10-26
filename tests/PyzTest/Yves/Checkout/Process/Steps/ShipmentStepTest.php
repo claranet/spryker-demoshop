@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -12,12 +12,12 @@ use Generated\Shared\Transfer\ExpenseTransfer;
 use Generated\Shared\Transfer\ItemTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Generated\Shared\Transfer\ShipmentTransfer;
-use Pyz\Yves\Checkout\CheckoutDependencyProvider;
-use Pyz\Yves\Checkout\Process\Steps\ShipmentStep;
-use Spryker\Client\Calculation\CalculationClientInterface;
 use Spryker\Shared\Shipment\ShipmentConstants;
 use Spryker\Yves\StepEngine\Dependency\Plugin\Handler\StepHandlerPluginCollection;
 use Spryker\Yves\StepEngine\Dependency\Plugin\Handler\StepHandlerPluginInterface;
+use SprykerShop\Yves\CheckoutPage\CheckoutPageDependencyProvider;
+use SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCalculationClientInterface;
+use SprykerShop\Yves\CheckoutPage\Process\Steps\ShipmentStep;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -41,13 +41,13 @@ class ShipmentStepTest extends Unit
         $shipmentPluginMock->expects($this->once())->method('addToDataClass');
 
         $shipmentStepHandler = new StepHandlerPluginCollection();
-        $shipmentStepHandler->add($shipmentPluginMock, CheckoutDependencyProvider::PLUGIN_SHIPMENT_STEP_HANDLER);
+        $shipmentStepHandler->add($shipmentPluginMock, CheckoutPageDependencyProvider::PLUGIN_SHIPMENT_STEP_HANDLER);
         $shipmentStep = $this->createShipmentStep($shipmentStepHandler);
 
         $quoteTransfer = new QuoteTransfer();
 
         $shipmentTransfer = new ShipmentTransfer();
-        $shipmentTransfer->setShipmentSelection(CheckoutDependencyProvider::PLUGIN_SHIPMENT_STEP_HANDLER);
+        $shipmentTransfer->setShipmentSelection(CheckoutPageDependencyProvider::PLUGIN_SHIPMENT_STEP_HANDLER);
         $quoteTransfer->setShipment($shipmentTransfer);
 
         $shipmentStep->execute($this->createRequest(), $quoteTransfer);
@@ -69,7 +69,7 @@ class ShipmentStepTest extends Unit
     }
 
     /**
-     * @return bool
+     * @return void
      */
     public function testShipmentRequireInputShouldReturnTrue()
     {
@@ -83,14 +83,14 @@ class ShipmentStepTest extends Unit
     /**
      * @param \Spryker\Yves\StepEngine\Dependency\Plugin\Handler\StepHandlerPluginCollection $shipmentPlugins
      *
-     * @return \Pyz\Yves\Checkout\Process\Steps\ShipmentStep
+     * @return \SprykerShop\Yves\CheckoutPage\Process\Steps\ShipmentStep
      */
     protected function createShipmentStep(StepHandlerPluginCollection $shipmentPlugins)
     {
         return new ShipmentStep(
             $this->createCalculationClientMock(),
             $shipmentPlugins,
-            CheckoutDependencyProvider::PLUGIN_SHIPMENT_STEP_HANDLER,
+            CheckoutPageDependencyProvider::PLUGIN_SHIPMENT_STEP_HANDLER,
             'escape_route'
         );
     }
@@ -104,11 +104,11 @@ class ShipmentStepTest extends Unit
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Spryker\Client\Calculation\CalculationClientInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|\SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCalculationClientInterface
      */
     protected function createCalculationClientMock()
     {
-        $calculationMock = $this->getMockBuilder(CalculationClientInterface::class)->getMock();
+        $calculationMock = $this->getMockBuilder(CheckoutPageToCalculationClientInterface::class)->getMock();
         $calculationMock->method('recalculate')->willReturnArgument(0);
 
         return $calculationMock;

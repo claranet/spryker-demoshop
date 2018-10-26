@@ -1,13 +1,13 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Orm\Zed\ProductReviewSearch\Persistence;
 
-use Orm\Zed\ProductReviewSearch\Persistence\Base\SpyProductReviewSearchQuery as BaseSpyProductReviewSearchQuery;
+use Spryker\Zed\ProductReviewSearch\Persistence\Propel\AbstractSpyProductReviewSearchQuery;
 
 /**
  * Skeleton subclass for performing query and update operations on the 'spy_product_review_search' table.
@@ -19,6 +19,6 @@ use Orm\Zed\ProductReviewSearch\Persistence\Base\SpyProductReviewSearchQuery as 
  * long as it does not already exist in the output directory.
  *
  */
-class SpyProductReviewSearchQuery extends BaseSpyProductReviewSearchQuery
+class SpyProductReviewSearchQuery extends AbstractSpyProductReviewSearchQuery
 {
 }

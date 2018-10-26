@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -16,23 +16,22 @@ use Orm\Zed\CmsBlockCategoryConnector\Persistence\SpyCmsBlockCategoryConnectorQu
 use Orm\Zed\CmsBlockProductConnector\Persistence\SpyCmsBlockProductConnectorQuery;
 use Orm\Zed\Glossary\Persistence\SpyGlossaryKeyQuery;
 use Orm\Zed\Glossary\Persistence\SpyGlossaryTranslationQuery;
-use Pyz\Zed\DataImport\Business\Model\Category\Repository\CategoryRepositoryInterface;
-use Pyz\Zed\DataImport\Business\Model\DataImportStep\LocalizedAttributesExtractorStep;
+use Pyz\Zed\DataImport\Business\Model\CmsBlock\Category\Repository\CategoryRepositoryInterface;
 use Pyz\Zed\DataImport\Business\Model\Product\Repository\ProductRepositoryInterface;
-use Pyz\Zed\Glossary\GlossaryConfig;
-use Spryker\Shared\CmsBlock\CmsBlockConfig;
-use Spryker\Shared\CmsBlockCategoryConnector\CmsBlockCategoryConnectorConfig;
-use Spryker\Shared\CmsBlockProductConnector\CmsBlockProductConnectorConstants;
 use Spryker\Zed\CmsBlock\Business\Model\CmsBlockGlossaryKeyGenerator;
+use Spryker\Zed\CmsBlock\Dependency\CmsBlockEvents;
+use Spryker\Zed\CmsBlockCategoryConnector\Dependency\CmsBlockCategoryConnectorEvents;
+use Spryker\Zed\CmsBlockProductConnector\Dependency\CmsBlockProductConnectorEvents;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
-use Spryker\Zed\DataImport\Business\Model\DataImportStep\TouchAwareStep;
+use Spryker\Zed\DataImport\Business\Model\DataImportStep\LocalizedAttributesExtractorStep;
+use Spryker\Zed\DataImport\Business\Model\DataImportStep\PublishAwareStep;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
-use Spryker\Zed\DataImport\Dependency\Facade\DataImportToTouchInterface;
+use Spryker\Zed\Glossary\Dependency\GlossaryEvents;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class CmsBlockWriterStep extends TouchAwareStep implements DataImportStepInterface
+class CmsBlockWriterStep extends PublishAwareStep implements DataImportStepInterface
 {
     const BULK_SIZE = 100;
 
@@ -48,7 +47,7 @@ class CmsBlockWriterStep extends TouchAwareStep implements DataImportStepInterfa
     const KEY_PLACEHOLDER_DESCRIPTION = 'placeholder.description';
 
     /**
-     * @var \Pyz\Zed\DataImport\Business\Model\Category\Repository\CategoryRepositoryInterface
+     * @var \Pyz\Zed\DataImport\Business\Model\CmsBlock\Category\Repository\CategoryRepositoryInterface
      */
     protected $categoryRepository;
 
@@ -58,19 +57,11 @@ class CmsBlockWriterStep extends TouchAwareStep implements DataImportStepInterfa
     protected $productRepository;
 
     /**
-     * @param \Pyz\Zed\DataImport\Business\Model\Category\Repository\CategoryRepositoryInterface $categoryRepository
+     * @param \Pyz\Zed\DataImport\Business\Model\CmsBlock\Category\Repository\CategoryRepositoryInterface $categoryRepository
      * @param \Pyz\Zed\DataImport\Business\Model\Product\Repository\ProductRepositoryInterface $productRepository
-     * @param \Spryker\Zed\DataImport\Dependency\Facade\DataImportToTouchInterface $touchFacade
-     * @param null|int $bulkSize
      */
-    public function __construct(
-        CategoryRepositoryInterface $categoryRepository,
-        ProductRepositoryInterface $productRepository,
-        DataImportToTouchInterface $touchFacade,
-        $bulkSize = null
-    ) {
-        parent::__construct($touchFacade, $bulkSize);
-
+    public function __construct(CategoryRepositoryInterface $categoryRepository, ProductRepositoryInterface $productRepository)
+    {
         $this->categoryRepository = $categoryRepository;
         $this->productRepository = $productRepository;
     }
@@ -89,8 +80,7 @@ class CmsBlockWriterStep extends TouchAwareStep implements DataImportStepInterfa
         $this->findOrCreateCmsBlockToProductRelation($dataSet, $cmsBlockEntity);
 
         $this->findOrCreateCmsBlockPlaceholderTranslation($dataSet, $cmsBlockEntity);
-
-        $this->addMainTouchable(CmsBlockConfig::RESOURCE_TYPE_CMS_BLOCK, $cmsBlockEntity->getIdCmsBlock());
+        $this->addPublishEvents(CmsBlockEvents::CMS_BLOCK_PUBLISH, $cmsBlockEntity->getIdCmsBlock());
     }
 
     /**
@@ -157,7 +147,7 @@ class CmsBlockWriterStep extends TouchAwareStep implements DataImportStepInterfa
             if ($cmsBlockCategoryConnectorEntity->isNew() || $cmsBlockCategoryConnectorEntity->isModified()) {
                 $cmsBlockCategoryConnectorEntity->save();
 
-                $this->addSubTouchable(CmsBlockCategoryConnectorConfig::RESOURCE_TYPE_CMS_BLOCK_CATEGORY_CONNECTOR, $idCategory);
+                $this->addPublishEvents(CmsBlockCategoryConnectorEvents::CMS_BLOCK_CATEGORY_CONNECTOR_PUBLISH, $idCategory);
             }
         }
     }
@@ -185,7 +175,7 @@ class CmsBlockWriterStep extends TouchAwareStep implements DataImportStepInterfa
             if ($cmsBlockProductConnectorEntity->isNew() || $cmsBlockProductConnectorEntity->isModified()) {
                 $cmsBlockProductConnectorEntity->save();
 
-                $this->addSubTouchable(CmsBlockProductConnectorConstants::RESOURCE_TYPE_CMS_BLOCK_PRODUCT_CONNECTOR, $idProductAbstract);
+                $this->addPublishEvents(CmsBlockProductConnectorEvents::CMS_BLOCK_PRODUCT_CONNECTOR_PUBLISH, $idProductAbstract);
             }
         }
     }
@@ -237,7 +227,7 @@ class CmsBlockWriterStep extends TouchAwareStep implements DataImportStepInterfa
                     $pageKeyMappingEntity->save();
                 }
 
-                $this->addSubTouchable(GlossaryConfig::RESOURCE_TYPE_TRANSLATION, $glossaryTranslationEntity->getIdGlossaryTranslation());
+                $this->addPublishEvents(GlossaryEvents::GLOSSARY_KEY_PUBLISH, $glossaryTranslationEntity->getFkGlossaryKey());
             }
         }
     }

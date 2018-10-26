@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -652,5 +652,15 @@ class CalculationWithCalculableObjectFacadeTest extends Test
         $taxSetTaxRateEntity->setFkTaxSet($taxSetEntity->getIdTaxSet());
         $taxSetTaxRateEntity->setFkTaxRate($taxRateEntity->getIdTaxRate());
         $taxSetTaxRateEntity->save();
+    }
+
+    /**
+     * @return \Generated\Shared\Transfer\StoreTransfer
+     */
+    protected function getCurrentStoreTransfer()
+    {
+        return (new StoreTransfer())
+            ->setIdStore(1)
+            ->setName('DE');
     }
 }

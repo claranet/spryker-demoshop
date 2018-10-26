@@ -1,12 +1,14 @@
 <?php
+
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Pyz\Zed\Category;
 
 use Spryker\Zed\Category\CategoryDependencyProvider as SprykerDependencyProvider;
+use Spryker\Zed\Category\Communication\Plugin\CategoryUrlPathPrefixUpdaterPlugin;
 use Spryker\Zed\CategoryNavigationConnector\Communication\Plugin\UpdateNavigationRelationPlugin;
 use Spryker\Zed\CmsBlockCategoryConnector\Communication\Plugin\CategoryFormPlugin;
 use Spryker\Zed\CmsBlockCategoryConnector\Communication\Plugin\ReadCmsBlockCategoryRelationsPlugin;
@@ -70,5 +72,15 @@ class CategoryDependencyProvider extends SprykerDependencyProvider
         return array_merge(parent::getCategoryFormPlugins(), [
             new CategoryFormPlugin(),
         ]);
+    }
+
+    /**
+     * @return \Spryker\Zed\Category\Dependency\Plugin\CategoryUrlPathPluginInterface[]
+     */
+    protected function getCategoryUrlPathPlugins()
+    {
+        return [
+            new CategoryUrlPathPrefixUpdaterPlugin(),
+        ];
     }
 }

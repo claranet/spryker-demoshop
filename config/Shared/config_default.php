@@ -22,8 +22,6 @@ use Spryker\Shared\Kernel\KernelConstants;
 use Spryker\Shared\Kernel\Store;
 use Spryker\Shared\Log\LogConstants;
 use Spryker\Shared\NewRelic\NewRelicConstants;
-use Spryker\Shared\Nopayment\NopaymentConfig;
-use Spryker\Shared\Nopayment\NopaymentConstants;
 use Spryker\Shared\Oms\OmsConstants;
 use Spryker\Shared\Propel\PropelConstants;
 use Spryker\Shared\Queue\QueueConfig;
@@ -39,7 +37,6 @@ use Spryker\Shared\User\UserConstants;
 use Spryker\Shared\ZedNavigation\ZedNavigationConstants;
 use Spryker\Shared\ZedRequest\ZedRequestConstants;
 use Spryker\Yves\Log\Plugin\YvesLoggerConfigPlugin;
-use Spryker\Zed\GiftCard\GiftCardConfig;
 use Spryker\Zed\Log\Communication\Plugin\ZedLoggerConfigPlugin;
 use Spryker\Zed\Oms\OmsConfig;
 use Spryker\Zed\Propel\PropelConfig;
@@ -62,6 +59,7 @@ $config[KernelConstants::PROJECT_NAMESPACES] = [
     'Pyz',
 ];
 $config[KernelConstants::CORE_NAMESPACES] = [
+    'SprykerShop',
     'SprykerEco',
     'Spryker',
 ];
@@ -334,45 +332,30 @@ $config[KernelConstants::AUTO_LOADER_UNRESOLVABLE_CACHE_PROVIDER] = File::class;
 
 // ---------- Dependency injector
 $config[KernelConstants::DEPENDENCY_INJECTOR_YVES] = [
-    'Checkout' => [
+    'CheckoutPage' => [
         'DummyPayment',
-        NopaymentConfig::PAYMENT_PROVIDER_NAME,
     ],
 ];
-
 $config[KernelConstants::DEPENDENCY_INJECTOR_ZED] = [
     'Payment' => [
         'DummyPayment',
-        GiftCardConfig::PROVIDER_NAME,
-        NopaymentConfig::PAYMENT_PROVIDER_NAME,
     ],
     'Oms' => [
         'DummyPayment',
-        GiftCardConfig::PROVIDER_NAME,
     ],
-];
-
-$config[NopaymentConstants::NO_PAYMENT_METHODS] = [
-    NopaymentConfig::PAYMENT_PROVIDER_NAME,
-];
-
-$config[NopaymentConstants::WHITELIST_PAYMENT_METHODS] = [
-    GiftCardConfig::PROVIDER_NAME,
 ];
 
 // ---------- State machine (OMS)
 $config[OmsConstants::PROCESS_LOCATION] = [
     OmsConfig::DEFAULT_PROCESS_LOCATION,
+    $config[KernelConstants::SPRYKER_ROOT] . '/dummy-payment/config/Zed/Oms',
 ];
 $config[OmsConstants::ACTIVE_PROCESSES] = [
     'DummyPayment01',
-    'Nopayment01',
 ];
 $config[SalesConstants::PAYMENT_METHOD_STATEMACHINE_MAPPING] = [
     DummyPaymentConfig::PAYMENT_METHOD_INVOICE => 'DummyPayment01',
     DummyPaymentConfig::PAYMENT_METHOD_CREDIT_CARD => 'DummyPayment01',
-    GiftCardConfig::PROVIDER_NAME => 'DummyPayment01',
-    NopaymentConfig::PAYMENT_PROVIDER_NAME => 'Nopayment01',
 ];
 
 // ---------- NewRelic
@@ -381,6 +364,7 @@ $config[NewRelicConstants::NEWRELIC_API_KEY] = null;
 // ---------- Queue
 $config[QueueConstants::QUEUE_SERVER_ID] = (gethostname()) ?: php_uname('n');
 $config[QueueConstants::QUEUE_WORKER_INTERVAL_MILLISECONDS] = 1000;
+$config[QueueConstants::QUEUE_PROCESS_TRIGGER_INTERVAL_MICROSECONDS] = 1001;
 $config[QueueConstants::QUEUE_WORKER_MAX_THRESHOLD_SECONDS] = 59;
 $config[QueueConstants::QUEUE_WORKER_LOG_ACTIVE] = false;
 
@@ -407,24 +391,17 @@ $config[QueueConstants::QUEUE_ADAPTER_CONFIGURATION] = [
     ],
 ];
 
-// Used for QueueHandlerPlugin which is disabled in 
-// src/Pyz/Zed/Log/LogDependencyProvider.php and
-// src/Pyz/Yves/Log/LogDependencyProvider.php
-//
-//$config[LogglyConstants::QUEUE_NAME] = 'loggly-log-queue';
-//$config[LogglyConstants::ERROR_QUEUE_NAME] = 'loggly-log-queue.error';
+$config[LogglyConstants::QUEUE_NAME] = 'loggly-log-queue';
+$config[LogglyConstants::ERROR_QUEUE_NAME] = 'loggly-log-queue.error';
 
 // ---------- Events
 $config[EventConstants::LOGGER_ACTIVE] = false;
 
-// ---------- Collector
-$config[CollectorConstants::TOUCH_DELETE_CLEANUP_ACTIVE] = false;
-
 // ---------- EventBehavior
-$config[EventBehaviorConstants::EVENT_BEHAVIOR_TRIGGERING_ACTIVE] = false;
+$config[EventBehaviorConstants::EVENT_BEHAVIOR_TRIGGERING_ACTIVE] = true;
 
 // ---------- Customer
-$config[CustomerConstants::CUSTOMER_SECURED_PATTERN] = '(^/login_check$|^(/en|/de)?/customer|^(/en|/de)?/wishlist)';
+$config[CustomerConstants::CUSTOMER_SECURED_PATTERN] = '(^/login_check$|^(/en|/de)?/customer|^(/en|/de)?/wishlist|^(/en|/de)?/shopping-list|^(/en|/de)?/company(?!/register)|^(/en|/de)?/multi-cart|^(/en|/de)?/shared-cart)';
 $config[CustomerConstants::CUSTOMER_ANONYMOUS_PATTERN] = '^/.*';
 
 // ---------- Taxes
@@ -433,3 +410,6 @@ $config[TaxConstants::DEFAULT_TAX_RATE] = 19;
 $config[FileSystemConstants::FILESYSTEM_SERVICE] = [];
 $config[FlysystemConstants::FILESYSTEM_SERVICE] = $config[FileSystemConstants::FILESYSTEM_SERVICE];
 $config[CmsGuiConstants::CMS_PAGE_PREVIEW_URI] = '/en/cms/preview/%d';
+
+// ---------- Loggly
+$config[LogglyConstants::TOKEN] = 'loggly-token:sample:123456';

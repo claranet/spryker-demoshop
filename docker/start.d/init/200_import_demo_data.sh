@@ -5,5 +5,7 @@ if ! is_true $ENABLE_DEMO_DATA; then
     return 0
 fi
 
-spryker_installer --sections=demodata
+for store in ${STORES}; do
+    spryker_installer --sections=demodata "$store"
+done
 

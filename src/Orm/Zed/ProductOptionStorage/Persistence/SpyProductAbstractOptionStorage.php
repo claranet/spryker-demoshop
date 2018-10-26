@@ -1,13 +1,13 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Orm\Zed\ProductOptionStorage\Persistence;
 
-use Orm\Zed\ProductOptionStorage\Persistence\Base\SpyProductAbstractOptionStorage as BaseSpyProductAbstractOptionStorage;
+use Spryker\Zed\ProductOptionStorage\Persistence\Propel\AbstractSpyProductAbstractOptionStorage;
 
 /**
  * Skeleton subclass for representing a row from the 'spy_product_abstract_option_storage' table.
@@ -19,6 +19,6 @@ use Orm\Zed\ProductOptionStorage\Persistence\Base\SpyProductAbstractOptionStorag
  * long as it does not already exist in the output directory.
  *
  */
-class SpyProductAbstractOptionStorage extends BaseSpyProductAbstractOptionStorage
+class SpyProductAbstractOptionStorage extends AbstractSpyProductAbstractOptionStorage
 {
 }

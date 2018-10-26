@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -9,7 +9,6 @@ namespace Pyz\Zed\CompanyUnitAddressGui;
 
 use Spryker\Zed\CompanyUnitAddressGui\CompanyUnitAddressGuiDependencyProvider as SprykerCompanyUnitAddressGuiDependencyProvider;
 use Spryker\Zed\CompanyUnitAddressLabel\Communication\Plugin\CompanyUnitAddressEditFormExpanderPlugin;
-use Spryker\Zed\CompanyUnitAddressLabelGui\Communication\Plugin\CompanyUnitAddressTableExpanderPlugin;
 
 class CompanyUnitAddressGuiDependencyProvider extends SprykerCompanyUnitAddressGuiDependencyProvider
 {
@@ -29,7 +28,6 @@ class CompanyUnitAddressGuiDependencyProvider extends SprykerCompanyUnitAddressG
     protected function getCompanyUnitAddressTableConfigExpanderPlugins(): array
     {
         return [
-            new CompanyUnitAddressTableExpanderPlugin(),
         ];
     }
 
@@ -39,7 +37,6 @@ class CompanyUnitAddressGuiDependencyProvider extends SprykerCompanyUnitAddressG
     protected function getCompanyUnitAddressTableHeaderExpanderPlugins(): array
     {
         return [
-            new CompanyUnitAddressTableExpanderPlugin(),
         ];
     }
 
@@ -49,7 +46,6 @@ class CompanyUnitAddressGuiDependencyProvider extends SprykerCompanyUnitAddressG
     protected function getCompanyUnitAddressTableDataExpanderPlugins(): array
     {
         return [
-            new CompanyUnitAddressTableExpanderPlugin(),
         ];
     }
 }

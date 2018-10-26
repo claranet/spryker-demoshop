@@ -1,17 +1,17 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Pyz\Zed\Mail;
 
+use Spryker\Zed\CompanyMailConnector\Communication\Plugin\Mail\CompanyStatusMailTypePlugin;
+use Spryker\Zed\CompanyUserInvitation\Communication\Plugin\Mail\CompanyUserInvitationMailTypePlugin;
 use Spryker\Zed\Customer\Communication\Plugin\Mail\CustomerRegistrationMailTypePlugin;
 use Spryker\Zed\Customer\Communication\Plugin\Mail\CustomerRestoredPasswordConfirmationMailTypePlugin;
 use Spryker\Zed\Customer\Communication\Plugin\Mail\CustomerRestorePasswordMailTypePlugin;
-use Spryker\Zed\GiftCardMailConnector\Communication\Plugin\Mail\GiftCardDeliveryMailTypePlugin;
-use Spryker\Zed\GiftCardMailConnector\Communication\Plugin\Mail\GiftCardUsageMailTypePlugin;
 use Spryker\Zed\Kernel\Container;
 use Spryker\Zed\Mail\Business\Model\Mail\MailTypeCollectionAddInterface;
 use Spryker\Zed\Mail\Business\Model\Provider\MailProviderCollectionAddInterface;
@@ -43,15 +43,18 @@ class MailDependencyProvider extends SprykerMailDependencyProvider
                 ->add(new NewsletterUnsubscribedMailTypePlugin())
                 ->add(new OrderConfirmationMailTypePlugin())
                 ->add(new OrderShippedMailTypePlugin())
-                ->add(new GiftCardDeliveryMailTypePlugin())
-                ->add(new GiftCardUsageMailTypePlugin());
+                ->add(new CompanyUserInvitationMailTypePlugin())
+                ->add(new CompanyStatusMailTypePlugin());
 
             return $mailCollection;
         });
 
         $container->extend(self::MAIL_PROVIDER_COLLECTION, function (MailProviderCollectionAddInterface $mailProviderCollection) {
-            $mailProviderCollection->addProvider(new MailProviderPlugin(), MailConfig::MAIL_TYPE_ALL);
-
+            $mailProviderCollection
+                ->addProvider(new MailProviderPlugin(), [
+                    MailConfig::MAIL_TYPE_ALL,
+                    CompanyUserInvitationMailTypePlugin::MAIL_TYPE,
+                ]);
             return $mailProviderCollection;
         });
 

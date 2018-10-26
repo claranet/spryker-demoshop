@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -18,26 +18,25 @@ use Orm\Zed\Glossary\Persistence\SpyGlossaryKeyQuery;
 use Orm\Zed\Glossary\Persistence\SpyGlossaryTranslationQuery;
 use Orm\Zed\Url\Persistence\SpyUrlQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Pyz\Zed\DataImport\Business\Model\DataImportStep\LocalizedAttributesExtractorStep;
-use Pyz\Zed\Glossary\GlossaryConfig;
 use Spryker\Service\UtilEncoding\UtilEncodingService;
-use Spryker\Shared\Cms\CmsConstants;
 use Spryker\Zed\Cms\Business\Mapping\GlossaryKeyMappingManager;
 use Spryker\Zed\Cms\Business\Version\Mapper\VersionDataMapper;
 use Spryker\Zed\Cms\Business\Version\VersionGenerator;
+use Spryker\Zed\Cms\Dependency\CmsEvents;
 use Spryker\Zed\Cms\Dependency\Service\CmsToUtilEncodingBridge;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
-use Spryker\Zed\DataImport\Business\Model\DataImportStep\TouchAwareStep;
+use Spryker\Zed\DataImport\Business\Model\DataImportStep\LocalizedAttributesExtractorStep;
+use Spryker\Zed\DataImport\Business\Model\DataImportStep\PublishAwareStep;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
-use Spryker\Zed\DataImport\Dependency\Facade\DataImportToTouchInterface;
-use Spryker\Zed\Url\UrlConfig;
+use Spryker\Zed\Glossary\Dependency\GlossaryEvents;
+use Spryker\Zed\Url\Dependency\UrlEvents;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  * @SuppressWarnings(PHPMD.NPathComplexity)
  */
-class CmsPageWriterStep extends TouchAwareStep implements DataImportStepInterface
+class CmsPageWriterStep extends PublishAwareStep implements DataImportStepInterface
 {
     const BULK_SIZE = 100;
 
@@ -60,14 +59,8 @@ class CmsPageWriterStep extends TouchAwareStep implements DataImportStepInterfac
      */
     protected $versionDataMapper;
 
-    /**
-     * @param \Spryker\Zed\DataImport\Dependency\Facade\DataImportToTouchInterface $touchFacade
-     * @param int|null $bulkSize
-     */
-    public function __construct(DataImportToTouchInterface $touchFacade, $bulkSize = null)
+    public function __construct()
     {
-        parent::__construct($touchFacade, $bulkSize);
-
         $utilEncodingBridge = new CmsToUtilEncodingBridge(new UtilEncodingService());
         $this->versionDataMapper = new VersionDataMapper($utilEncodingBridge);
     }
@@ -119,7 +112,7 @@ class CmsPageWriterStep extends TouchAwareStep implements DataImportStepInterfac
                 $urlEntity->save();
             }
 
-            $this->addSubTouchable(UrlConfig::RESOURCE_TYPE_URL, $urlEntity->getIdUrl());
+            $this->addPublishEvents(UrlEvents::URL_PUBLISH, $urlEntity->getIdUrl());
         }
 
         foreach ($dataSet[PlaceholderExtractorStep::KEY_PLACEHOLDER] as $idLocale => $placeholder) {
@@ -161,7 +154,7 @@ class CmsPageWriterStep extends TouchAwareStep implements DataImportStepInterfac
                     $pageKeyMappingEntity->save();
                 }
 
-                $this->addSubTouchable(GlossaryConfig::RESOURCE_TYPE_TRANSLATION, $glossaryTranslationEntity->getIdGlossaryTranslation());
+                $this->addPublishEvents(GlossaryEvents::GLOSSARY_KEY_PUBLISH, $glossaryTranslationEntity->getFkGlossaryKey());
             }
         }
 
@@ -173,7 +166,7 @@ class CmsPageWriterStep extends TouchAwareStep implements DataImportStepInterfac
     /**
      * @param \Orm\Zed\Cms\Persistence\SpyCmsPage $cmsPageEntity
      *
-     * @return \Generated\Shared\Transfer\CmsVersionTransfer
+     * @return void
      */
     public function publishWithVersion(SpyCmsPage $cmsPageEntity)
     {
@@ -187,14 +180,14 @@ class CmsPageWriterStep extends TouchAwareStep implements DataImportStepInterfac
      * @param string $data
      * @param int $idCmsPage
      *
-     * @return \Generated\Shared\Transfer\CmsVersionTransfer
+     * @return void
      */
     protected function createCmsVersion($data, $idCmsPage)
     {
         $versionNumber = $this->generateNewCmsVersion($idCmsPage);
         $versionName = $this->generateNewCmsVersionName($versionNumber);
 
-        $this->saveAndTouchCmsVersion($data, $idCmsPage, $versionName, $versionNumber);
+        $this->saveAndPublishCmsVersion($data, $idCmsPage, $versionName, $versionNumber);
     }
 
     /**
@@ -234,11 +227,11 @@ class CmsPageWriterStep extends TouchAwareStep implements DataImportStepInterfac
      *
      * @return void
      */
-    protected function saveAndTouchCmsVersion($data, $idCmsPage, $versionName, $versionNumber)
+    protected function saveAndPublishCmsVersion($data, $idCmsPage, $versionName, $versionNumber)
     {
         $this->saveCmsVersion($idCmsPage, $data, $versionNumber, $versionName);
 
-        $this->addMainTouchable(CmsConstants::RESOURCE_TYPE_PAGE, $idCmsPage);
+        $this->addPublishEvents(CmsEvents::CMS_VERSION_PUBLISH, $idCmsPage);
     }
 
     /**

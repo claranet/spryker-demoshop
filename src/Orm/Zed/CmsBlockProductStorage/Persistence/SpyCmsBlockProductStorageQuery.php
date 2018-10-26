@@ -1,13 +1,13 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Orm\Zed\CmsBlockProductStorage\Persistence;
 
-use Orm\Zed\CmsBlockProductStorage\Persistence\Base\SpyCmsBlockProductStorageQuery as BaseSpyCmsBlockProductStorageQuery;
+use Spryker\Zed\CmsBlockProductStorage\Persistence\Propel\AbstractSpyCmsBlockProductStorageQuery;
 
 /**
  * Skeleton subclass for performing query and update operations on the 'spy_cms_block_product_storage' table.
@@ -19,6 +19,6 @@ use Orm\Zed\CmsBlockProductStorage\Persistence\Base\SpyCmsBlockProductStorageQue
  * long as it does not already exist in the output directory.
  *
  */
-class SpyCmsBlockProductStorageQuery extends BaseSpyCmsBlockProductStorageQuery
+class SpyCmsBlockProductStorageQuery extends AbstractSpyCmsBlockProductStorageQuery
 {
 }

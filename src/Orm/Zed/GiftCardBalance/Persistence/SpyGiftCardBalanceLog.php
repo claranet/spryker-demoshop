@@ -1,13 +1,13 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Orm\Zed\GiftCardBalance\Persistence;
 
-use Spryker\Zed\GiftCardBalance\Persistence\Propel\AbstractSpyGiftCardBalanceLog as BaseSpyGiftCardBalanceLog;
+use Orm\Zed\GiftCardBalance\Persistence\Base\SpyGiftCardBalanceLog as BaseSpyGiftCardBalanceLog;
 
 /**
  * Skeleton subclass for representing a row from the 'spy_gift_card_balance_log' table.

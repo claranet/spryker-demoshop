@@ -1,13 +1,13 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Orm\Zed\SalesReclamation\Persistence;
 
-use Spryker\Zed\SalesReclamation\Persistence\Propel\AbstractSpySalesReclamationItem;
+use Spryker\Zed\SalesReclamation\Persistence\Propel\AbstractSpySalesReclamationItem as BaseSpySalesReclamationItem;
 
 /**
  * Skeleton subclass for representing a row from the 'spy_sales_reclamation_item' table.
@@ -19,6 +19,6 @@ use Spryker\Zed\SalesReclamation\Persistence\Propel\AbstractSpySalesReclamationI
  * long as it does not already exist in the output directory.
  *
  */
-class SpySalesReclamationItem extends AbstractSpySalesReclamationItem
+class SpySalesReclamationItem extends BaseSpySalesReclamationItem
 {
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -16,7 +16,6 @@ use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
 class DiscountStoreWriterStep implements DataImportStepInterface
 {
     const BULK_SIZE = 100;
-
     const KEY_DISCOUNT_KEY = 'discount_key';
     const KEY_STORE_NAME = 'store_name';
 
@@ -55,7 +54,6 @@ class DiscountStoreWriterStep implements DataImportStepInterface
             static::$idDiscountBuffer[$discountKey] =
                 SpyDiscountQuery::create()->findOneByDiscountKey($discountKey)->getIdDiscount();
         }
-
         return static::$idDiscountBuffer[$discountKey];
     }
 
@@ -70,7 +68,6 @@ class DiscountStoreWriterStep implements DataImportStepInterface
             static::$idStoreBuffer[$storeName] =
                 SpyStoreQuery::create()->findOneByName($storeName)->getIdStore();
         }
-
         return static::$idStoreBuffer[$storeName];
     }
 }

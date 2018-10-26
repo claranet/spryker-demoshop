@@ -21,4 +21,6 @@ prepare_elasticsearch_index_descriptions
 prepare_collector_export_chunk_size
 
 sectionText "Run spryker installer"
-spryker_installer --sections=database-migrate
+for store in ${STORES}; do
+  spryker_installer --sections=database-migrate "$store"
+done
