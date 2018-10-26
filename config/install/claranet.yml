@@ -58,6 +58,11 @@ sections:
             command: "vendor/bin/console setup:search:index-map"
             groups:
                 - build
+        
+        generate-transfer-databuilders:
+            command: "vendor/bin/console transfer:databuilder:generate"
+            groups:
+                - build
 
         generate-ide-auto-completion:
             command: "vendor/bin/console dev:ide:generate-auto-completion"
@@ -71,6 +76,11 @@ sections:
 
         navigation-cache-warmup:
             command: "vendor/bin/console navigation:build-cache"
+            groups:
+                - build
+        
+        rest-request-validation-cache-warmup:
+            command: "vendor/bin/console glue:rest:build-request-validation-cache"
             groups:
                 - build
 
@@ -234,13 +244,13 @@ sections:
                 - US
                 - DE
 
-        search-collector:
-            command: "vendor/bin/console collector:search:export"
-            stores: true
+        # search-collector:
+        #     command: "vendor/bin/console collector:search:export"
+        #     stores: true
 
-        storage-collector:
-            command: "vendor/bin/console collector:storage:export"
-            stores: true
+        # storage-collector:
+        #     command: "vendor/bin/console collector:storage:export"
+        #     stores: true
 
 
     jenkins-up:
