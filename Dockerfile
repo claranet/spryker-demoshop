@@ -13,7 +13,7 @@ LABEL org.label-schema.name="claranet/spryker-demoshop" \
 # Override claranet/php image settings
 ENV NPM_ARGS="--with-dev" \
     PHP_EXTENSIONS="redis" \
-    SYSTEM_PACKAGES="graphviz redis-tools" \
+    SYSTEM_PACKAGES="graphviz redis-tools procps" \
     PHP_EXTENSIONS_STARTUP_ONLY="xdebug" \
     NODEJS_VERSION="10" \
     CODECEPTION_ARGS="-x CheckoutAvailabilityCest -x CmsGuiCreatePageCest -x NavigationCRUDCest -x NavigationTreeCest -x ProductRelationCreateRelationCest -x Smoke" \
