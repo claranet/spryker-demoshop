@@ -243,6 +243,13 @@ sections:
             stores:
                 - US
                 - DE
+        
+        export-elasticsearch-prepare:
+            command: "vendor/bin/console event:trigger"
+            stores: true
+        export-elasticsearch:
+            command: "vendor/bin/console queue:worker:start"
+            stores: true
 
         # search-collector:
         #     command: "vendor/bin/console collector:search:export"
