@@ -13,9 +13,9 @@ use Spryker\Zed\CustomerAccess\CustomerAccessConfig as SprykerCustomerAccessConf
 class CustomerAccessConfig extends SprykerCustomerAccessConfig
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
-     * @return array
+     * @return string[]
      */
     public function getContentTypes(): array
     {
@@ -25,6 +25,22 @@ class CustomerAccessConfig extends SprykerCustomerAccessConfig
             SprykerSharedCustomerAccessConfig::CONTENT_TYPE_ADD_TO_CART,
             SprykerSharedCustomerAccessConfig::CONTENT_TYPE_WISHLIST,
             SprykerSharedCustomerAccessConfig::CONTENT_TYPE_SHOPPING_LIST,
+        ];
+    }
+
+    /**
+     * Returns content access by type for install.
+     *
+     * @return bool[]
+     */
+    public function getContentAccessByType(): array
+    {
+        return [
+            SprykerSharedCustomerAccessConfig::CONTENT_TYPE_PRICE => true,
+            SprykerSharedCustomerAccessConfig::CONTENT_TYPE_ORDER_PLACE_SUBMIT => true,
+            SprykerSharedCustomerAccessConfig::CONTENT_TYPE_ADD_TO_CART => true,
+            SprykerSharedCustomerAccessConfig::CONTENT_TYPE_WISHLIST => false,
+            SprykerSharedCustomerAccessConfig::CONTENT_TYPE_SHOPPING_LIST => false,
         ];
     }
 }

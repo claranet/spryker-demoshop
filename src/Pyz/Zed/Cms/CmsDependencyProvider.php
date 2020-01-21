@@ -9,6 +9,7 @@ namespace Pyz\Zed\Cms;
 
 use Spryker\Zed\Cms\CmsDependencyProvider as SprykerCmsDependencyProvider;
 use Spryker\Zed\CmsContentWidget\Communication\Plugin\CmsPageDataExpander\CmsPageParameterMapExpanderPlugin;
+use Spryker\Zed\CmsNavigationConnector\Communication\Plugin\CmsPageBeforeDeleteNavigationPlugin;
 use Spryker\Zed\CmsNavigationConnector\Communication\Plugin\PostCmsPageActivatorNavigationPlugin;
 use Spryker\Zed\CmsUserConnector\Communication\Plugin\UserCmsVersionPostSavePlugin;
 use Spryker\Zed\CmsUserConnector\Communication\Plugin\UserCmsVersionTransferExpanderPlugin;
@@ -21,7 +22,7 @@ class CmsDependencyProvider extends SprykerCmsDependencyProvider
      *
      * @return array
      */
-    protected function getPostSavePlugins(Container $container)
+    protected function getPostSavePlugins(Container $container): array
     {
         return [
             new UserCmsVersionPostSavePlugin(),
@@ -33,7 +34,7 @@ class CmsDependencyProvider extends SprykerCmsDependencyProvider
      *
      * @return array
      */
-    protected function getTransferExpanderPlugins(Container $container)
+    protected function getTransferExpanderPlugins(Container $container): array
     {
         return [
             new UserCmsVersionTransferExpanderPlugin(),
@@ -41,9 +42,9 @@ class CmsDependencyProvider extends SprykerCmsDependencyProvider
     }
 
     /**
-     * @return \Spryker\Zed\Cms\Dependency\Plugin\CmsPageDataExpanderPluginInterface[]
+     * @return \Spryker\Zed\CmsExtension\Dependency\Plugin\CmsPageDataExpanderPluginInterface[]
      */
-    protected function getCmsPageDataExpanderPlugins()
+    protected function getCmsPageDataExpanderPlugins(): array
     {
         return [
             new CmsPageParameterMapExpanderPlugin(),
@@ -53,10 +54,20 @@ class CmsDependencyProvider extends SprykerCmsDependencyProvider
     /**
      * @return \Spryker\Zed\Cms\Communication\Plugin\PostCmsPageActivatorPluginInterface[]
      */
-    protected function getCmsPagePostActivatorPlugins()
+    protected function getCmsPagePostActivatorPlugins(): array
     {
         return [
             new PostCmsPageActivatorNavigationPlugin(),
+        ];
+    }
+
+    /**
+     * @return \Spryker\Zed\CmsExtension\Dependency\Plugin\CmsPageBeforeDeletePluginInterface[]
+     */
+    protected function getCmsPageBeforeDeletePlugins(): array
+    {
+        return [
+            new CmsPageBeforeDeleteNavigationPlugin(),
         ];
     }
 }

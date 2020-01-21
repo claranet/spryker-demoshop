@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Spryker Demoshop.
+ * This file is part of the Spryker Suite.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
@@ -15,7 +15,9 @@ use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
 
 class GiftCardConcreteConfigurationWriterStep implements DataImportStepInterface
 {
-    const BULK_SIZE = 100;
+    public const BULK_SIZE = 100;
+    public const COL_VALUE = 'value';
+    public const COL_SKU = 'sku';
 
     /**
      * @var \Pyz\Zed\DataImport\Business\Model\Product\Repository\ProductRepositoryInterface
@@ -31,22 +33,14 @@ class GiftCardConcreteConfigurationWriterStep implements DataImportStepInterface
     }
 
     /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return 'Concrete Gift-Card Configurations';
-    }
-
-    /**
      * @param \Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface $dataSet
      *
      * @return void
      */
     public function execute(DataSetInterface $dataSet)
     {
-        $value = $dataSet['value'];
-        $concreteSku = $dataSet['sku'];
+        $value = $dataSet[static::COL_VALUE];
+        $concreteSku = $dataSet[static::COL_SKU];
 
         $typeEntity = SpyGiftCardProductConfigurationQuery::create()
             ->filterByValue($value)

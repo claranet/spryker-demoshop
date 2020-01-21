@@ -15,12 +15,16 @@ use Generated\Shared\Transfer\DataImporterReaderConfigurationTransfer;
 use Propel\Runtime\Propel;
 use Pyz\Zed\DataImport\Business\DataImportBusinessFactory;
 use Pyz\Zed\DataImport\DataImportConfig;
+use Spryker\Service\UtilEncoding\UtilEncodingService;
 use Spryker\Shared\Kernel\Store;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetWriterCollection;
 use Spryker\Zed\DataImport\Dependency\Propel\DataImportToPropelConnectionBridge;
+use Spryker\Zed\DataImport\Dependency\Service\DataImportToUtilEncodingServiceBridge;
+use Spryker\Zed\PriceProduct\Business\PriceProductFacade;
 
 /**
  * Auto-generated group annotations
+ *
  * @group PyzTest
  * @group Zed
  * @group DataImport
@@ -59,6 +63,10 @@ abstract class AbstractWriterPluginTest extends Unit
             'getConfig' => $this->getDataImportConfigStub(),
             'getPropelConnection' => $this->getPropelConnection(),
             'getStore' => $this->getStore(),
+            'getPriceProductFacade' => new PriceProductFacade(),
+            'getUtilEncodingService' => new DataImportToUtilEncodingServiceBridge(
+                new UtilEncodingService()
+            ),
         ]);
 
         return $dataImportBusinessFactory;

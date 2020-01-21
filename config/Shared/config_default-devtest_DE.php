@@ -9,15 +9,21 @@ use Spryker\Shared\Application\ApplicationConstants;
 use Spryker\Shared\Collector\CollectorConstants;
 use Spryker\Shared\Customer\CustomerConstants;
 use Spryker\Shared\Event\EventConstants;
+use Spryker\Shared\GlueApplication\GlueApplicationConstants;
+use Spryker\Shared\Http\HttpConstants;
 use Spryker\Shared\Newsletter\NewsletterConstants;
 use Spryker\Shared\ProductManagement\ProductManagementConstants;
 use Spryker\Shared\Propel\PropelConstants;
 use Spryker\Shared\Queue\QueueConfig;
 use Spryker\Shared\Queue\QueueConstants;
 use Spryker\Shared\RabbitMq\RabbitMqEnv;
-use Spryker\Shared\Search\SearchConstants;
 use Spryker\Shared\Session\SessionConstants;
+use Spryker\Shared\SessionRedis\SessionRedisConstants;
+use Spryker\Shared\StorageDatabase\StorageDatabaseConstants;
+use Spryker\Shared\Testify\TestifyConstants;
 use Spryker\Shared\ZedRequest\ZedRequestConstants;
+
+$domain = getenv('VM_PROJECT') ?: 'suite-nonsplit';
 
 // ---------- Yves host
 $config[ApplicationConstants::HOST_YVES] = 'www-test.de.suite.local';
@@ -56,11 +62,13 @@ $config[ZedRequestConstants::BASE_URL_ZED_API] = $config[ApplicationConstants::B
 $config[ZedRequestConstants::BASE_URL_SSL_ZED_API] = $config[ApplicationConstants::BASE_URL_SSL_ZED];
 
 // ---------- Trusted hosts
-$config[ApplicationConstants::YVES_TRUSTED_HOSTS] = [
-    $config[ApplicationConstants::HOST_YVES],
-    $config[ApplicationConstants::HOST_ZED],
-    'localhost',
-];
+$config[ApplicationConstants::YVES_TRUSTED_HOSTS]
+    = $config[HttpConstants::YVES_TRUSTED_HOSTS]
+    = [
+        $config[ApplicationConstants::HOST_YVES],
+        $config[ApplicationConstants::HOST_ZED],
+        'localhost',
+    ];
 
 // ---------- Propel
 $config[PropelConstants::ZED_DB_USERNAME] = 'devtest';
@@ -68,9 +76,7 @@ $config[PropelConstants::ZED_DB_PASSWORD] = 'mate20mg';
 $config[PropelConstants::ZED_DB_DATABASE] = 'DE_devtest_zed';
 
 // ---------- Elasticsearch
-$config[SearchConstants::ELASTICA_PARAMETER__INDEX_NAME]
-    = $config[CollectorConstants::ELASTICA_PARAMETER__INDEX_NAME]
-    = 'de_search_devtest';
+$config[CollectorConstants::ELASTICA_PARAMETER__INDEX_NAME] = 'de_search_devtest';
 
 // ---------- RabbitMq
 $config[RabbitMqEnv::RABBITMQ_CONNECTIONS]['DE'][RabbitMqEnv::RABBITMQ_DEFAULT_CONNECTION] = true;
@@ -119,4 +125,15 @@ $config[EventConstants::EVENT_CHUNK] = 5000;
 // ---------- Session
 $config[SessionConstants::YVES_SESSION_COOKIE_DOMAIN] = $config[ApplicationConstants::HOST_YVES];
 $config[SessionConstants::ZED_SESSION_COOKIE_NAME] = $config[ApplicationConstants::HOST_ZED];
-$config[SessionConstants::YVES_SESSION_REDIS_DATABASE] = 5;
+$config[SessionRedisConstants::YVES_SESSION_REDIS_DATABASE] = 5;
+$config[SessionRedisConstants::ZED_SESSION_REDIS_DATABASE] = $config[SessionRedisConstants::YVES_SESSION_REDIS_DATABASE];
+
+// ----------- Glue Application
+$config[GlueApplicationConstants::GLUE_APPLICATION_DOMAIN] = sprintf('http://glue-test.de.%s.local', $domain);
+$config[TestifyConstants::GLUE_APPLICATION_DOMAIN] = $config[GlueApplicationConstants::GLUE_APPLICATION_DOMAIN];
+$config[TestifyConstants::GLUE_OPEN_API_SCHEMA] = APPLICATION_SOURCE_DIR . '/Generated/Glue/Specification/spryker_rest_api.schema.yml';
+
+// ---------- Database storage
+$config[StorageDatabaseConstants::DB_USERNAME] = 'devtest';
+$config[StorageDatabaseConstants::DB_PASSWORD] = 'mate20mg';
+$config[StorageDatabaseConstants::DB_DATABASE] = 'DE_devtest_zed';

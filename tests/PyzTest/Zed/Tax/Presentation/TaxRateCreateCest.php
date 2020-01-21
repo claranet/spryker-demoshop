@@ -13,6 +13,7 @@ use PyzTest\Zed\Tax\TaxPresentationTester;
 
 /**
  * Auto-generated group annotations
+ *
  * @group PyzTest
  * @group Zed
  * @group Tax
@@ -105,5 +106,15 @@ class TaxRateCreateCest
         $i->wait(2);
 
         $i->see(TaxRateCreatePage::ERROR_MESSAGE_TAX_RATE_ALREADY_EXISTS);
+    }
+
+    /**
+     * @param \PyzTest\Zed\Tax\TaxPresentationTester $i
+     *
+     * @return void
+     */
+    public function _after(TaxPresentationTester $i): void
+    {
+        $i->removeTaxRateFromDatabase(TaxRateCreatePage::TAX_RATE_VALID);
     }
 }

@@ -14,6 +14,7 @@
 {% set brand = data.product.attributes.brand | default %}
 {% set sku = data.product.sku %}
 {% set availabilityWidget = '' %}
+{% set isProductAbstract = data.product.idProductConcrete is empty %}
 {% set isDisabled = data.product.idProductConcrete is empty or data.product.price is empty %}
 {% set isProductAvailable = true %}
 
@@ -49,18 +50,14 @@
     {% widget 'ProductPriceVolumeWidget' args [data.product] only %}
     {% elsewidget 'PriceProductVolumeWidgetPlugin' args [data.product] only %} {# @deprecated Use ProductPriceVolumeWidget instead. #}
     {% nowidget %}
-        {% if widgetExists('PriceWidgetPlugin') %}
-            {{ widget('PriceWidgetPlugin', data.product) }}  {# @deprecated Use molecule('price') instead. #}
-        {% else %}
-            <p>
-                {% include molecule('price') with {
-                    data: {
-                        amount: data.product.price | money,
-                        originalAmount: data.product.prices.ORIGINAL | default
-                    }
-                } only %}
-            </p>
-        {% endif %}
+        <p>
+            {% include molecule('money-price') with {
+                data: {
+                    amount: data.product.price,
+                    originalAmount: data.product.prices.ORIGINAL | default
+                }
+            } only %}
+        </p>
     {% endwidget %}
 
     {% widget 'ProductDetailPageReviewWidget' args [data.product.idProductAbstract] use view('pdp-review-rating', 'ProductReviewWidget') only %}
@@ -79,11 +76,11 @@
             availableAttributes: data.product.availableAttributes
         }
     } only %}
-        {% block body %}<hr />{{parent()}}{% endblock %}
+        {% block body %}<hr />{{ parent() }}{% endblock %}
     {% endembed %}
 
     <hr />
-    <form method="POST" action="{{ path("cart/add", {"sku": sku}) }}">
+    <form method="POST" class="{{ config.jsName }}__form" action="{{ path("cart/add", {"sku": sku}) }}">
         {% widget 'ProductOptionConfiguratorWidget' args [data.product] only %}
         {% elsewidget 'ProductOptionWidgetPlugin' args [data.product] only %} {# @deprecated Use ProductOptionConfiguratorWidget instead. #}
         {% endwidget %}
@@ -129,6 +126,8 @@
         {% elsewidget 'MultiCartWidgetPlugin' args [data.product, isDisabled] only %} {# @deprecated Use AddToMultiCartWidget instead. #}
         {% endwidget %}
 
+        {% widget 'MerchantProductOfferWidget' args [data.product] only %}{% endwidget %}
+
         {% if widgetExists('AvailabilityWidgetPlugin') %}
             {{ widget('AvailabilityWidgetPlugin', data.product) }} {# @deprecated Use molecule('availability-product', 'AvailabilityWidget') instead. #}
         {% else %}
@@ -140,6 +139,10 @@
             } only %}
         {% endif %}
     </form>
+
+    {% if not isAvailable and not isProductAbstract %}
+        {% widget 'AvailabilityNotificationSubscriptionWidget' args [data.product] only %}{% endwidget %}
+    {% endif %}
 
     {% if can('SeeShoppingListPermissionPlugin') and isProductAvailable %}
         {% widget 'AddToShoppingListWidget' args [sku, isDisabled] only %}

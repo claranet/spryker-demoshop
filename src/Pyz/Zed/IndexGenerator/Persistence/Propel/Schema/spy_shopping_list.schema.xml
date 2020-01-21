@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zed" xsi:noNamespaceSchemaLocation="http://static.spryker.com/schema-01.xsd" namespace="Orm\Zed\ShoppingList\Persistence" package="src.Orm.Zed.ShoppingList.Persistence">
+<database xmlns="spryker:schema-01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zed" xsi:schemaLocation="spryker:schema-01 https://static.spryker.com/schema-01.xsd" namespace="Orm\Zed\ShoppingList\Persistence" package="src.Orm.Zed.ShoppingList.Persistence">
   <table name="spy_shopping_list_item">
     <index name="index-spy_shopping_list_item-fk_shopping_list">
       <index-column name="fk_shopping_list"/>
@@ -25,6 +25,14 @@
     </index>
     <index name="index-spy_shopping_list_company_business_unit-fk_s-ac186bc7732a">
       <index-column name="fk_shopping_list_permission_group"/>
+    </index>
+  </table>
+  <table name="spy_shopping_list_company_business_unit_blacklist">
+    <index name="index-spy_shopping_list_company_business_unit_blac-02b93f3310f1">
+      <index-column name="fk_shopping_list_company_business_unit"/>
+    </index>
+    <index name="index-spy_shopping_list_company_business_unit_blac-3a6bca02d731">
+      <index-column name="fk_company_user"/>
     </index>
   </table>
   <table name="spy_shopping_list_permission_group_to_permission">

@@ -8,17 +8,22 @@
 namespace PyzTest\Yves\Checkout\Process\Steps;
 
 use Codeception\Test\Unit;
+use Generated\Shared\Transfer\PaymentMethodsTransfer;
+use Generated\Shared\Transfer\PaymentMethodTransfer;
 use Generated\Shared\Transfer\PaymentTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Spryker\Yves\Messenger\FlashMessenger\FlashMessengerInterface;
 use Spryker\Yves\StepEngine\Dependency\Plugin\Handler\StepHandlerPluginCollection;
 use Spryker\Yves\StepEngine\Dependency\Plugin\Handler\StepHandlerPluginInterface;
 use SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCalculationClientBridge;
+use SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCalculationClientInterface;
+use SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToPaymentClientInterface;
 use SprykerShop\Yves\CheckoutPage\Process\Steps\PaymentStep;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Auto-generated group annotations
+ *
  * @group PyzTest
  * @group Yves
  * @group Checkout
@@ -57,21 +62,12 @@ class PaymentStepTest extends Unit
     {
         $quoteTransfer = new QuoteTransfer();
         $paymentTransfer = new PaymentTransfer();
-        $paymentTransfer->setPaymentProvider('test');
+        $paymentTransfer->setPaymentProvider('test')->setPaymentSelection('test');
         $quoteTransfer->setPayment($paymentTransfer);
 
         $paymentStep = $this->createPaymentStep(new StepHandlerPluginCollection());
 
         $this->assertTrue($paymentStep->postCondition($quoteTransfer));
-    }
-
-    /**
-     * @return void
-     */
-    public function testShipmentRequireInputShouldReturnTrue()
-    {
-        $paymentStep = $this->createPaymentStep(new StepHandlerPluginCollection());
-        $this->assertTrue($paymentStep->requireInput(new QuoteTransfer()));
     }
 
     /**
@@ -82,11 +78,13 @@ class PaymentStepTest extends Unit
     protected function createPaymentStep(StepHandlerPluginCollection $paymentPlugins)
     {
         return new PaymentStep(
+            $this->getPaymentClientMock(),
             $paymentPlugins,
             'payment',
             'escape_route',
             $this->getFlashMessengerMock(),
-            $this->getCalculationClientMock()
+            $this->getCalculationClientMock(),
+            []
         );
     }
 
@@ -99,26 +97,43 @@ class PaymentStepTest extends Unit
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Spryker\Yves\StepEngine\Dependency\Plugin\Handler\StepHandlerPluginInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|\Spryker\Yves\StepEngine\Dependency\Plugin\Handler\StepHandlerPluginInterface
      */
-    protected function createPaymentPluginMock()
+    protected function createPaymentPluginMock(): StepHandlerPluginInterface
     {
         return $this->getMockBuilder(StepHandlerPluginInterface::class)->getMock();
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCalculationClientInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|\SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToCalculationClientInterface
      */
-    protected function getCalculationClientMock()
+    protected function getCalculationClientMock(): CheckoutPageToCalculationClientInterface
     {
         return $this->getMockBuilder(CheckoutPageToCalculationClientBridge::class)->disableOriginalConstructor()->getMock();
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Spryker\Yves\Messenger\FlashMessenger\FlashMessengerInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|\Spryker\Yves\Messenger\FlashMessenger\FlashMessengerInterface
      */
-    protected function getFlashMessengerMock()
+    protected function getFlashMessengerMock(): FlashMessengerInterface
     {
         return $this->getMockBuilder(FlashMessengerInterface::class)->getMock();
+    }
+
+    /**
+     * @return \PHPUnit\Framework\MockObject\MockObject|\SprykerShop\Yves\CheckoutPage\Dependency\Client\CheckoutPageToPaymentClientInterface
+     */
+    protected function getPaymentClientMock(): CheckoutPageToPaymentClientInterface
+    {
+        $availablePaymentMethods = new PaymentMethodsTransfer();
+        $availablePaymentMethods->addMethod((new PaymentMethodTransfer())->setMethodName('test'));
+
+        $mock = $this->getMockBuilder(CheckoutPageToPaymentClientInterface::class)
+            ->setMethods(['getAvailableMethods'])
+            ->getMock();
+
+        $mock->method('getAvailableMethods')->willReturn($availablePaymentMethods);
+
+        return $mock;
     }
 }

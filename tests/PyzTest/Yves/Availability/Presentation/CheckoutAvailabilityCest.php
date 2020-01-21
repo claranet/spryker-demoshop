@@ -17,6 +17,7 @@ use PyzTest\Zed\Sales\PageObject\OrderListPage;
 
 /**
  * Auto-generated group annotations
+ *
  * @group PyzTest
  * @group Yves
  * @group Availability
@@ -27,6 +28,8 @@ use PyzTest\Zed\Sales\PageObject\OrderListPage;
 class CheckoutAvailabilityCest
 {
     /**
+     * @skip Require P&S functionality
+     *
      * @param \PyzTest\Yves\Availability\AvailabilityPresentationTester $i
      * @param \Codeception\Scenario $scenario
      *
@@ -34,10 +37,9 @@ class CheckoutAvailabilityCest
      */
     public function testCheckoutItemWithAvailability(AvailabilityPresentationTester $i, Scenario $scenario)
     {
-        $scenario->skip('Re-enable the test when VM with PHP 7.2 is available.');
-
         $i->wantTo('Checkout item with stock');
         $i->expectTo('Availability changed during SM processing.');
+        $i->truncateSalesOrderThresholds();
 
         $i->amOnPage(AvailabilityPresentationTester::FUJITSU_PRODUCT_PAGE);
 
@@ -51,9 +53,7 @@ class CheckoutAvailabilityCest
         $i->amZed();
         $i->amLoggedInUser();
 
-        $idProductFujitsu = 301;
-
-        $i->amOnPage(sprintf(AvailabilityViewPage::VIEW_PRODUCT_AVAILABILITY_URL, $idProductFujitsu));
+        $i->amOnPage(sprintf(AvailabilityViewPage::VIEW_PRODUCT_AVAILABILITY_URL, AvailabilityPresentationTester::FUJITSU_PRODUCT_ID));
 
         $i->waitForElementVisible(AvailabilityViewPage::AVAILABILITY_RESERVATION_XPATH, 30);
         $reservedProductsBefore = $i->grabTextFrom(AvailabilityViewPage::AVAILABILITY_RESERVATION_XPATH);
@@ -71,7 +71,7 @@ class CheckoutAvailabilityCest
         $i->click(sprintf(OrderDetailPage::OMS_EVENT_TRIGGER_XPATH, 'return'));
         $i->click(sprintf(OrderDetailPage::OMS_EVENT_TRIGGER_XPATH, 'refund'));
 
-        $i->amOnPage(sprintf(AvailabilityViewPage::VIEW_PRODUCT_AVAILABILITY_URL, $idProductFujitsu));
+        $i->amOnPage(sprintf(AvailabilityViewPage::VIEW_PRODUCT_AVAILABILITY_URL, AvailabilityPresentationTester::FUJITSU_PRODUCT_ID));
 
         $i->waitForElementVisible(AvailabilityViewPage::AVAILABILITY_RESERVATION_XPATH, 10);
         $reservedProductsAfter = $i->grabTextFrom(AvailabilityViewPage::AVAILABILITY_RESERVATION_XPATH);

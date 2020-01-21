@@ -7,8 +7,12 @@
 
 namespace PyzTest\Zed\DataImport\Business\Model\ProductPrice;
 
+use Spryker\Shared\Config\Config;
+use Spryker\Shared\Propel\PropelConstants;
+
 /**
  * Auto-generated group annotations
+ *
  * @group PyzTest
  * @group Zed
  * @group DataImport
@@ -29,6 +33,10 @@ class ProductPriceWriterPdoTest extends AbstractProductPriceWriterTest
      */
     public function testProductPriceWriter(): void
     {
+        if (Config::get(PropelConstants::ZED_DB_ENGINE) !== Config::get(PropelConstants::ZED_DB_ENGINE_PGSQL)) {
+            $this->markTestSkipped('PostgreSQL related test');
+        }
+
         $writer = $this->getDataImportBusinessFactoryStub()->createProductPriceBulkPdoWriter();
 
         $dataSets = $this->createDataSets();

@@ -36,6 +36,13 @@ interface DataImportDataFormatterInterface
      *
      * @return string
      */
+    public function formatPostgresArrayBoolean(array $values): string;
+
+    /**
+     * @param array $values
+     *
+     * @return string
+     */
     public function formatPostgresArrayFromJson(array $values): string;
 
     /**
@@ -44,5 +51,12 @@ interface DataImportDataFormatterInterface
      *
      * @return array
      */
-    public function getCollectionDataByKey(array $collection, string $key);
+    public function getCollectionDataByKey(array $collection, string $key): array;
+
+    /**
+     * @param array $priceData
+     *
+     * @return string
+     */
+    public function formatPostgresPriceDataString(array $priceData): string;
 }

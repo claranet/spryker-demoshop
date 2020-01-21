@@ -4,15 +4,38 @@
     <dashboard/>
     <sales/>
     <customer/>
-    <category/>
+    <category>
+        <label>Category</label>
+        <title>Category</title>
+        <bundle>category-gui</bundle>
+        <controller>list</controller>
+        <action>index</action>
+        <order>0</order>
+        <shortcut>c</shortcut>
+        <icon>fa-sitemap</icon>
+    </category>
     <cms-gui/>
     <glossary/>
-    <product/>
+    <product>
+        <pages>
+            <AvailabilityGui/>
+            <products/>
+            <attributes/>
+            <product-barcode/>
+            <product-label-gui/>
+            <product-list/>
+            <product_options/>
+            <product-packaging-unit/>
+            <product_relations/>
+            <reviews/>
+            <sets/>
+            <configurable-bundle-templates/>
+        </pages>
+    </product>
     <search-and-filters/>
     <discount/>
     <navigation/>
     <tax/>
-    <shipment/>
     <acl/>
     <company-gui/>
     <maintenance/>

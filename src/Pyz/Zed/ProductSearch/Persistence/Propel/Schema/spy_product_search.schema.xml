@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
-<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zed" xsi:noNamespaceSchemaLocation="http://static.spryker.com/schema-01.xsd" namespace="Orm\Zed\ProductSearch\Persistence" package="src.Orm.Zed.ProductSearch.Persistence">
+<database xmlns="spryker:schema-01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zed" xsi:schemaLocation="spryker:schema-01 https://static.spryker.com/schema-01.xsd" namespace="Orm\Zed\ProductSearch\Persistence" package="src.Orm.Zed.ProductSearch.Persistence">
 
     <table name="spy_product_search_attribute">
         <behavior name="event">
             <parameter name="spy_product_search_attribute_all" column="*"/>
+        </behavior>
+    </table>
+
+    <table name="spy_product_search">
+        <behavior name="event">
+            <parameter name="spy_product_search_all" column="*"/>
         </behavior>
     </table>
 </database>

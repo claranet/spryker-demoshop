@@ -31,9 +31,12 @@ config/accumulated-config.json
 /src/Generated/
 /vendor/
 FOSS.md
+/public/Yves/maintenance/maintenance.marker
+/public/Zed/maintenance/maintenance.marker
 
 /data/*
-!/data/import/
+!/data/import/*
+!/data/translation
 
 # grunt stuff
 .grunt
@@ -49,6 +52,10 @@ public/Zed/assets/
 # vagrant stuff
 .vagrant
 Vagrantfile
+
+# docker stuff
+/.docker-sync/
+/.unison*
 
 # profiling
 /profiler
@@ -73,7 +80,6 @@ npm-debug.log
 /src/Orm/Zed/*/Persistence/Map
 
 # propel config
-/src/Orm/Propel/*/Config/*
 /src/Orm/Propel/*/Schema
 /src/Orm/Propel/*/Sql
 

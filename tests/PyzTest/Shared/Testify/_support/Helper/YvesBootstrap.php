@@ -9,7 +9,6 @@ namespace PyzTest\Shared\Testify\Helper;
 
 use Codeception\Exception\ModuleConfigException;
 use Codeception\Lib\Framework;
-use Codeception\TestInterface;
 use Pyz\Yves\ShopApplication\YvesBootstrap as PyzYvesBootstrap;
 use Symfony\Component\HttpKernel\Client;
 
@@ -29,11 +28,11 @@ class YvesBootstrap extends Framework
     }
 
     /**
-     * @param \Codeception\TestInterface $test
+     * @param array $settings
      *
      * @return void
      */
-    public function _before(TestInterface $test)
+    public function _beforeSuite($settings = [])
     {
         $this->client = new Client($this->yvesBootstrap->boot());
     }
@@ -48,7 +47,7 @@ class YvesBootstrap extends Framework
         $this->yvesBootstrap = new PyzYvesBootstrap();
 
         if (!isset($this->yvesBootstrap)) {
-            throw new ModuleConfigException(__CLASS__, 'Application instance was not received from bootstrap file');
+            throw new ModuleConfigException(self::class, 'Application instance was not received from bootstrap file');
         }
     }
 }

@@ -10,12 +10,13 @@
 } %}
 
 {% define attributes = {
-    'target-image-selector': required
+    'target-image-selector': required,
+    'target-parent-wrapper-selector': 'body',
 } %}
 
 {% block component %}
     {% if data.items is not empty %}
-        {{parent()}}
+        {{ parent() }}
     {% endif %}
 {% endblock %}
 

@@ -25,6 +25,7 @@ use Spryker\Zed\DataImport\Business\Model\DataSet\DataSet;
 
 /**
  * Auto-generated group annotations
+ *
  * @group PyzTest
  * @group Zed
  * @group DataImport
@@ -56,12 +57,13 @@ abstract class AbstractProductStockWriterTest extends AbstractWriterTest
 
             $dataSet[ProductStockHydratorStep::KEY_IS_BUNDLE] = 0;
             $dataSet[ProductStockHydratorStep::KEY_CONCRETE_SKU] = $sku;
+            $dataSet[ProductStockHydratorStep::KEY_IS_NEVER_OUT_OF_STOCK] = 0;
             $dataSet[ProductStockHydratorStep::STOCK_ENTITY_TRANSFER] = (new SpyStockEntityTransfer())
                 ->setName($warehouses[$index] ?? $warehouses[0]);
 
             $dataSet[ProductStockHydratorStep::STOCK_PRODUCT_ENTITY_TRANSFER] = (new SpyStockProductEntityTransfer())
                 ->setQuantity(static::WAREHOUSES_QTY[$index])
-                ->setIsNeverOutOfStock(0);
+                ->setIsNeverOutOfStock($dataSet[ProductStockHydratorStep::KEY_IS_NEVER_OUT_OF_STOCK]);
 
             $result[$sku] = $dataSet;
         }
@@ -77,7 +79,6 @@ abstract class AbstractProductStockWriterTest extends AbstractWriterTest
      */
     protected function queryDataFromDB(array $skus, array $warehouses): array
     {
-
         $stockProducts = SpyStockProductQuery::create()
             ->filterByQuantity_In(static::WAREHOUSES_QTY)
             ->useStockQuery()
@@ -123,7 +124,9 @@ abstract class AbstractProductStockWriterTest extends AbstractWriterTest
      */
     protected function assertImportedData(array $dataSets, array $fetchedResult): void
     {
-        $this->assertCount(count($dataSets), $fetchedResult['stockProducts']);
+        $dataSetsCount = count($dataSets);
+        $this->assertCount($dataSetsCount, $fetchedResult['stockProducts']);
+        $this->assertCount($dataSetsCount, $fetchedResult['availability']);
 
         foreach ($fetchedResult['stockProducts'] as $stockProduct) {
             $dataSetStock = $dataSets[$stockProduct[SpyProductTableMap::COL_SKU]][ProductStockHydratorStep::STOCK_ENTITY_TRANSFER];
@@ -171,6 +174,7 @@ abstract class AbstractProductStockWriterTest extends AbstractWriterTest
         return SpyStockQuery::create()
             ->limit(count(static::WAREHOUSES_QTY))
             ->select(SpyStockTableMap::COL_NAME)
+            ->orderByIdStock()
             ->find()
             ->toArray();
     }

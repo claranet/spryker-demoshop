@@ -16,6 +16,7 @@ use PyzTest\Yves\Newsletter\PageObject\NewsletterSubscriptionHomePage;
 
 /**
  * Auto-generated group annotations
+ *
  * @group PyzTest
  * @group Yves
  * @group Newsletter
@@ -42,7 +43,7 @@ class NewsletterSubscriptionCest
         $i->fillField(NewsletterSubscriptionHomePage::FORM_SELECTOR, $customerTransfer->getEmail());
         $i->click(NewsletterSubscriptionHomePage::FORM_SUBMIT);
 
-        $i->see(NewsletterSubscriptionHomePage::SUCCESS_MESSAGE);
+        $i->seeInPageSource(NewsletterSubscriptionHomePage::SUCCESS_MESSAGE);
     }
 
     /**
@@ -64,7 +65,7 @@ class NewsletterSubscriptionCest
         $i->fillField(NewsletterSubscriptionHomePage::FORM_SELECTOR, $customerTransfer->getEmail());
         $i->click(NewsletterSubscriptionHomePage::FORM_SUBMIT);
 
-        $i->see(NewsletterSubscriptionHomePage::ERROR_MESSAGE);
+        $i->seeInPageSource(NewsletterSubscriptionHomePage::ERROR_MESSAGE);
     }
 
     /**
