@@ -4,6 +4,8 @@ stores:
     - AT
     - US
 
+command-timeout: 3600
+
 sections:
 
     hidden:
@@ -32,11 +34,6 @@ sections:
             command: "if [ ! -f ./config/Shared/console_env_local.php ]; then cp ./config/Shared/console_env_local.dist.php ./config/Shared/console_env_local.php ; fi"
 
 
-    jenkins-down:
-        jenkins-stop:
-            command: "vendor/bin/console setup:jenkins:disable"
-
-
     clear:
         remove-logs:
             command: "vendor/bin/console log:clear"
@@ -53,12 +50,7 @@ sections:
             command: "vendor/bin/console transfer:generate"
             groups:
                 - build
-        
-        generate-es-index-map:
-            command: "vendor/bin/console setup:search:index-map"
-            groups:
-                - build
-        
+
         generate-transfer-databuilders:
             command: "vendor/bin/console transfer:databuilder:generate"
             groups:
@@ -66,9 +58,27 @@ sections:
 
         generate-ide-auto-completion:
             command: "vendor/bin/console dev:ide:generate-auto-completion"
+            groups:
+                - build
+
+
+    jenkins-down:
+        jenkins-stop:
+            command: "vendor/bin/console scheduler:clean"
+            stores: true
 
 
     cache:
+        router-cache-warmup-yves:
+            command: "vendor/bin/yves router:cache:warm-up"
+            groups:
+                - build
+
+        router-cache-warmup-zed:
+            command: "vendor/bin/console router:cache:warm-up"
+            groups:
+                - build
+
         twig-cache-warmup:
             command: "vendor/bin/console twig:cache:warmer"
             groups:
@@ -135,15 +145,6 @@ sections:
 
 
     database-migrate:
-        propel-config:
-            command: "vendor/bin/console propel:config:convert"
-            stores:
-                - US
-                - DE
-            groups:
-                - propel
-                - build
-
         propel-create:
             command: "vendor/bin/console propel:database:create"
             stores:
@@ -211,23 +212,28 @@ sections:
             command: "vendor/bin/console maintenance:disable"
             stores: true
 
+        generate-entity-transfer:
+            command: "vendor/bin/console transfer:entity:generate"
+            groups:
+                - build
+
         init-database:
             command: "vendor/bin/console setup:init-db"
             stores:
                 - US
                 - DE
 
-        setup-search:
-            command: "vendor/bin/console setup:search"
+        setup-search-create-sources:
+            command: "vendor/bin/console search:setup:sources"
             stores: true
             groups:
                 - elastic
 
-
-    generate-entity-transfer:
-        generate-transfers:
-            command: "vendor/bin/console transfer:generate"
+        setup-search-create-source-map:
+            command: "vendor/bin/console search:setup:source-map"
+            stores: true
             groups:
+                - elastic
                 - build
 
 
@@ -243,29 +249,15 @@ sections:
             stores:
                 - US
                 - DE
-        
-        export-elasticsearch-prepare:
-            command: "vendor/bin/console event:trigger"
-            stores: true
-        export-elasticsearch:
-            command: "vendor/bin/console queue:worker:start"
-            stores: true
-
-        # search-collector:
-        #     command: "vendor/bin/console collector:search:export"
-        #     stores: true
-
-        # storage-collector:
-        #     command: "vendor/bin/console collector:storage:export"
-        #     stores: true
-
 
     jenkins-up:
         jenkins-generate:
-            command: "vendor/bin/console setup:jenkins:generate"
+            command: "vendor/bin/console scheduler:setup"
+            stores: true
 
         jenkins-enable:
-            command: "vendor/bin/console setup:jenkins:enable"
+            command: "vendor/bin/console scheduler:resume"
+            stores: true
 
 
     frontend:
