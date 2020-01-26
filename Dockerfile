@@ -57,6 +57,7 @@ ENV ENABLE_PROPEL_DIFF="true" \
 # rabbitmq
 ENV RABBITMQ_HOST="rabbitmq" \
     RABBITMQ_PORT="5672" \
+    RABBITMQ_MGMT_PORT="15672" \
     RABBITMQ_USERNAME="spryker" \
     RABBITMQ_VIRTUAL_HOST="spryker"
 
