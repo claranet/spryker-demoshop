@@ -13,6 +13,13 @@ create_cache_dirs() {
 sectionText "Create spryker cache dir"
 create_cache_dirs &>> $BUILD_LOG
 
+sectionText "Spryker Installer for build artifacts"
 spryker_installer --groups=build
 
 chown -R www-data: $WORKDIR/cache $WORKDIR/data
+
+# As the spryker installer genrated a lot of php files we need to regenerate 
+# the autoloader file.
+# TODO: Check why php-base 450_optimize_composer_autoloader.sh doesn't work
+sectionText "Regenerate composers autoload.php"
+eatmydata composer dump-autoload &>> $BUILD_LOG
