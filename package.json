@@ -25,7 +25,7 @@
     "foundation-sites": "~6.3.1",
     "jquery": "~3.2.0",
     "slick-carousel": "~1.6.0",
-    "lodash": "~4.17.2",
+    "lodash": "~4.17.21",
     "motion-ui": "~1.2.2",
     "jquery-bar-rating": "^1.2.2"
   },
